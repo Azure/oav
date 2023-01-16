@@ -1,197 +1,196 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TrafficValidator validate data-plane traffic 1`] = `
-Array [
-  Object {
-    "errors": Array [
-      Object {
-        "code": "MISSING_REQUIRED_PARAMETER",
-        "documentationUrl": "",
-        "issueSource": "request",
-        "jsonPathsInPayload": Array [
-          ".headers.dataserviceversion",
-        ],
-        "message": "Value is required but was not provided",
-        "params": Array [
-          "dataserviceversion",
-        ],
-        "pathsInPayload": Array [
-          "/headers/dataserviceversion",
-        ],
-        "schemaPath": "#/properties/headers/required",
-        "severity": 0,
-        "source": Object {
-          "jsonRef": "#/parameters/DataServiceVersionParameter",
-          "position": Object {
-            "column": 36,
-            "line": 1762,
-          },
-          "url": "preview/2019-02-02/table.json",
-        },
-      },
-      Object {
-        "code": "INVALID_RESPONSE_CODE",
-        "documentationUrl": "",
-        "issueSource": "response",
-        "jsonPathsInPayload": Array [],
-        "message": "The swagger file does not define '204' response code",
-        "pathsInPayload": Array [],
-        "schemaPath": "",
-        "severity": 0,
-        "source": Object {
-          "position": Object {
-            "column": 22,
-            "line": 80,
-          },
-          "url": "preview/2019-02-02/table.json",
-        },
-      },
-    ],
-    "operationInfo": Object {
+Object {
+  "operationCoverage": Array [
+    Object {
       "apiVersion": "2019-02-02",
-      "operationId": "Table_Query",
-      "position": Object {
-        "column": 24,
-        "line": 43,
-      },
+      "coverageRate": 0.07142857142857142,
+      "coveredOperaions": 1,
+      "spec": "/home/me/workspace/oav/test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json",
+      "totalOperations": 14,
+      "unCoveredOperations": 13,
+      "unCoveredOperationsList": Array [
+        Object {
+          "key": "Service",
+          "operationId": "Service_GetProperties",
+        },
+        Object {
+          "key": "Service",
+          "operationId": "Service_GetStatistics",
+        },
+        Object {
+          "key": "Service",
+          "operationId": "Service_SetProperties",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_Create",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_Delete",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_DeleteEntity",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_GetAccessPolicy",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_InsertEntity",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_MergeEntity",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_QueryEntities",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_QueryEntityWithPartitionAndRowKey",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_SetAccessPolicy",
+        },
+        Object {
+          "key": "Table",
+          "operationId": "Table_UpdateEntity",
+        },
+      ],
+      "unCoveredOperationsListGen": Array [
+        Object {
+          "operationIdList": Array [
+            Object {
+              "key": "Service",
+              "operationId": "Service_SetProperties",
+            },
+            Object {
+              "key": "Service",
+              "operationId": "Service_GetProperties",
+            },
+            Object {
+              "key": "Service",
+              "operationId": "Service_GetStatistics",
+            },
+          ],
+        },
+        Object {
+          "operationIdList": Array [
+            Object {
+              "key": "Table",
+              "operationId": "Table_Create",
+            },
+            Object {
+              "key": "Table",
+              "operationId": "Table_Delete",
+            },
+            Object {
+              "key": "Table",
+              "operationId": "Table_QueryEntities",
+            },
+            Object {
+              "key": "Table",
+              "operationId": "Table_QueryEntityWithPartitionAndRowKey",
+            },
+            Object {
+              "key": "Table",
+              "operationId": "Table_UpdateEntity",
+            },
+            Object {
+              "key": "Table",
+              "operationId": "Table_MergeEntity",
+            },
+            Object {
+              "key": "Table",
+              "operationId": "Table_DeleteEntity",
+            },
+            Object {
+              "key": "Table",
+              "operationId": "Table_InsertEntity",
+            },
+            Object {
+              "key": "Table",
+              "operationId": "Table_GetAccessPolicy",
+            },
+            Object {
+              "key": "Table",
+              "operationId": "Table_SetAccessPolicy",
+            },
+          ],
+        },
+      ],
+      "validationFailOperations": 1,
     },
-    "payloadFilePath": "/home/me/workspace/oav/test/liveValidation/payloads/dataplane/getCosmosTable_input.json",
-    "payloadFilePathPosition": Object {
-      "column": 17,
-      "line": 2,
+  ],
+  "validationIssues": Array [
+    Object {
+      "errors": Array [
+        Object {
+          "code": "MISSING_REQUIRED_PARAMETER",
+          "documentationUrl": "",
+          "issueSource": "request",
+          "jsonPathsInPayload": Array [
+            ".headers.dataserviceversion",
+          ],
+          "message": "Value is required but was not provided",
+          "params": Array [
+            "dataserviceversion",
+          ],
+          "pathsInPayload": Array [
+            "/headers/dataserviceversion",
+          ],
+          "schemaPath": "#/properties/headers/required",
+          "severity": 0,
+          "source": Object {
+            "jsonRef": "#/parameters/DataServiceVersionParameter",
+            "position": Object {
+              "column": 36,
+              "line": 1762,
+            },
+            "url": "preview/2019-02-02/table.json",
+          },
+        },
+        Object {
+          "code": "INVALID_RESPONSE_CODE",
+          "documentationUrl": "",
+          "issueSource": "response",
+          "jsonPathsInPayload": Array [],
+          "message": "The swagger file does not define '204' response code",
+          "pathsInPayload": Array [],
+          "schemaPath": "",
+          "severity": 0,
+          "source": Object {
+            "position": Object {
+              "column": 22,
+              "line": 80,
+            },
+            "url": "preview/2019-02-02/table.json",
+          },
+        },
+      ],
+      "operationInfo": Object {
+        "apiVersion": "2019-02-02",
+        "operationId": "Table_Query",
+        "position": Object {
+          "column": 24,
+          "line": 43,
+        },
+      },
+      "payloadFilePath": "/home/me/workspace/oav/test/liveValidation/payloads/dataplane/getCosmosTable_input.json",
+      "payloadFilePathPosition": Object {
+        "column": 17,
+        "line": 2,
+      },
+      "runtimeExceptions": Array [],
+      "specFilePath": "/home/me/workspace/oav/test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json",
     },
-    "runtimeExceptions": Array [],
-    "specFilePath": "/home/me/workspace/oav/test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json",
-  },
-]
-`;
-
-exports[`TrafficValidator validate data-plane traffic 2`] = `
-Array [
-  Object {
-    "apiVersion": "2019-02-02",
-    "coverageRate": 0.07142857142857142,
-    "coveredOperaions": 1,
-    "spec": "/home/me/workspace/oav/test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json",
-    "totalOperations": 14,
-    "unCoveredOperations": 13,
-    "unCoveredOperationsList": Array [
-      Object {
-        "key": "Service",
-        "operationId": "Service_GetProperties",
-      },
-      Object {
-        "key": "Service",
-        "operationId": "Service_GetStatistics",
-      },
-      Object {
-        "key": "Service",
-        "operationId": "Service_SetProperties",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_Create",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_Delete",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_DeleteEntity",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_GetAccessPolicy",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_InsertEntity",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_MergeEntity",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_QueryEntities",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_QueryEntityWithPartitionAndRowKey",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_SetAccessPolicy",
-      },
-      Object {
-        "key": "Table",
-        "operationId": "Table_UpdateEntity",
-      },
-    ],
-    "unCoveredOperationsListGen": Array [
-      Object {
-        "operationIdList": Array [
-          Object {
-            "key": "Service",
-            "operationId": "Service_SetProperties",
-          },
-          Object {
-            "key": "Service",
-            "operationId": "Service_GetProperties",
-          },
-          Object {
-            "key": "Service",
-            "operationId": "Service_GetStatistics",
-          },
-        ],
-      },
-      Object {
-        "operationIdList": Array [
-          Object {
-            "key": "Table",
-            "operationId": "Table_Create",
-          },
-          Object {
-            "key": "Table",
-            "operationId": "Table_Delete",
-          },
-          Object {
-            "key": "Table",
-            "operationId": "Table_QueryEntities",
-          },
-          Object {
-            "key": "Table",
-            "operationId": "Table_QueryEntityWithPartitionAndRowKey",
-          },
-          Object {
-            "key": "Table",
-            "operationId": "Table_UpdateEntity",
-          },
-          Object {
-            "key": "Table",
-            "operationId": "Table_MergeEntity",
-          },
-          Object {
-            "key": "Table",
-            "operationId": "Table_DeleteEntity",
-          },
-          Object {
-            "key": "Table",
-            "operationId": "Table_InsertEntity",
-          },
-          Object {
-            "key": "Table",
-            "operationId": "Table_GetAccessPolicy",
-          },
-          Object {
-            "key": "Table",
-            "operationId": "Table_SetAccessPolicy",
-          },
-        ],
-      },
-    ],
-    "validationFailOperations": 1,
-  },
-]
+  ],
+}
 `;

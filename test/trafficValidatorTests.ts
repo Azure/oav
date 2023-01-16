@@ -11,9 +11,9 @@ describe("TrafficValidator", () => {
       path.resolve(process.cwd(), "./test/liveValidation/payloads/dataplane/")
     );
     await validator.initialize();
-    const result = await validator.validate();
+    const result = {} as any;
+    result.validationIssues = await validator.validate();
+    result.operationCoverage = validator.operationCoverageResult;
     expect(result).toMatchSnapshot();
-    const operationCoverageResult = validator.operationCoverageResult;
-    expect(operationCoverageResult).toMatchSnapshot();
   });
 });
