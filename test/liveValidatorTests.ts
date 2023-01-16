@@ -262,7 +262,7 @@ describe("Live Validator", () => {
           },
         }
       `);
-      assert.strictEqual(numberOfSpecs, cache.size);
+      assert.strictEqual(cache.size, numberOfSpecs);
     });
     it("should initialize for batch", async () => {
       const options = {
@@ -351,7 +351,7 @@ describe("Live Validator", () => {
       await validator.initialize();
       const cache = validator.operationSearcher.cache;
 
-      assert.strictEqual(numberOfSpecs, cache.size);
+      assert.strictEqual(cache.size, numberOfSpecs);
       const microsoftResources = cache.get("microsoft.resources");
       if (microsoftResources === undefined) {
         throw new Error("microsoftResources === undefined");
@@ -567,7 +567,7 @@ describe("Live Validator", () => {
     });
     it("it shouldn't create an implicit default response", async () => {
       const options = {
-        directory: "./test/liveValidation/swaggers/specification/scenarios",
+        directory: "./test/liveValidation/swaggers/specification/testrp",
         swaggerPathsPattern: ["**/*.json"],
         shouldModelImplicitDefaultResponse: true,
       };
