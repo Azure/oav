@@ -9,13 +9,15 @@ import {
   RequestResponsePair,
 } from "../liveValidation/liveValidator";
 import { DefaultConfig } from "../util/constants";
-import { ErrorCodeConstants } from "../util/errorDefinitions";
+import { apiValidationErrors, ErrorCodeConstants } from "../util/errorDefinitions";
 import { OperationContext } from "../liveValidation/operationValidator";
 import { Options } from "../validate";
-import { inversifyGetInstance } from "../inversifyUtils";
+import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils";
 import { findPathsToKey, findPathToValue, getApiVersionFromFilePath } from "../util/utils";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import { getFilePositionFromJsonPath } from "../util/jsonUtils";
+import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
+import { traverseSwagger } from "../transform/traverseSwagger";
 
 export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
@@ -76,6 +78,7 @@ export class TrafficValidator {
   private trafficFiles: string[] = [];
   private specPath: string;
   private trafficPath: string;
+  private loader?: LiveValidatorLoader;
   private swaggerLoader?: SwaggerLoader;
   private trafficOperation: Map<string, string[]> = new Map<string, string[]>();
   private validationFailOperations: Map<string, string[]> = new Map<string, string[]>();
@@ -125,6 +128,45 @@ export class TrafficValidator {
 
     this.liveValidator = new LiveValidator(liveValidationOptions);
     await this.liveValidator.initialize();
+
+    const container = inversifyGetContainer();
+    this.loader = inversifyGetInstance(LiveValidatorLoader, {
+      container,
+      fileRoot: liveValidationOptions.directory,
+      ...liveValidationOptions,
+      loadSuppression: Object.keys(apiValidationErrors),
+    });
+
+    const swaggerPaths = this.liveValidator.swaggerList;
+    while (swaggerPaths.length > 0) {
+      const swaggerPath = swaggerPaths.shift()!;
+      let spec;
+      try {
+        spec = await this.loader.load(pathResolve(swaggerPath));
+      } catch (e) {
+        console.log(
+          `Exception when loading spec, ErrorMessage: ${(e as any)?.message}; ErrorStack: ${
+            (e as any)?.stack
+          }.`
+        );
+      }
+      if (spec !== undefined) {
+        // Get Swagger - operation mapper.
+        if (this.operationSpecMapper.get(swaggerPath) === undefined) {
+          this.operationSpecMapper.set(swaggerPath, []);
+        }
+        traverseSwagger(spec, {
+          onOperation: (operation) => {
+            if (
+              operation.operationId !== undefined &&
+              !this.operationSpecMapper.get(swaggerPath)?.includes(operation.operationId)
+            ) {
+              this.operationSpecMapper.get(swaggerPath)!.push(operation.operationId);
+            }
+          },
+        });
+      }
+    }
   }
 
   public async validate(): Promise<TrafficValidationIssue[]> {
@@ -180,13 +222,13 @@ export class TrafficValidator {
           );
 
           let swaggerFiles: string[] = [];
-          // if (liveRequest.url.includes("provider")) {
-          //   // This is for validation of resource-manager
-          //   swaggerFiles = this.findSwaggerByOperationInfo(opInfo.info);
-          // } else {
-          //   // This is for validation of data-plane
-          //   swaggerFiles = this.findSwaggerByOperationId(opInfo.info);
-          // }
+          if (liveRequest.url.includes("provider")) {
+            // This is for validation of resource-manager
+            swaggerFiles = this.findSwaggerByOperationInfo(opInfo.info);
+          } else {
+            // This is for validation of data-plane
+            swaggerFiles = this.findSwaggerByOperationId(opInfo.info);
+          }
 
           if (swaggerFiles.length !== 0) {
             for (const swaggerFile of swaggerFiles) {
@@ -351,5 +393,40 @@ export class TrafficValidator {
         });
     });
     return this.trafficValidationResult;
+  }
+
+  private findSwaggerByOperationInfo(operationInfo: OperationContext): string[] {
+    let result: string[] = [];
+    if (operationInfo.validationRequest === undefined) {
+      return result;
+    }
+    for (const key of this.operationSpecMapper.keys()) {
+      const value = this.operationSpecMapper.get(key);
+      if (
+        key.toLowerCase().includes(operationInfo.validationRequest?.providerNamespace) &&
+        (key.includes(operationInfo.apiVersion) ||
+          key.toLowerCase().includes(operationInfo.apiVersion))
+      ) {
+        if (value!.includes(operationInfo.operationId)) {
+          result.push(key);
+        }
+      }
+    }
+    return result;
+  }
+
+  private findSwaggerByOperationId(operationInfo: OperationContext): string[] {
+    let result: string[] = [];
+    for (const key of this.operationSpecMapper.keys()) {
+      const value = this.operationSpecMapper.get(key);
+      if (
+        value!.includes(operationInfo.operationId) &&
+        (key.includes(operationInfo.apiVersion) ||
+          key.toLowerCase().includes(operationInfo.apiVersion))
+      ) {
+        result.push(key);
+      }
+    }
+    return result;
   }
 }
