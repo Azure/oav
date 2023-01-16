@@ -208,71 +208,69 @@ export class TrafficValidator {
             })
           );
         }
-        if (errorResult.length > 0 || runtimeExceptions.length > 0) {
-          const trafficSpec = await this.swaggerLoader.load(payloadFilePath);
-          let liveRequestResponseList;
-          if (validationResult.requestValidationResult.isSuccessful) {
-            liveRequestResponseList = findPathsToKey({ key: "liveResponse", obj: trafficSpec });
-          } else {
-            liveRequestResponseList = findPathsToKey({ key: "liveRequest", obj: trafficSpec });
-          }
-          const liveRequestResponsePosition = getFilePositionFromJsonPath(
-            trafficSpec,
-            liveRequestResponseList[0]
-          );
+        const trafficSpec = await this.swaggerLoader.load(payloadFilePath);
+        let liveRequestResponseList;
+        if (validationResult.requestValidationResult.isSuccessful) {
+          liveRequestResponseList = findPathsToKey({ key: "liveResponse", obj: trafficSpec });
+        } else {
+          liveRequestResponseList = findPathsToKey({ key: "liveRequest", obj: trafficSpec });
+        }
+        const liveRequestResponsePosition = getFilePositionFromJsonPath(
+          trafficSpec,
+          liveRequestResponseList[0]
+        );
 
-          let swaggerFiles: string[] = [];
-          if (liveRequest.url.includes("provider")) {
-            // This is for validation of resource-manager
-            swaggerFiles = this.findSwaggerByOperationInfo(opInfo.info);
-          } else {
-            // This is for validation of data-plane
-            swaggerFiles = this.findSwaggerByOperationId(opInfo.info);
-          }
+        let swaggerFiles: string[] = [];
+        if (liveRequest.url.includes("provider")) {
+          // This is for validation of resource-manager
+          swaggerFiles = this.findSwaggerByOperationInfo(opInfo.info);
+        } else {
+          // This is for validation of data-plane
+          swaggerFiles = this.findSwaggerByOperationId(opInfo.info);
+        }
 
-          if (swaggerFiles.length !== 0) {
-            for (const swaggerFile of swaggerFiles) {
-              if (this.trafficOperation.get(swaggerFile) === undefined) {
-                this.trafficOperation.set(swaggerFile, []);
-              }
-              if (!this.trafficOperation.get(swaggerFile)?.includes(opInfo.info.operationId)) {
-                this.trafficOperation.get(swaggerFile)?.push(opInfo.info.operationId);
+        if (swaggerFiles.length !== 0) {
+          for (const swaggerFile of swaggerFiles) {
+            if (this.trafficOperation.get(swaggerFile) === undefined) {
+              this.trafficOperation.set(swaggerFile, []);
+            }
+            if (!this.trafficOperation.get(swaggerFile)?.includes(opInfo.info.operationId)) {
+              this.trafficOperation.get(swaggerFile)?.push(opInfo.info.operationId);
+            }
+            if (
+              validationResult.requestValidationResult.isSuccessful === false ||
+              validationResult.requestValidationResult.isSuccessful === undefined ||
+              validationResult.responseValidationResult.isSuccessful === false ||
+              validationResult.responseValidationResult.isSuccessful === undefined ||
+              validationResult.runtimeException !== undefined
+            ) {
+              if (this.validationFailOperations.get(swaggerFile) === undefined) {
+                this.validationFailOperations.set(swaggerFile, []);
               }
               if (
-                validationResult.requestValidationResult.isSuccessful === false ||
-                validationResult.requestValidationResult.isSuccessful === undefined ||
-                validationResult.responseValidationResult.isSuccessful === false ||
-                validationResult.responseValidationResult.isSuccessful === undefined ||
-                validationResult.runtimeException !== undefined
+                !this.validationFailOperations.get(swaggerFile)?.includes(opInfo.info.operationId)
               ) {
-                if (this.validationFailOperations.get(swaggerFile) === undefined) {
-                  this.validationFailOperations.set(swaggerFile, []);
-                }
-                if (
-                  !this.validationFailOperations.get(swaggerFile)?.includes(opInfo.info.operationId)
-                ) {
-                  this.validationFailOperations.get(swaggerFile)?.push(opInfo.info.operationId);
-                }
+                this.validationFailOperations.get(swaggerFile)?.push(opInfo.info.operationId);
               }
-
-              const spec = swaggerFile && (await this.swaggerLoader.load(swaggerFile));
-              const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
-              const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
-              const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
-              operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
-              this.trafficValidationResult.push({
-                specFilePath: swaggerFile,
-                payloadFilePath,
-                payloadFilePathPosition: liveRequestResponsePosition,
-                errors: errorResult,
-                runtimeExceptions,
-                operationInfo,
-              });
             }
-          } else {
-            console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);
-            this.operationUndefinedResult = this.operationUndefinedResult + 1;
+
+            const spec = swaggerFile && (await this.swaggerLoader.load(swaggerFile));
+            const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
+            const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
+            const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
+            operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
+            this.trafficValidationResult.push({
+              specFilePath: swaggerFile,
+              payloadFilePath,
+              payloadFilePathPosition: liveRequestResponsePosition,
+              errors: errorResult,
+              runtimeExceptions,
+              operationInfo,
+            });
           }
+        } else {
+          console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);
+          this.operationUndefinedResult = this.operationUndefinedResult + 1;
         }
       }
     } catch (err) {
