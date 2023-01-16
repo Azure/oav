@@ -39,8 +39,7 @@ export type TestScriptType =
   | "DetailResponseLog"
   | "OverwriteVariables"
   | "ARMDeploymentStatusAssertion"
-  | "ExtractARMTemplateOutput"
-  | "LROFinalResult";
+  | "ExtractARMTemplateOutput";
 
 export function createItem(definition?: ItemDefinition): Item {
   return new Item({

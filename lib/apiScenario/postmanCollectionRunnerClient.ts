@@ -13,6 +13,7 @@ import {
   VariableScope,
 } from "postman-collection";
 import { urlParse } from "@azure-tools/openapi-tools-common";
+import { isArray } from "lodash";
 import {
   xmsLongRunningOperation,
   xmsLongRunningOperationOptions,
@@ -44,6 +45,7 @@ import {
 import { DEFAULT_ARM_API_VERSION } from "./constants";
 import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
+import { postmanArmRules } from "./postmanArmRules";
 
 export interface PostmanCollectionRunnerClientOption {
   scenarioFile: string;
@@ -69,6 +71,43 @@ interface PostmanAzureKeyAuthOption {
 }
 
 type PostmanAuthOption = PostmanAADTokenAuthOption | PostmanAzureKeyAuthOption;
+
+function generateArmRuleAssertion(parameter: {
+  step: StepRestCall | StepArmTemplate;
+  item: Item;
+  type: "lroPolling" | "stepCall" | "lroFinalGet";
+}) {
+  const scripts: string[] = [];
+  if (parameter.step.type === "armTemplateDeployment") {
+    return;
+  }
+  const rules = postmanArmRules;
+  for (const rule of rules) {
+    const httpMethods = isArray(rule.httpMethods) ? rule.httpMethods : [rule.httpMethods];
+    if (
+      !!(parameter.step as StepRestCall).isManagementPlane === (rule.category === "Management") &&
+      (httpMethods.includes(parameter.step.operation?._method as any) ||
+        parameter.type === rule.callType) &&
+      parameter.step.operation?.[xmsLongRunningOperation] === rule.isAsync
+    ) {
+      if (rule.assertion) {
+        PostmanHelper.appendScripts(scripts, {
+          name: rule.name!,
+          types: ["ResponseDataAssertion", "StatusCodeAssertion"],
+          responseAssertion: rule.assertion,
+        });
+      }
+      if (rule.postmanTest) {
+        scripts.push(`pm.test("${rule.name}", function() {`);
+        rule.postmanTest.forEach((s) => scripts.push(s));
+        scripts.push("});");
+      }
+    }
+  }
+  if (scripts.length) {
+    PostmanHelper.addEvent(parameter.item.events, "test", scripts);
+  }
+}
 
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   private opts: PostmanCollectionRunnerClientOption;
@@ -686,17 +725,15 @@ pm.test("Stopped TestProxy recording", function() {
         step: item.name,
       };
       item.description = JSON.stringify(metadata);
-      const finalStateVia =
-        step?.operation?.[xmsLongRunningOperationOptions]?.[xmsLongRunningOperationOptionsField];
+
       this.lroPoll(
         itemGroup!,
         item,
+        step,
         clientRequest.host,
         postScripts,
         false,
-        step.responseAssertion,
-        finalStateVia,
-        step.isManagementPlane
+        step.responseAssertion
       );
 
       // generate final get
@@ -705,11 +742,10 @@ pm.test("Stopped TestProxy recording", function() {
           this.generateFinalGetItem(
             item.name,
             baseUri,
-            item.name,
+            step,
             step.operation._method,
             undefined,
-            undefined,
-            finalStateVia
+            undefined
           )
         );
       }
@@ -727,18 +763,23 @@ pm.test("Stopped TestProxy recording", function() {
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(item.events, "test", postScripts);
     }
+    generateArmRuleAssertion({ step, type: "stepCall", item });
   }
 
   private lroPoll(
     itemGroup: ItemGroup<Item>,
     item: Item,
+    step: StepRestCall | StepArmTemplate,
     baseUri: string,
     postScripts: string[],
     checkStatus: boolean = false,
-    responseAssertion?: StepResponseAssertion,
-    finalStateVia?: string,
-    isManagementPlane?: boolean
+    responseAssertion?: StepResponseAssertion
   ) {
+    const finalStateVia =
+      step.type === "restCall"
+        ? step?.operation?.[xmsLongRunningOperationOptions]?.[xmsLongRunningOperationOptionsField]
+        : undefined;
+    const isManagementPlane = step.type === "armTemplateDeployment" || step.isManagementPlane;
     if (this.opts.skipLroPoll) return;
     const url = item.request.url;
     const urlStr = `${baseUri}${url.getPathWithQuery()}`;
@@ -748,6 +789,7 @@ pm.test("Stopped TestProxy recording", function() {
       isManagementPlane && ["put", "patch"].includes(item.request.method.toLowerCase());
     postScripts.push(
       `
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
  function getLroFinalGetUrl(finalStateVia) {
   if (!finalStateVia) {
     // by default, the final url header is Location for ARM, Operation-Location for dataplane.
@@ -865,7 +907,7 @@ try {
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(pollerItem.events, "test", pollerPostScripts);
     }
-
+    generateArmRuleAssertion({ step, type: "lroPolling", item: pollerItem });
     itemGroup.items.add(pollerItem);
   }
 
@@ -961,7 +1003,7 @@ try {
       variables: undefined,
     });
 
-    this.lroPoll(itemGroup!, item, armEndpoint, postScripts, true);
+    this.lroPoll(itemGroup!, item, step, armEndpoint, postScripts, true);
 
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(item.events, "test", postScripts);
@@ -973,7 +1015,7 @@ try {
     const generatedGetOperationItem = this.generateFinalGetItem(
       item.name,
       armEndpoint,
-      step.step,
+      step,
       "put",
       generatedGetScriptTypes,
       armTemplate
@@ -984,7 +1026,7 @@ try {
   private generateFinalGetItem(
     name: string,
     baseUri: string,
-    step: string,
+    step: StepRestCall | StepArmTemplate,
     prevMethod: string = "put",
     scriptTypes: PostmanHelper.TestScriptType[] = [],
     armTemplate?: ArmTemplate,
@@ -1005,7 +1047,7 @@ try {
     const metadata: FinalGetItemMetadata = {
       type: "finalGet",
       lro_item_name: name,
-      step,
+      step: step.step,
     };
     item.description = JSON.stringify(metadata);
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
@@ -1037,7 +1079,7 @@ try {
         })`,
       ]);
     }
-
+    generateArmRuleAssertion({ step, type: "lroFinalGet", item: item });
     return item;
   }
 }
