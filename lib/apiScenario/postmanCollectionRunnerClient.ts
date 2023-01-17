@@ -86,7 +86,7 @@ function generateArmRuleAssertion(parameter: {
     const httpMethods = isArray(rule.httpMethods) ? rule.httpMethods : [rule.httpMethods];
     if (
       !!(parameter.step as StepRestCall).isManagementPlane === (rule.category === "Management") &&
-      (httpMethods.includes(parameter.step.operation?._method as any) ||
+      (httpMethods.includes(parameter.step.operation?._method as any) &&
         parameter.type === rule.callType) &&
       parameter.step.operation?.[xmsLongRunningOperation] === rule.isAsync
     ) {
