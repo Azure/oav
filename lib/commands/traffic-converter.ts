@@ -74,12 +74,10 @@ function requestUriConversion(uri: string, version: string): string {
 
 function processFile(file: string, inputJson: any) {
   if (inputJson.Entries !== undefined && inputJson.Entries.length > 0) {
+    const filePrefix = file.substring(0, file.lastIndexOf("."));
     inputJson.Entries.forEach((entry: ProxyPayload, idx: number) => {
-      let outFile = `${file.substring(0, file.lastIndexOf("."))}_${String(idx).padStart(
-        4,
-        "0"
-      )}.json`;
-      let newEntry: ValidationPayload = {
+      const outFile = `${filePrefix}_${String(idx).padStart(4, "0")}.json`;
+      const newEntry: ValidationPayload = {
         liveRequest: <LiveRequest>{},
         liveResponse: <LiveResponse>{},
       };

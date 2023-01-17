@@ -966,18 +966,23 @@ export function formatUrlToExpectedFormat(requestUrl: string): string {
 /**
  * Parse the validation request information.
  *
- * @param requestUrl The url of service api call.
+ * @param  requestUrl The url of service api call.
  *
  * @param requestMethod The http verb for the method to be used for lookup.
  *
- * @param headers Optional headers
+ * @param correlationId The id to correlate the api calls.
+ *
+ * @param activityId The id maps to request id, used by RPaaS.
  *
  * @returns parsed ValidationRequest info.
+ *
+ * @deprecated use parseValidationRequest instead.
  */
-export const parseValidationRequest = (
+export const legacyParseValidationRequest = (
   requestUrl: string,
-  requestMethod: string,
-  headers?: { [propertyName: string]: string }
+  requestMethod: string | undefined | null,
+  correlationId: string,
+  activityId: string
 ): ValidationRequest => {
   if (
     requestUrl === undefined ||
@@ -1004,6 +1009,28 @@ export const parseValidationRequest = (
     const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg);
     throw e;
   }
+  return parseValidationRequest(requestUrl, requestMethod, {
+    "x-ms-correlation-request-id": correlationId,
+    "x-ms-request-id": activityId,
+  });
+};
+
+/**
+ * Parse the validation request information.
+ *
+ * @param requestUrl The url of service api call.
+ *
+ * @param requestMethod The http verb for the method to be used for lookup.
+ *
+ * @param headers Optional headers
+ *
+ * @returns parsed ValidationRequest info.
+ */
+export const parseValidationRequest = (
+  requestUrl: string,
+  requestMethod: string,
+  headers?: { [propertyName: string]: string }
+): ValidationRequest => {
   let queryStr;
   let apiVersion = "";
   let resourceType = "";

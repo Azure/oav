@@ -252,21 +252,20 @@ export class TrafficValidator {
               ) {
                 this.validationFailOperations.get(swaggerFile)?.push(opInfo.info.operationId);
               }
+              const spec = swaggerFile && (await this.swaggerLoader.load(swaggerFile));
+              const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
+              const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
+              const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
+              operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
+              this.trafficValidationResult.push({
+                specFilePath: swaggerFile,
+                payloadFilePath,
+                payloadFilePathPosition: liveRequestResponsePosition,
+                errors: errorResult,
+                runtimeExceptions,
+                operationInfo,
+              });
             }
-
-            const spec = swaggerFile && (await this.swaggerLoader.load(swaggerFile));
-            const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
-            const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
-            const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
-            operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
-            this.trafficValidationResult.push({
-              specFilePath: swaggerFile,
-              payloadFilePath,
-              payloadFilePathPosition: liveRequestResponsePosition,
-              errors: errorResult,
-              runtimeExceptions,
-              operationInfo,
-            });
           }
         } else {
           console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);

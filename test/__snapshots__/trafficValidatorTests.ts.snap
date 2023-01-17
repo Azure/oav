@@ -122,19 +122,6 @@ Object {
   ],
   "validationIssues": Array [
     Object {
-      "errors": Array [],
-      "operationInfo": Object {
-        "apiVersion": "2019-02-02",
-        "operationId": "Table_Delete",
-        "position": undefined,
-      },
-      "payloadFilePathPosition": Object {
-        "column": 18,
-        "line": 18,
-      },
-      "runtimeExceptions": Array [],
-    },
-    Object {
       "errors": Array [
         Object {
           "code": "MISSING_REQUIRED_PARAMETER",
