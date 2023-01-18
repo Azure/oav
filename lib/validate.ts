@@ -25,6 +25,7 @@ import {
   TrafficValidator,
 } from "./swaggerValidator/trafficValidator";
 import { ReportGenerator } from "./report/generateReport";
+import { flatMap } from "@azure-tools/openapi-tools-common";
 
 export interface Options extends XMsExampleExtractor.Options {
   consoleLogLevel?: unknown;
@@ -229,6 +230,34 @@ export async function validateTrafficAgainstSpec(
         ],
       });
     }
+    if (options.jsonReportPath) {
+      const report = {
+        allOperations: validator!.operationCoverageResult
+          .map((item) => item.totalOperations)
+          .reduce((a, b) => a + b, 0),
+        coveredOperations: validator!.operationCoverageResult
+          .map((item) => item.coveredOperaions)
+          .reduce((a, b) => a + b, 0),
+        failedOperations: validator!.operationCoverageResult
+          .map((item) => item.validationFailOperations)
+          .reduce((a, b) => a + b, 0),
+        errors: Array.from(
+          flatMap(
+            trafficValidationResult,
+            (item) =>
+              item.errors?.map((it) => {
+                return {
+                  errorCode: it.code,
+                  errorMessage: it.message,
+                  issueSource: it.issueSource,
+                  operationId: item.operationInfo?.operationId,
+                };
+              }) ?? []
+          )
+        ),
+      };
+      fs.writeFileSync(options.jsonReportPath, JSON.stringify(report, null, 2));
+    }
     if (options.reportPath) {
       const generator = new ReportGenerator(
         trafficValidationResult,
@@ -277,6 +306,7 @@ export async function generateExamples(
   operationIds?: string,
   readme?: string,
   tag?: string,
+  generationRule?: "Max" | "Min",
   options?: Options
 ): Promise<any> {
   if (!options) {
@@ -304,7 +334,7 @@ export async function generateExamples(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
   log.filepath = options.logFilepath || log.filepath;
   for (const file of wholeInputFiles) {
-    const generator = new ExampleGenerator(file, payloadDir);
+    const generator = new ExampleGenerator(file, payloadDir, generationRule);
     if (operationIds) {
       const operationIdArray = operationIds.trim().split(",");
       for (const operationId of operationIdArray) {
