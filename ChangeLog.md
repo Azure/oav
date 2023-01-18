@@ -6,6 +6,8 @@
   - Support scenario file as scope
   - Support test-proxy recording externalization with `--testProxyAssets` option
   - Support `--randomSeed` option
+- generate-api-scenario
+  - Support `--scope` option in static generator
 
 ## 12/01/2022 3.2.4
 
