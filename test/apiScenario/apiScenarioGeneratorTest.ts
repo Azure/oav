@@ -164,5 +164,4 @@ describe("ApiScenarioGenerator", () => {
 
     expect(apiScenario).toMatchSnapshot();
   });
-
 });
