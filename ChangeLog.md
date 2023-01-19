@@ -1,15 +1,13 @@
 # Change Log - oav
 
-## 01/15/2023 3.3.1
-
-- Add json report parameter in command `validate-traffic`
-
 ## 12/19/2022 3.3.0
 
 - API Scenario
   - Support scenario file as scope
   - Support test-proxy recording externalization with `--testProxyAssets` option
   - Support `--randomSeed` option
+- validate-traffic
+  - Add `--jsonReport` parameter in command `validate-traffic`
 
 ## 12/01/2022 3.2.4
 
@@ -99,7 +97,7 @@
 ## 06/30/2022 3.0.2
 
 - traffic-converter
-    - Implement [oav-traffic-converter](https://github.com/Azure/azure-sdk-tools/tree/main/tools/oav-traffic-converter)
+  - Implement [oav-traffic-converter](https://github.com/Azure/azure-sdk-tools/tree/main/tools/oav-traffic-converter)
 - Add activity parsed from request header to logs
 
 ## 06/10/2022 3.0.1

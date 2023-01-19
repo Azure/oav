@@ -162,6 +162,8 @@ export const unknownResourceType = "unknownResourceType";
 export const DefaultConfig = {
   ExcludedSwaggerPathsPattern: [
     "**/examples/**/*",
+    "**/scenarios/**/*",
+    "**/restler/**/*",
     "**/quickstart-templates/**/*",
     "**/schema/**/*",
     "**/live/**/*",
@@ -189,6 +191,8 @@ export const DefaultConfig = {
   ],
   ExcludedExamplesAndCommonFiles: [
     "**/examples/**/*",
+    "**/scenarios/**/*",
+    "**/restler/**/*",
     "**/quickstart-templates/**/*",
     "**/schema/**/*",
     "**/live/**/*",
