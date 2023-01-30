@@ -3,6 +3,7 @@
 ## 01/30/2023 3.2.4
 
 - Generate Examples - Support specified generation rule
+- Revert node requirement to >=12
 - API Scenario
   - Support scenario file as scope
   - Support test-proxy recording externalization with `--testProxyAssets` option
