@@ -156,7 +156,7 @@ export class SwaggerSemanticValidator {
     let oavError: any;
     if (e.message.includes("Brackets should be deployed in symmetric pairs")) {
       oavError = getOavErrorMeta("MISSING_PATH_PARAMETER_DECLARATION", e.message);
-      oavError.message = `${e.message}\n${e.stack}`;
+      oavError.message = e.message;
     } else {
       oavError = getOavErrorMeta("INTERNAL_ERROR", { message: `${e.message}\n${e.stack}` });
     }

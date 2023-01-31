@@ -775,8 +775,7 @@ export class SwaggerExampleValidator {
         data: actualType,
       });
       if (bodySchema.noRefWithTypeObject === true) {
-        meta.message =
-          "Schema definition needs reference, please check out semantic validation results";
+        meta.message = `"type: object" without properties or "additionalProperties: {}" is invalid type if example has properties.`;
       }
       this.addErrorsFromErrorCode(
         operationId,
