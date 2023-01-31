@@ -1,26 +1,23 @@
 # Change Log - oav
 
-## 12/19/2022 3.3.0
-
-- API Scenario
-  - Support scenario file as scope
-  - Support test-proxy recording externalization with `--testProxyAssets` option
-  - Support `--randomSeed` option
-- validate-traffic
-  - Add `--jsonReport` parameter in command `validate-traffic`
-
-## 12/01/2022 3.2.4
-
-- Generate Examples - Support specified generation rule
-- API Scenario
-  - Support file type in formdata and body
-  - Change the prefix length to 8 from 10 in generated API Scenario
-
-## 11/23/2022 3.2.3
+## 01/30/2023 3.2.4
 
 - SemanticValidator&ModelValidator - Clear INVALID_TYPE to user in a specific case
 - ModelValidator - Ignore leading slash for scope parameter
 - SemanticValidator - Support path validation
+- Generate Examples - Support specified generation rule
+- Revert node requirement to >=12
+- API Scenario
+  - Support scenario file as scope
+  - Support test-proxy recording externalization with `--testProxyAssets` option
+  - Support `--randomSeed` option
+  - Support file type in formdata and body
+  - Change the prefix length to 8 from 10 in generated API Scenario
+- validate-traffic
+  - Add `--jsonReport` parameter in command `validate-traffic`
+
+## 11/23/2022 3.2.3
+
 - AjvSchemaValidator - Ignore unknown format when compile schema
 
 ## 11/07/2022 3.2.2
