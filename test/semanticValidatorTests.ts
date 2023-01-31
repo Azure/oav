@@ -297,22 +297,4 @@ describe("Semantic validation", () => {
       assert(result.validityStatus === true);
     });
   });
-
-  describe("validateResponse", () => {
-    // OBJECT_MISSING_REQUIRED_PROPERTY_DEFINITION
-    it("should fail when schema missing reference with type object defined", async () => {
-      const specPath = `${testPath}/semanticValidation/specification/validateResponse/OBJECT_MISSING_REQUIRED_PROPERTY_DEFINITION.json`;
-      const result = await validate.validateSpec(specPath, undefined);
-      assert(result.validityStatus === false);
-      assert.strictEqual(result.validateSpec?.errors?.length, 1);
-      assert.strictEqual(
-        result.validateSpec?.errors?.[0].code,
-        "OBJECT_MISSING_REQUIRED_PROPERTY_DEFINITION"
-      );
-      assert.strictEqual(
-        result.validateSpec?.errors?.[0].message,
-        "Missing required property definition: $ref when schema type is 'object'"
-      );
-    });
-  });
 });

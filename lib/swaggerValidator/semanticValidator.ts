@@ -557,18 +557,6 @@ export class SwaggerSemanticValidator {
           this.addErrorsFromErrorCode(errors, url, meta, operation);
         }
       },
-      onResponse: (response) => {
-        if (response.schema !== undefined) {
-          if (response.schema.noRefWithTypeObject === true) {
-            const meta = getOavErrorMeta("OBJECT_MISSING_REQUIRED_PROPERTY_DEFINITION", {
-              property: "$ref",
-            });
-            meta.message =
-              "Missing required property definition: $ref when schema type is 'object'";
-            this.addErrorsFromErrorCode(errors, url, meta, response.schema);
-          }
-        }
-      },
     });
   }
 }
