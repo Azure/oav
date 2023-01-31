@@ -61,6 +61,10 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "https://github.com/scbedd/oav-traffic-converter/blob/main/sample-tables-input/",
   },
+  jsonReport: {
+    describe: "path and file name for json report",
+    string: true,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -79,8 +83,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       outputExceptionInReport: argv.outputExceptionInReport,
       specLinkPrefix: argv.specLinkPrefix,
       payloadLinkPrefix: argv.payloadLinkPrefix,
+      jsonReportPath: argv.jsonReport,
     };
-    const errors = await validate.validateTrafficAgainstSpec(specPath, trafficPath, vOptions);
+    const errors = await validate.validateTraffic(specPath, trafficPath, vOptions);
     return errors.length > 0 ? 1 : 0;
   });
 }

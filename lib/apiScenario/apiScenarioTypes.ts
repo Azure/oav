@@ -363,8 +363,11 @@ export type Scenario = TransformRaw<
 //#endregion
 
 //#region ScenarioDefinitionFile
+
+export type ArmScope = "ResourceGroup" | "Subscription" | "Tenant" | "None";
+
 export type RawScenarioDefinition = RawVariableScope & {
-  scope?: "ResourceGroup" | "Subscription" | "Tenant" | "None";
+  scope?: ArmScope | string;
   prepareSteps?: RawStep[];
   scenarios: RawScenario[];
   cleanUpSteps?: RawStep[];

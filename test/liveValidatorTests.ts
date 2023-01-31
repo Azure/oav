@@ -5,7 +5,7 @@ import * as assert from "assert";
 import * as os from "os";
 import * as path from "path";
 import * as lodash from "lodash";
-import { LiveValidator } from "../lib/liveValidation/liveValidator";
+import { LiveValidator, parseValidationRequest } from "../lib/liveValidation/liveValidator";
 import { OperationSearcher } from "../lib/liveValidation/operationSearcher";
 import * as Constants from "../lib/util/constants";
 
@@ -262,7 +262,7 @@ describe("Live Validator", () => {
           },
         }
       `);
-      assert.strictEqual(numberOfSpecs, cache.size);
+      assert.strictEqual(cache.size, numberOfSpecs);
     });
     it("should initialize for batch", async () => {
       const options = {
@@ -351,7 +351,7 @@ describe("Live Validator", () => {
       await validator.initialize();
       const cache = validator.operationSearcher.cache;
 
-      assert.strictEqual(numberOfSpecs, cache.size);
+      assert.strictEqual(cache.size, numberOfSpecs);
       const microsoftResources = cache.get("microsoft.resources");
       if (microsoftResources === undefined) {
         throw new Error("microsoftResources === undefined");
@@ -399,7 +399,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
       // Operations to match is RoleAssignments_Create
-      const validationInfo = validator.parseValidationRequest(requestUrl, "Put", "randomId", "");
+      const validationInfo = parseValidationRequest(requestUrl, "Put");
       const operations = validator.operationSearcher.getPotentialOperations(validationInfo).matches;
       assert.strictEqual(0, operations.length);
     });
@@ -418,7 +418,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
       // Operations to match is RoleAssignments_Create
-      const validationInfo = validator.parseValidationRequest(requestUrl, "Put", "randomId", "");
+      const validationInfo = parseValidationRequest(requestUrl, "Put");
       const result = validator.operationSearcher.getPotentialOperations(validationInfo);
       const pathObject = result.matches[0].operation._path;
       if (pathObject === undefined) {
@@ -449,7 +449,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
       // Operations to match is StorageAccounts_List
-      let validationInfo = validator.parseValidationRequest(listRequestUrl, "Get", "randomId", "");
+      let validationInfo = parseValidationRequest(listRequestUrl, "Get");
       // eslint-disable-next-line dot-notation
       let operations = validator.operationSearcher.getPotentialOperations(validationInfo).matches;
       let pathObject = operations[0].operation._path;
@@ -463,7 +463,7 @@ describe("Live Validator", () => {
       );
 
       // Operations to match is StorageAccounts_CheckNameAvailability
-      validationInfo = validator.parseValidationRequest(postRequestUrl, "PoSt", "randomId", "");
+      validationInfo = parseValidationRequest(postRequestUrl, "PoSt");
       // eslint-disable-next-line dot-notation
       operations = validator.operationSearcher.getPotentialOperations(validationInfo).matches;
       pathObject = operations[0].operation._path;
@@ -477,7 +477,7 @@ describe("Live Validator", () => {
       );
 
       // Operations to match is StorageAccounts_Delete
-      validationInfo = validator.parseValidationRequest(deleteRequestUrl, "Delete", "randomId", "");
+      validationInfo = parseValidationRequest(deleteRequestUrl, "Delete");
       // eslint-disable-next-line dot-notation
       operations = validator.operationSearcher.getPotentialOperations(validationInfo).matches;
       pathObject = operations[0].operation._path;
@@ -515,7 +515,7 @@ describe("Live Validator", () => {
       await validator.initialize();
       // Operations to match is StorageAccounts_List with api-version 2015-08-15
       // [non cached api version]
-      let validationInfo = validator.parseValidationRequest(nonCachedApiUrl, "Get", "randomId", "");
+      let validationInfo = parseValidationRequest(nonCachedApiUrl, "Get");
       let result = validator.operationSearcher.getPotentialOperations(validationInfo);
       let operations = result.matches;
       let reason = result.reason;
@@ -527,12 +527,7 @@ describe("Live Validator", () => {
 
       // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World"
       // [non cached provider]
-      validationInfo = validator.parseValidationRequest(
-        nonCachedProviderUrl,
-        "PoSt",
-        "randomId",
-        ""
-      );
+      validationInfo = parseValidationRequest(nonCachedProviderUrl, "PoSt");
       result = validator.operationSearcher.getPotentialOperations(validationInfo);
       operations = result.matches;
       reason = result.reason;
@@ -546,7 +541,7 @@ describe("Live Validator", () => {
       );
 
       // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
-      validationInfo = validator.parseValidationRequest(nonCachedVerbUrl, "head", "randomId", "");
+      validationInfo = parseValidationRequest(nonCachedVerbUrl, "head");
       result = validator.operationSearcher.getPotentialOperations(validationInfo);
       operations = result.matches;
       reason = result.reason;
@@ -560,7 +555,7 @@ describe("Live Validator", () => {
       // "subscriptions/subscriptionId/providers/Microsoft.Storage/" +
       // "storageAccounts/storageAccounts/accountName/properties/"
       // [non cached path]
-      validationInfo = validator.parseValidationRequest(nonCachedPath, "get", "randomId", "");
+      validationInfo = parseValidationRequest(nonCachedPath, "get");
       result = validator.operationSearcher.getPotentialOperations(validationInfo);
       operations = result.matches;
       reason = result.reason;
@@ -572,7 +567,7 @@ describe("Live Validator", () => {
     });
     it("it shouldn't create an implicit default response", async () => {
       const options = {
-        directory: "./test/liveValidation/swaggers/specification/scenarios",
+        directory: "./test/liveValidation/swaggers/specification/testrp",
         swaggerPathsPattern: ["**/*.json"],
         shouldModelImplicitDefaultResponse: true,
       };

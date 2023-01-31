@@ -3,10 +3,10 @@
 
 /* eslint-disable no-console */
 
-import * as fs from "fs";
 import * as path from "path";
-import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
+import * as fs from "fs";
 import jsYaml from "js-yaml";
+import { flatMap, StringMap } from "@azure-tools/openapi-tools-common";
 import * as utils from "./util/utils";
 
 import {
@@ -128,7 +128,7 @@ export const validateSpec = async (specPath: string, options: Options | undefine
         logMessage(`Semantically validating ${specPath}`);
         logMessage(`${outputMsg}`, "error");
       } else {
-        log.error(`Detail error:${err?.message}.ErrorStack:${err?.stack}`);
+        log.error(`Detail error:${(err as any)?.message}.ErrorStack:${(err as any)?.stack}`);
       }
       validator.specValidationResult.validityStatus = false;
       return validator.specValidationResult;
@@ -170,9 +170,9 @@ export async function validateExamples(
       logMessage(`Validating x-ms-examples in ${specPath}`, "error");
       logMessage("Unexpected runtime exception:");
       if (o.pretty) {
-        logMessage(`Detail error:${e?.message}.ErrorStack:${e?.stack}`, "error");
+        logMessage(`Detail error:${(e as any)?.message}.ErrorStack:${(e as any)?.stack}`, "error");
       } else {
-        log.error(`Detail error:${e?.message}.ErrorStack:${e?.stack}`);
+        log.error(`Detail error:${(e as any)?.message}.ErrorStack:${(e as any)?.stack}`);
       }
       const error: SwaggerExampleErrorDetail = {
         inner: e,
@@ -184,40 +184,24 @@ export async function validateExamples(
   });
 }
 
-export async function validateTrafficAgainstSpec(
+export async function validateTraffic(
   specPath: string,
   trafficPath: string,
   options: TrafficValidationOptions
 ): Promise<TrafficValidationIssue[]> {
-  specPath = path.resolve(process.cwd(), specPath);
-  trafficPath = path.resolve(process.cwd(), trafficPath);
-  if (!fs.existsSync(specPath)) {
-    const error = new Error(
-      `Can not find specPath:${specPath}, please check your specPath parameter.`
-    );
-    log.error(JSON.stringify(error));
-    throw error;
-  }
-
-  if (!fs.existsSync(trafficPath)) {
-    const error = new Error(
-      `Can not find trafficPath:${trafficPath}, please check your trafficPath parameter.`
-    );
-    log.error(JSON.stringify(error));
-    throw error;
-  }
   return validate(options, async (o) => {
-    let validator: TrafficValidator;
     o.consoleLogLevel = log.consoleLogLevel;
     o.logFilepath = log.filepath;
+    const validator = new TrafficValidator(specPath, trafficPath);
     const trafficValidationResult: TrafficValidationIssue[] = [];
     try {
-      validator = new TrafficValidator(specPath, trafficPath);
       await validator.initialize();
       const result = await validator.validate();
       trafficValidationResult.push(...result);
     } catch (err) {
-      const msg = `Detail error message:${err?.message}. ErrorStack:${err?.Stack}`;
+      const msg = `Detail error message:${(err as any)?.message}. ErrorStack:${
+        (err as any)?.Stack
+      }`;
       log.error(msg);
       trafficValidationResult.push({
         payloadFilePath: specPath,
@@ -229,11 +213,39 @@ export async function validateTrafficAgainstSpec(
         ],
       });
     }
+    if (options.jsonReportPath) {
+      const report = {
+        allOperations: validator.operationCoverageResult
+          .map((item) => item.totalOperations)
+          .reduce((a, b) => a + b, 0),
+        coveredOperations: validator.operationCoverageResult
+          .map((item) => item.coveredOperations)
+          .reduce((a, b) => a + b, 0),
+        failedOperations: validator.operationCoverageResult
+          .map((item) => item.validationFailOperations)
+          .reduce((a, b) => a + b, 0),
+        errors: Array.from(
+          flatMap(
+            trafficValidationResult,
+            (item) =>
+              item.errors?.map((it) => {
+                return {
+                  errorCode: it.code,
+                  errorMessage: it.message,
+                  issueSource: it.issueSource,
+                  operationId: item.operationInfo?.operationId,
+                };
+              }) ?? []
+          )
+        ),
+      };
+      fs.writeFileSync(options.jsonReportPath, JSON.stringify(report, null, 2));
+    }
     if (options.reportPath) {
       const generator = new ReportGenerator(
         trafficValidationResult,
-        validator!.operationCoverageResult,
-        validator!.operationUndefinedResult,
+        validator.operationCoverageResult,
+        validator.operationUndefinedResult,
         options
       );
       await generator.generateHtmlReport();
@@ -257,7 +269,7 @@ export async function extractXMsExamples(
   specPath: string,
   recordings: string,
   options: Options
-): Promise<openapiToolsCommon.StringMap<unknown>> {
+): Promise<StringMap<unknown>> {
   if (!options) {
     options = {};
   }
@@ -277,6 +289,7 @@ export async function generateExamples(
   operationIds?: string,
   readme?: string,
   tag?: string,
+  generationRule?: "Max" | "Min",
   options?: Options
 ): Promise<any> {
   if (!options) {
@@ -304,7 +317,7 @@ export async function generateExamples(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
   log.filepath = options.logFilepath || log.filepath;
   for (const file of wholeInputFiles) {
-    const generator = new ExampleGenerator(file, payloadDir);
+    const generator = new ExampleGenerator(file, payloadDir, generationRule);
     if (operationIds) {
       const operationIdArray = operationIds.trim().split(",");
       for (const operationId of operationIdArray) {

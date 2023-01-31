@@ -20,7 +20,7 @@ import { NewmanExecution, NewmanReport, Scenario, Step } from "./apiScenarioType
 import { DataMasker } from "./dataMasker";
 import { JUnitReporter } from "./junitReport";
 import { generateMarkdownReport } from "./markdownReport";
-import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 
 export interface ApiScenarioTestResult {
   apiScenarioFilePath: string;
@@ -69,7 +69,9 @@ export interface RuntimeError {
   severity: SeverityString;
 }
 
-export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
+export interface NewmanReportValidatorOption
+  extends ApiScenarioLoaderOption,
+    SwaggerAnalyzerOption {
   apiScenarioFilePath: string;
   reportOutputFilePath: string;
   markdown?: boolean;
@@ -112,7 +114,7 @@ export class NewmanReportValidator {
 
     this.testResult = {
       apiScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
-      swaggerFilePaths: this.opts.swaggerFilePaths!.map((specPath) => {
+      swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths.map((specPath) => {
         if (process.env.REPORT_SPEC_PATH_PREFIX) {
           specPath = path.join(
             process.env.REPORT_SPEC_PATH_PREFIX,
@@ -138,7 +140,7 @@ export class NewmanReportValidator {
 
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
-      swaggerPaths: [...this.opts.swaggerFilePaths!],
+      swaggerPaths: [...scenario._scenarioDef._swaggerFilePaths],
       enableRoundTripValidator: !this.opts.skipValidation,
     });
     if (!this.opts.skipValidation) {
@@ -360,7 +362,7 @@ export class NewmanReportValidator {
     const responseObj = this.dataMasker.jsonParse(it.response.body);
     return {
       code: `${it.response.statusCode >= 500 ? "SERVER_ERROR" : "CLIENT_ERROR"}`,
-      message: `statusCode: ${it.response.statusCode}, errorCode: ${responseObj?.error?.code}, errorMessage: ${responseObj?.error?.message}`,
+      message: `statusCode: ${it.response.statusCode},\nerrorCode: ${responseObj?.error?.code},\nerrorMessage: ${responseObj?.error?.message}`,
       severity: "Error",
       detail: this.dataMasker.jsonStringify(it.response.body),
     };

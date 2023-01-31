@@ -182,7 +182,7 @@ export class TestRecordingApiScenarioGenerator {
   ): Promise<RawScenario> {
     logger.info(`\nGenerating ${requestTracking.description}`);
     const testScenario: RawScenario = {
-      scenario: requestTracking.description.replace(/[\(\)]/g, "_").replace(/ /g, ""),
+      scenario: requestTracking.description.replace(/[^a-zA-Z0-9_]/g, "_"),
       variables: {},
       steps: [],
     };
@@ -237,7 +237,7 @@ export class TestRecordingApiScenarioGenerator {
   }
 
   private searchOperation(record: SingleRequestTracking) {
-    const info = parseValidationRequest(record.url, record.method, "", "");
+    const info = parseValidationRequest(record.url, record.method);
     try {
       const result = this.operationSearcher.search(info);
       return result.operationMatch;
@@ -424,9 +424,9 @@ export class TestRecordingApiScenarioGenerator {
 
   private convertVariables(
     root: Scenario["variables"],
-    scopes: (RawVariableScope & { operation?: Operation })[]
+    scopes: Array<RawVariableScope & { operation?: Operation }>
   ) {
-    const keyToVariables = new Map<string, Array<Variable>>();
+    const keyToVariables = new Map<string, Variable[]>();
     const unusedVariables = new Set<string>();
     scopes.forEach((v) => {
       Object.entries(v.variables ?? {}).forEach(([key, value]) => {

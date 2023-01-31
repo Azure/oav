@@ -1,5 +1,21 @@
 # Change Log - oav
 
+## 12/19/2022 3.3.0
+
+- API Scenario
+  - Support scenario file as scope
+  - Support test-proxy recording externalization with `--testProxyAssets` option
+  - Support `--randomSeed` option
+- validate-traffic
+  - Add `--jsonReport` parameter in command `validate-traffic`
+
+## 12/01/2022 3.2.4
+
+- Generate Examples - Support specified generation rule
+- API Scenario
+  - Support file type in formdata and body
+  - Change the prefix length to 8 from 10 in generated API Scenario
+
 ## 11/23/2022 3.2.3
 
 - SemanticValidator&ModelValidator - Clear INVALID_TYPE to user in a specific case
@@ -84,7 +100,7 @@
 ## 06/30/2022 3.0.2
 
 - traffic-converter
-    - Implement [oav-traffic-converter](https://github.com/Azure/azure-sdk-tools/tree/main/tools/oav-traffic-converter)
+  - Implement [oav-traffic-converter](https://github.com/Azure/azure-sdk-tools/tree/main/tools/oav-traffic-converter)
 - Add activity parsed from request header to logs
 
 ## 06/10/2022 3.0.1
@@ -478,7 +494,7 @@
 
 ## 02/13/2020 0.20.9
 
-- Fall back to match child resouce in live validator
+- Fall back to match child resource in live validator
 
 ## 02/13/2020 0.20.8
 
