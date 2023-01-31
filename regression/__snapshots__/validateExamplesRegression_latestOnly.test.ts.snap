@@ -22480,7 +22480,7 @@ Array [
       "line": 6,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2022-05-31/examples/GetTwin.json",
-    "message": "Expected type  but found type object",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
     "operationId": "DigitalTwins_GetById",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
@@ -22499,7 +22499,7 @@ Array [
       "line": 11,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2022-05-31/examples/PutTwinBasicExample.json",
-    "message": "Expected type  but found type object",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
     "operationId": "DigitalTwins_Add",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
@@ -22518,7 +22518,7 @@ Array [
       "line": 28,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2022-05-31/examples/PutTwinAdvancedExample.json",
-    "message": "Expected type  but found type object",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
     "operationId": "DigitalTwins_Add",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
@@ -22537,7 +22537,7 @@ Array [
       "line": 7,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2022-05-31/examples/GetRelationshipById.json",
-    "message": "Expected type  but found type object",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
     "operationId": "DigitalTwins_GetRelationshipById",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
@@ -22556,7 +22556,7 @@ Array [
       "line": 11,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2022-05-31/examples/CreateRelationshipBasicExample.json",
-    "message": "Expected type  but found type object",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
     "operationId": "DigitalTwins_AddRelationship",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
@@ -22575,7 +22575,7 @@ Array [
       "line": 13,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2022-05-31/examples/CreateRelationshipAdvancedExample.json",
-    "message": "Expected type  but found type object",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
     "operationId": "DigitalTwins_AddRelationship",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
@@ -22594,7 +22594,7 @@ Array [
       "line": 7,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2022-05-31/examples/GetComponent.json",
-    "message": "Expected type  but found type object",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
     "operationId": "DigitalTwins_GetComponent",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
@@ -30902,7 +30902,7 @@ Array [
       "line": 14,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/search/data-plane/Microsoft.Azure.Search.Data/stable/2019-05-06/examples/SearchIndexGetDocument.json",
-    "message": "Schema definition needs reference, please check out semantic validation results",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
     "operationId": "Documents_Get",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
@@ -31653,6 +31653,44 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 
 exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/securityinsights/resource-manager/Microsoft.SecurityInsights/stable/2022-08-01/AutomationRules.json': returned results 1`] = `
 Array [
+  Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.200/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 9,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/securityinsights/resource-manager/Microsoft.SecurityInsights/stable/2022-08-01/examples/automationRules/AutomationRules_Delete.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "AutomationRules_Delete",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 148,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/securityinsights/resource-manager/Microsoft.SecurityInsights/stable/2022-08-01/AutomationRules.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.204/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 9,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/securityinsights/resource-manager/Microsoft.SecurityInsights/stable/2022-08-01/examples/automationRules/AutomationRules_Delete.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "AutomationRules_Delete",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 148,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/securityinsights/resource-manager/Microsoft.SecurityInsights/stable/2022-08-01/AutomationRules.json",
+    "severity": 0,
+    "source": "response",
+  },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
     "exampleJsonPath": "$parameters[\\"api-version\\"]",
@@ -43601,6 +43639,63 @@ Array [
     "source": "response",
   },
   Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.200/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 9,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/examples/DeleteSitePrivateEndpointConnection.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "StaticSites_DeletePrivateEndpointConnection",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 2269,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/StaticSites.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.202/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 9,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/examples/DeleteSitePrivateEndpointConnection.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "StaticSites_DeletePrivateEndpointConnection",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 2269,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/StaticSites.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.204/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 9,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/examples/DeleteSitePrivateEndpointConnection.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "StaticSites_DeletePrivateEndpointConnection",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 2269,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/StaticSites.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
     "code": "INVALID_REQUEST_PARAMETER",
     "exampleJsonPath": "$parameters[\\"api-version\\"]",
     "examplePosition": Object {
@@ -43988,6 +44083,63 @@ Array [
     "source": "response",
   },
   Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.200/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 9,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/examples/DeleteSitePrivateEndpointConnection.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "WebApps_DeletePrivateEndpointConnection",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 7514,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/WebApps.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.202/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 9,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/examples/DeleteSitePrivateEndpointConnection.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "WebApps_DeletePrivateEndpointConnection",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 7514,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/WebApps.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.204/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 9,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/examples/DeleteSitePrivateEndpointConnection.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "WebApps_DeletePrivateEndpointConnection",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 7514,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/WebApps.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
     "code": "MISSING_RESOURCE_ID",
     "exampleJsonPath": "$responses.200.body",
     "examplePosition": Object {
@@ -44174,6 +44326,63 @@ Array [
       "line": 2542,
     },
     "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/CommonDefinitions.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.200/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 10,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/examples/DeleteSitePrivateEndpointConnectionSlot.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "WebApps_DeletePrivateEndpointConnectionSlot",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 16835,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/WebApps.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.202/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 10,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/examples/DeleteSitePrivateEndpointConnectionSlot.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "WebApps_DeletePrivateEndpointConnectionSlot",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 16835,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/WebApps.json",
+    "severity": 0,
+    "source": "response",
+  },
+  Object {
+    "code": "INVALID_TYPE",
+    "exampleJsonPath": "$response.204/body",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 10,
+    },
+    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/examples/DeleteSitePrivateEndpointConnectionSlot.json",
+    "message": "\\"type: object\\" without \\"properties\\" or \\"additionalProperties: {}\\" is invalid type if example has properties.",
+    "operationId": "WebApps_DeletePrivateEndpointConnectionSlot",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 16835,
+    },
+    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2022-03-01/WebApps.json",
     "severity": 0,
     "source": "response",
   },

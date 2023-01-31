@@ -410,7 +410,7 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].code, "INVALID_TYPE");
       assert.strictEqual(
         result[0].message,
-        "Schema definition needs reference, please check out semantic validation results"
+        `"type: object" without "properties" or "additionalProperties: {}" is invalid type if example has properties.`
       );
     });
 
