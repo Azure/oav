@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 02/01/2023 3.2.5
+
+- ModelValidator - Clarify message of INVALID_TYPE error when response body doesn't define schema
+- ModelValidator - Ignore leading slash for scope parameter
+- SemanticValidator - Support path validation
+
 ## 01/30/2023 3.2.4
 
 - Generate Examples - Support specified generation rule

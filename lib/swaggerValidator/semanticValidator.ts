@@ -141,7 +141,7 @@ export class SwaggerSemanticValidator {
 
       await this.validateOperation(swagger, errors);
     } catch (e) {
-      const errInfo = getOavErrorMeta("INTERNAL_ERROR", { message: `${e.message}\n${e.stack}` });
+      const errInfo = this.transformErrorToOavError(e);
       errors.unshift({
         code: errInfo.code,
         message: errInfo.message,
@@ -150,6 +150,17 @@ export class SwaggerSemanticValidator {
     }
 
     return errors;
+  }
+
+  private transformErrorToOavError(e: any) {
+    let oavError: any;
+    if (e.message.includes("Brackets should be deployed in symmetric pairs")) {
+      oavError = getOavErrorMeta("MISSING_PATH_PARAMETER_DECLARATION", e.message);
+      oavError.message = e.message;
+    } else {
+      oavError = getOavErrorMeta("INTERNAL_ERROR", { message: `${e.message}\n${e.stack}` });
+    }
+    return oavError;
   }
 
   private async loadSwagger(swaggerFilePath: string, errors: SemanticErrorDetail[]) {

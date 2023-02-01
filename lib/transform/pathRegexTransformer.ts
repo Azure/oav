@@ -111,6 +111,9 @@ export const pathRegexTransformer: SpecTransformer = {
     traverseSwagger(spec, {
       onPath: (path, pathTemplate) => {
         let pathStr = pathTemplate;
+        if ([...pathStr.matchAll(/\{/g)].length !== [...pathStr.matchAll(/\}/g)].length) {
+          throw new Error(`Brackets should be deployed in symmetric pairs.\nPath: ${pathStr}`);
+        }
         const queryIdx = pathTemplate.indexOf("?");
         if (queryIdx !== -1) {
           // path in x-ms-paths has query part we need to match

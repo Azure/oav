@@ -96,19 +96,25 @@ describe("Model Validation", () => {
 
     it("should fail for paths with path parameter value resulting in duplicate forward slashes", async () => {
       const operationIds = "StorageAccounts_duplicateforwardslashes";
-      try {
-        const result = await validate.validateExamples(specPath, operationIds, {
-          consoleLogLevel: "off",
-        });
-        assert(
-          result.length !== 0,
-          `swagger "${specPath}" with operation "${operationIds}" contains passed incorrectly.`
-        );
-        // console.log(result)
-      } catch (err) {
-        assert.strictEqual(err.code, "REQUEST_VALIDATION_ERROR");
-        assert.strictEqual(err.innerErrors[0].code, "DOUBLE_FORWARD_SLASHES_IN_URL");
-      }
+      const result = await validate.validateExamples(specPath, operationIds, {
+        consoleLogLevel: "off",
+      });
+      assert(
+        result.length === 1,
+        `swagger "${specPath}" with operation "${operationIds}" contains validation errors.`
+      );
+      assert(result[0].code === "DOUBLE_FORWARD_SLASHES_IN_URL");
+    });
+
+    it("should pass for paths with path parameter 'scope' value starting with '/'", async () => {
+      const operationIds = "StorageAccounts_duplicateforwardslashes_scope";
+      const result = await validate.validateExamples(specPath, operationIds, {
+        consoleLogLevel: "off",
+      });
+      assert(
+        result.length === 0,
+        `swagger "${specPath}" with operation "${operationIds}" contains failed incorrectly.`
+      );
     });
 
     it("should report real exampleJsonPath when additional parameter includes '.'", async () => {
@@ -392,6 +398,20 @@ describe("Model Validation", () => {
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       );
       // console.log(result)
+    });
+
+    it("should failed when object type schema does not define a reference", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/nullableTypes/invalid_type_noRef.json`;
+      const operationIds = "DigitalTwins_GetById";
+      const result = await validate.validateExamples(specPath2, operationIds, {
+        consoleLogLevel: "off",
+      });
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_TYPE");
+      assert.strictEqual(
+        result[0].message,
+        `"type: object" without "properties" or "additionalProperties: {}" is invalid type if example has properties.`
+      );
     });
 
     it("should pass for definitionWithReferenceNull_Get", async () => {

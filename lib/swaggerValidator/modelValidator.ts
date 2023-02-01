@@ -1,10 +1,11 @@
 import { ParsedUrlQuery } from "querystring";
 import { inject, injectable } from "inversify";
-import { FilePosition, getInfo, ParseError, StringMap } from "@azure-tools/openapi-tools-common";
 import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
+import { FilePosition, getInfo, ParseError, StringMap } from "@azure-tools/openapi-tools-common";
 import jsonPointer from "json-pointer";
 import { parseInt } from "lodash";
 import * as C from "../util/constants";
+import { xmsSkipUrlEncoding } from "../util/constants";
 import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
 import { JsonLoader, JsonLoaderRefError } from "../swagger/jsonLoader";
@@ -16,6 +17,7 @@ import {
   Operation,
   Parameter,
   Path,
+  PathParameter,
   refSelfSymbol,
   SwaggerExample,
   SwaggerSpec,
@@ -359,7 +361,8 @@ export class SwaggerExampleValidator {
           // where there will be duplicate forward slashes in the url.
           if (
             pathTemplate.charAt(pathTemplate.indexOf(`${parameter.name}`) - 2) === "/" &&
-            parameterValue.startsWith("/")
+            parameterValue.startsWith("/") &&
+            (parameter as PathParameter)[xmsSkipUrlEncoding] !== true
           ) {
             const meta = getOavErrorMeta(ErrorCodeConstants.DOUBLE_FORWARD_SLASHES_IN_URL as any, {
               operationId: operation.operationId,
@@ -379,7 +382,9 @@ export class SwaggerExampleValidator {
           }
           // replacing characters that may cause validator failed  with empty string because this messes up Sways regex
           // validation of path segment.
-          parameterValue = parameterValue.replace(/\//gi, "");
+          if ((parameter as PathParameter)[xmsSkipUrlEncoding] !== true) {
+            parameterValue = parameterValue.replace(/\//gi, "");
+          }
 
           // replacing scheme that may cause validator failed when x-ms-parameterized-host enbaled & useSchemePrefix enabled
           // because if useSchemePrefix enabled ,the parameter value in x-ms-parameterized-host should not has the scheme (http://|https://)
@@ -765,10 +770,13 @@ export class SwaggerExampleValidator {
     }
 
     if (invalidTypeError) {
-      const meta = getOavErrorMeta(ErrorCodeConstants.INVALID_TYPE as any, {
+      let meta = getOavErrorMeta(ErrorCodeConstants.INVALID_TYPE as any, {
         type: expectedType,
         data: actualType,
       });
+      if (bodySchema.noPropertyWithTypeObject === true) {
+        meta.message = `"type: object" without "properties" or "additionalProperties: {}" is invalid type if example has properties.`;
+      }
       this.addErrorsFromErrorCode(
         operationId,
         exampleFileUrl,

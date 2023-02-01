@@ -100,6 +100,16 @@ describe("Semantic validation", () => {
         ".paths['/providers/Microsoft.ErrorPath/{name}'].get.parameters[0].required"
       );
     });
+    // path brackets
+    it("should fail when path brackets are deployed as a single", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/validateSwaggerSchema/internalErrors/pathBrackets.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === false);
+      assert.strictEqual(
+        result.validateSpec?.errors?.[0].code,
+        "MISSING_PATH_PARAMETER_DECLARATION"
+      );
+    });
   });
 
   describe("validateSwaggerSchema", () => {
