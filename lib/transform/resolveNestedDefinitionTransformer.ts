@@ -20,7 +20,7 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
         return;
       }
       if (isResponseSchema && s.type === "object" && s.properties === undefined) {
-        s.noRefWithTypeObject = true;
+        s.noPropertyWithTypeObject = true;
       }
       const schema = jsonLoader.resolveRefObj(s);
       if (visited.has(schema)) {

@@ -272,8 +272,9 @@ export interface Schema extends BaseSchema {
   // Additional property support
   additionalPropertiesWithObjectType?: boolean;
 
-  // Type object exists but reference missing
-  noRefWithTypeObject?: boolean;
+  // Type object exists but property missing, this is only used to validate the
+  // case of property is missing in response body definition
+  noPropertyWithTypeObject?: boolean;
 }
 
 export interface XML {

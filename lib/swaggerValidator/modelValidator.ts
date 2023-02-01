@@ -774,7 +774,7 @@ export class SwaggerExampleValidator {
         type: expectedType,
         data: actualType,
       });
-      if (bodySchema.noRefWithTypeObject === true) {
+      if (bodySchema.noPropertyWithTypeObject === true) {
         meta.message = `"type: object" without "properties" or "additionalProperties: {}" is invalid type if example has properties.`;
       }
       this.addErrorsFromErrorCode(
