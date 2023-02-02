@@ -147,6 +147,8 @@ export class JsonLoader implements Loader<Json> {
     };
     try {
       const parser = new $RefParser();
+      // try to bundle external definitions into current spec,
+      // this is to fix the exception of external circular reference.
       let spec = await parser.bundle(
         this.fileLoader.resolvePath(filePath),
         fileContent,
@@ -359,10 +361,9 @@ export async function loadSingleFile(filePath: string) {
 export function removeSelfReference(object: any, path: string[]) {
   if (typeof object === "object" && object !== null) {
     if (object.$ref !== undefined) {
-      const jsonPath: string = "(.*)".concat(path.join("/").concat("(.*)"));
+      const jsonPath: string = "#/".concat(path.join("/"));
       const refPath: string = decode(object.$ref.replace(/~1/gi, "/"));
-      const resRegex = new RegExp(jsonPath, "g");
-      if (resRegex.test(refPath)) {
+      if (refPath.startsWith(jsonPath)) {
         delete object["$ref"];
       }
     }
