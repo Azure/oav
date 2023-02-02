@@ -18,7 +18,11 @@ export function diffRequestResponse(
   const rest = diffs
     .map((it: any) => {
       const jsonPath: string = it.remove || it.add || it.replace;
-      const path = jsonPath.split("/").join("(.*)").concat("$");
+      const path = jsonPath
+        .split("/")
+        .filter((e) => Number.isNaN(+e))
+        .join("(.*)")
+        .concat("$");
       if (it.replace !== undefined) {
         const isReplace =
           operationLoader.attrChecker(
