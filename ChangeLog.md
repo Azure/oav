@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 02/03/2023 3.2.5
+
+- generate-api-scenario
+  - Support `--scope` option in static generator
+
 ## 01/30/2023 3.2.4
 
 - Generate Examples - Support specified generation rule
