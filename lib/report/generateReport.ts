@@ -164,21 +164,27 @@ export class CoverageView {
             params: error.params,
             payloadFilePath: this.overrideLinkInReport
               ? `${this.payloadLinkPrefix}/${payloadFile}`
-              : element.payloadFilePath,
+              : path.relative(__dirname, `./${element.payloadFilePath}`),
             payloadFilePathWithPosition: this.overrideLinkInReport
               ? `${this.payloadLinkPrefix}/${payloadFile}#L${element.payloadFilePathPosition?.line}`
-              : `${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`,
+              : path.relative(
+                  __dirname,
+                  `./${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`
+                ),
             payloadFileLinkLabel: payloadFile,
           });
         });
         this.validationResultsForRendering.push({
           payloadFilePath: this.overrideLinkInReport
             ? `${this.payloadLinkPrefix}/${payloadFile}`
-            : element.payloadFilePath,
+            : path.relative(__dirname, `./${element.payloadFilePath}`),
           payloadFileLinkLabel: payloadFile,
           payloadFilePathWithPosition: this.overrideLinkInReport
             ? `${this.payloadLinkPrefix}/${payloadFile}#L${element.payloadFilePathPosition?.line}`
-            : `${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`,
+            : path.relative(
+                __dirname,
+                `./${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`
+              ),
           errors: element.errors,
           specFilePath: this.overrideLinkInReport
             ? `${this.specLinkPrefix}/${element.specFilePath?.substring(
