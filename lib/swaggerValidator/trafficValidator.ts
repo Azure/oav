@@ -12,13 +12,12 @@ import { DefaultConfig } from "../util/constants";
 import { apiValidationErrors, ErrorCodeConstants } from "../util/errorDefinitions";
 import { OperationContext } from "../liveValidation/operationValidator";
 import { Options } from "../validate";
-import { traverseSwagger } from "../transform/traverseSwagger";
-import { Operation, Path, LowerHttpMethods } from "../swagger/swaggerTypes";
-import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
 import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils";
 import { findPathsToKey, findPathToValue, getApiVersionFromFilePath } from "../util/utils";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import { getFilePositionFromJsonPath } from "../util/jsonUtils";
+import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
+import { traverseSwagger } from "../transform/traverseSwagger";
 
 export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
@@ -53,7 +52,7 @@ export interface RuntimeException {
 export interface OperationCoverageInfo {
   readonly spec: string;
   readonly apiVersion: string;
-  readonly coveredOperaions: number;
+  readonly coveredOperations: number;
   readonly validationFailOperations: number;
   readonly unCoveredOperations: number;
   readonly unCoveredOperationsList: OperationMeta[];
@@ -89,8 +88,8 @@ export class TrafficValidator {
   public operationUndefinedResult: number = 0;
 
   public constructor(specPath: string, trafficPath: string) {
-    this.specPath = specPath;
-    this.trafficPath = trafficPath;
+    this.specPath = pathResolve(specPath);
+    this.trafficPath = pathResolve(trafficPath);
   }
 
   public async initialize() {
@@ -146,7 +145,9 @@ export class TrafficValidator {
         spec = await this.loader.load(pathResolve(swaggerPath));
       } catch (e) {
         console.log(
-          `Exception when loading spec, ErrorMessage: ${e?.message}; ErrorStack: ${e?.stack}.`
+          `Exception when loading spec, ErrorMessage: ${(e as any)?.message}; ErrorStack: ${
+            (e as any)?.stack
+          }.`
         );
       }
       if (spec !== undefined) {
@@ -155,7 +156,7 @@ export class TrafficValidator {
           this.operationSpecMapper.set(swaggerPath, []);
         }
         traverseSwagger(spec, {
-          onOperation: (operation: Operation, _path: Path, _method: LowerHttpMethods) => {
+          onOperation: (operation) => {
             if (
               operation.operationId !== undefined &&
               !this.operationSpecMapper.get(swaggerPath)?.includes(operation.operationId)
@@ -182,13 +183,7 @@ export class TrafficValidator {
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
         let operationInfo = validationResult.requestValidationResult?.operationInfo;
         const liveRequest = payload.liveRequest;
-        const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
-        const activityId = liveRequest.headers?.["x-ms-request-id"] || "";
-        const opInfo = await this.liveValidator.getOperationInfo(
-          liveRequest,
-          correlationId,
-          activityId
-        );
+        const opInfo = await this.liveValidator.getOperationInfo(liveRequest);
 
         const errorResult: LiveValidationIssueWithSource[] = [];
         const runtimeExceptions: RuntimeException[] = [];
@@ -213,53 +208,50 @@ export class TrafficValidator {
             })
           );
         }
-        if (errorResult.length > 0 || runtimeExceptions.length > 0) {
-          const trafficSpec = await this.swaggerLoader.load(payloadFilePath);
-          let liveRequestResponseList;
-          if (validationResult.requestValidationResult.isSuccessful) {
-            liveRequestResponseList = findPathsToKey({ key: "liveResponse", obj: trafficSpec });
-          } else {
-            liveRequestResponseList = findPathsToKey({ key: "liveRequest", obj: trafficSpec });
-          }
-          const liveRequestResponsePosition = getFilePositionFromJsonPath(
-            trafficSpec,
-            liveRequestResponseList[0]
-          );
+        const trafficSpec = await this.swaggerLoader.load(payloadFilePath);
+        let liveRequestResponseList;
+        if (validationResult.requestValidationResult.isSuccessful) {
+          liveRequestResponseList = findPathsToKey({ key: "liveResponse", obj: trafficSpec });
+        } else {
+          liveRequestResponseList = findPathsToKey({ key: "liveRequest", obj: trafficSpec });
+        }
+        const liveRequestResponsePosition = getFilePositionFromJsonPath(
+          trafficSpec,
+          liveRequestResponseList[0]
+        );
 
-          let swaggerFiles: string[] = [];
-          if (liveRequest.url.includes("provider")) {
-            // This is for validation of resource-manager
-            swaggerFiles = this.findSwaggerByOperationInfo(opInfo.info);
-          } else {
-            // This is for validation of data-plane
-            swaggerFiles = this.findSwaggerByOperationId(opInfo.info);
-          }
+        let swaggerFiles: string[] = [];
+        if (liveRequest.url.includes("provider")) {
+          // This is for validation of resource-manager
+          swaggerFiles = this.findSwaggerByOperationInfo(opInfo.info);
+        } else {
+          // This is for validation of data-plane
+          swaggerFiles = this.findSwaggerByOperationId(opInfo.info);
+        }
 
-          if (swaggerFiles.length !== 0) {
-            for (const swaggerFile of swaggerFiles) {
-              if (this.trafficOperation.get(swaggerFile) === undefined) {
-                this.trafficOperation.set(swaggerFile, []);
-              }
-              if (!this.trafficOperation.get(swaggerFile)?.includes(opInfo.info.operationId)) {
-                this.trafficOperation.get(swaggerFile)?.push(opInfo.info.operationId);
+        if (swaggerFiles.length !== 0) {
+          for (const swaggerFile of swaggerFiles) {
+            if (this.trafficOperation.get(swaggerFile) === undefined) {
+              this.trafficOperation.set(swaggerFile, []);
+            }
+            if (!this.trafficOperation.get(swaggerFile)?.includes(opInfo.info.operationId)) {
+              this.trafficOperation.get(swaggerFile)?.push(opInfo.info.operationId);
+            }
+            if (
+              validationResult.requestValidationResult.isSuccessful === false ||
+              validationResult.requestValidationResult.isSuccessful === undefined ||
+              validationResult.responseValidationResult.isSuccessful === false ||
+              validationResult.responseValidationResult.isSuccessful === undefined ||
+              validationResult.runtimeException !== undefined
+            ) {
+              if (this.validationFailOperations.get(swaggerFile) === undefined) {
+                this.validationFailOperations.set(swaggerFile, []);
               }
               if (
-                validationResult.requestValidationResult.isSuccessful === false ||
-                validationResult.requestValidationResult.isSuccessful === undefined ||
-                validationResult.responseValidationResult.isSuccessful === false ||
-                validationResult.responseValidationResult.isSuccessful === undefined ||
-                validationResult.runtimeException !== undefined
+                !this.validationFailOperations.get(swaggerFile)?.includes(opInfo.info.operationId)
               ) {
-                if (this.validationFailOperations.get(swaggerFile) === undefined) {
-                  this.validationFailOperations.set(swaggerFile, []);
-                }
-                if (
-                  !this.validationFailOperations.get(swaggerFile)?.includes(opInfo.info.operationId)
-                ) {
-                  this.validationFailOperations.get(swaggerFile)?.push(opInfo.info.operationId);
-                }
+                this.validationFailOperations.get(swaggerFile)?.push(opInfo.info.operationId);
               }
-
               const spec = swaggerFile && (await this.swaggerLoader.load(swaggerFile));
               const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
               const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
@@ -274,14 +266,16 @@ export class TrafficValidator {
                 operationInfo,
               });
             }
-          } else {
-            console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);
-            this.operationUndefinedResult = this.operationUndefinedResult + 1;
           }
+        } else {
+          console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);
+          this.operationUndefinedResult = this.operationUndefinedResult + 1;
         }
       }
     } catch (err) {
-      const msg = `Detail error message:${err?.message}. ErrorStack:${err?.Stack}`;
+      const msg = `Detail error message:${(err as any)?.message}. ErrorStack:${
+        (err as any)?.Stack
+      }`;
       this.trafficValidationResult.push({
         payloadFilePath,
         runtimeExceptions: [
@@ -293,7 +287,7 @@ export class TrafficValidator {
       });
     }
 
-    let coveredOperaions: number;
+    let coveredOperations: number;
     let coverageRate: number;
     let validationFailOperations: number;
     let unCoveredOperationsList: unCoveredOperationsFormatInner[];
@@ -303,14 +297,14 @@ export class TrafficValidator {
       const unCoveredOperationsListFormat: unCoveredOperationsFormat[] = [];
       unCoveredOperationsList = [];
       if (this.trafficOperation.get(key) === undefined) {
-        coveredOperaions = 0;
+        coveredOperations = 0;
         coverageRate = 0;
         this.coverageData.set(key, 0);
         isMatch = false;
       } else if (value !== undefined && value.length !== 0) {
         const validatedOperations = this.trafficOperation.get(key);
-        coveredOperaions = validatedOperations!.length;
-        coverageRate = coveredOperaions / value.length;
+        coveredOperations = validatedOperations!.length;
+        coverageRate = coveredOperations / value.length;
         this.coverageData.set(key, coverageRate);
         const unValidatedOperations = [...value];
         validatedOperations!.forEach((element) => {
@@ -340,7 +334,7 @@ export class TrafficValidator {
         });
       } else {
         isMatch = false;
-        coveredOperaions = 0;
+        coveredOperations = 0;
         coverageRate = 0;
         this.coverageData.set(key, 0);
       }
@@ -386,9 +380,9 @@ export class TrafficValidator {
         this.operationCoverageResult.push({
           spec: key,
           apiVersion: getApiVersionFromFilePath(key),
-          coveredOperaions: coveredOperaions,
-          coverageRate: coverageRate,
-          unCoveredOperations: value.length - coveredOperaions,
+          coveredOperations,
+          coverageRate,
+          unCoveredOperations: value.length - coveredOperations,
           totalOperations: value.length,
           validationFailOperations: validationFailOperations,
           unCoveredOperationsList: sortedUnCoveredOperationsList,
