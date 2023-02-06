@@ -4,6 +4,8 @@
 
 - generate-api-scenario
   - Support `--scope` option in static generator
+- API Scenario
+  - Skip create and delete resource group if specify resource group name
 
 ## 01/30/2023 3.2.4
 
