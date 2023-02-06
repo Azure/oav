@@ -1,0 +1,406 @@
+{
+  "/keys": {
+    "GET": {
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "After"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "name"
+        }
+      ]
+    },
+    "HEAD": {
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "After"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "name"
+        }
+      ]
+    }
+  },
+  "/kv": {
+    "GET": {
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "$Select"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "After"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "key"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    },
+    "HEAD": {
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "$Select"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "After"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "key"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    }
+  },
+  "/kv/{key}": {
+    "DELETE": {
+      "Path": [
+        {
+          "producer_endpoint": "/kv/{key}",
+          "producer_method": "PUT",
+          "producer_resource_name": "key",
+          "consumer_param": "key"
+        }
+      ],
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    },
+    "GET": {
+      "Path": [
+        {
+          "producer_endpoint": "/kv/{key}",
+          "producer_method": "PUT",
+          "producer_resource_name": "key",
+          "consumer_param": "key"
+        }
+      ],
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "$Select"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    },
+    "HEAD": {
+      "Path": [
+        {
+          "producer_endpoint": "/kv/{key}",
+          "producer_method": "PUT",
+          "producer_resource_name": "key",
+          "consumer_param": "key"
+        }
+      ],
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "$Select"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    },
+    "PUT": {
+      "Path": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "restler_custom_payload_uuid_suffix__key",
+          "consumer_param": "key"
+        }
+      ],
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    }
+  },
+  "/labels": {
+    "GET": {
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "$Select"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "After"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "name"
+        }
+      ]
+    },
+    "HEAD": {
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "$Select"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "After"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "name"
+        }
+      ]
+    }
+  },
+  "/locks/{key}": {
+    "DELETE": {
+      "Path": [
+        {
+          "producer_endpoint": "/locks/{key}",
+          "producer_method": "PUT",
+          "producer_resource_name": "key",
+          "consumer_param": "key"
+        }
+      ],
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    },
+    "PUT": {
+      "Path": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "restler_custom_payload_uuid_suffix__key",
+          "consumer_param": "key"
+        }
+      ],
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    }
+  },
+  "/revisions": {
+    "GET": {
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "$Select"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "After"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "key"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    },
+    "HEAD": {
+      "Query": [
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "$Select"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "After"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "api-version"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "key"
+        },
+        {
+          "producer_endpoint": "",
+          "producer_method": "",
+          "producer_resource_name": "",
+          "consumer_param": "label"
+        }
+      ]
+    }
+  }
+}
