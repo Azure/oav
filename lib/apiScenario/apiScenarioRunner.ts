@@ -91,6 +91,7 @@ export class ApiScenarioRunner {
   private client: ApiScenarioRunnerClient;
   private env: EnvironmentVariables;
   private scope: Scope;
+  private skipResourceGroupOperation: boolean = true;
 
   public constructor(opts: ApiScenarioRunnerOption) {
     this.env = opts.env;
@@ -121,13 +122,14 @@ export class ApiScenarioRunner {
         type: "string",
         prefix: "apiTest-",
       });
+      this.skipResourceGroupOperation = false;
     }
 
     this.generateValueFromPrefix(this.scope.env);
 
     await this.client.provisionScope(scenarioDef, this.scope);
 
-    if (this.scope.type === "ResourceGroup") {
+    if (!this.skipResourceGroupOperation) {
       await this.client.createResourceGroup(
         this.scope.env.getRequiredString("armEndpoint"),
         this.scope.env.getRequiredString("subscriptionId"),
@@ -144,7 +146,7 @@ export class ApiScenarioRunner {
     for (const step of this.scope.cleanUpSteps) {
       await this.executeStep(step, this.scope.env, this.scope);
     }
-    if (this.scope.type === "ResourceGroup") {
+    if (!this.skipResourceGroupOperation) {
       await this.client.deleteResourceGroup(
         this.scope.env.getRequiredString("armEndpoint"),
         this.scope.env.getRequiredString("subscriptionId"),
