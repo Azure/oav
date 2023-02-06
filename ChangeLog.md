@@ -9,16 +9,19 @@
 
 ## 01/30/2023 3.2.4
 
-- Generate Examples - Support specified generation rule
-- Revert node requirement to >=12
 - API Scenario
   - Support scenario file as scope
   - Support test-proxy recording externalization with `--testProxyAssets` option
   - Support `--randomSeed` option
-  - Support file type in formdata and body
-  - Change the prefix length to 8 from 10 in generated API Scenario
 - validate-traffic
   - Add `--jsonReport` parameter in command `validate-traffic`
+
+## 12/01/2022 3.2.4
+
+- Generate Examples - Support specified generation rule
+- API Scenario
+  - Support file type in formdata and body
+  - Change the prefix length to 8 from 10 in generated API Scenario
 
 ## 11/23/2022 3.2.3
 
