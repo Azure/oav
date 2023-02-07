@@ -1262,6 +1262,7 @@ Object {
 
 exports[`ApiScenarioGenerator generate api scenario from swagger - storage 1`] = `
 Object {
+  "authentication": undefined,
   "scenarios": Array [
     Object {
       "scenario": "GeneratedScenario",
@@ -1773,6 +1774,7 @@ Object {
 
 exports[`ApiScenarioGenerator generate api scenario from swagger and example - storage 1`] = `
 Object {
+  "authentication": undefined,
   "scenarios": Array [
     Object {
       "scenario": "GeneratedScenario",
@@ -2210,6 +2212,85 @@ Object {
     },
     "username": Object {
       "prefix": "username",
+      "type": "string",
+    },
+  },
+}
+`;
+
+exports[`ApiScenarioGenerator generate scope data-plane api scenario from swagger - appconfiguration 1`] = `
+Object {
+  "authentication": Object {
+    "scope": "https://azconfig.io/.default",
+    "type": "AADToken",
+  },
+  "scenarios": Array [
+    Object {
+      "scenario": "GeneratedScenario",
+      "steps": Array [
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/PutKeyValue.json",
+          "operationId": "PutKeyValue",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/PutLock.json",
+          "operationId": "PutLock",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/GetKeys.json",
+          "operationId": "GetKeys",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/CheckKeys.json",
+          "operationId": "CheckKeys",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/GetKeyValues.json",
+          "operationId": "GetKeyValues",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/CheckKeyValues.json",
+          "operationId": "CheckKeyValues",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/DeleteKeyValue.json",
+          "operationId": "DeleteKeyValue",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/GetKeyValue.json",
+          "operationId": "GetKeyValue",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/CheckKeyValue.json",
+          "operationId": "CheckKeyValue",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/GetLabels.json",
+          "operationId": "GetLabels",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/CheckLabels.json",
+          "operationId": "CheckLabels",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/DeleteLock.json",
+          "operationId": "DeleteLock",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/GetRevisions.json",
+          "operationId": "GetRevisions",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/examples/CheckRevisions.json",
+          "operationId": "CheckRevisions",
+        },
+      ],
+    },
+  ],
+  "scope": "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/scenarios/liveness.yaml",
+  "variables": Object {
+    "key": Object {
+      "prefix": "key",
       "type": "string",
     },
   },
