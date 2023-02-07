@@ -2,6 +2,7 @@
 
 ## 02/03/2023 3.2.5
 
+- Revert node requirement to >=10
 - generate-api-scenario
   - Support `--scope` option in static generator
 - API Scenario
