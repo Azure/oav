@@ -140,4 +140,28 @@ describe("ApiScenarioGenerator", () => {
 
     expect(apiScenario).toMatchSnapshot();
   });
+
+  it("generate scope data-plane api scenario from swagger - appconfiguration", async () => {
+    const tag = "package-1-0";
+    const readme = "test/apiScenario/fixtures/specification/appconfiguration/data-plane/readme.md";
+    const readmeMd: string = path.resolve(readme);
+    const swaggerFilePaths = (await getInputFiles(readmeMd, tag)).map((file) =>
+      path.join(path.dirname(readmeMd), file)
+    );
+
+    const generator = RestlerApiScenarioGenerator.create({
+      swaggerFilePaths: swaggerFilePaths,
+      outputDir: ".",
+      dependencyPath:
+        "test/apiScenario/fixtures/dependency/appconfiguration/data-plane/dependencies.json",
+      useExample: true,
+      scope:
+        "test/apiScenario/fixtures/specification/appconfiguration/data-plane/Microsoft.AppConfiguration/stable/1.0/scenarios/liveness.yaml",
+    });
+
+    await generator.initialize();
+    const apiScenario = await generator.generate();
+
+    expect(apiScenario).toMatchSnapshot();
+  });
 });
