@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 02/09/2023 3.2.5
+
+- bug fix about incorrect payload file path in html report
+
 ## 01/30/2023 3.2.4
 
 - Generate Examples - Support specified generation rule
