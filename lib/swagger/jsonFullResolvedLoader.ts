@@ -1,61 +1,18 @@
 import { dirname as pathDirname } from "path";
-import {
-  FilePosition,
-  getInfo,
-  getRootObjectInfo,
-  Json,
-  parseJson,
-  pathJoin,
-} from "@azure-tools/openapi-tools-common";
+import { Json, parseJson, pathJoin } from "@azure-tools/openapi-tools-common";
 import { load as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { inject, injectable } from "inversify";
 import { xmsExamples } from "../util/constants";
-import { getLazyBuilder } from "../util/lazyBuilder";
 import { TYPES } from "../inversifyUtils";
-import { FileLoader, FileLoaderOption } from "./fileLoader";
+import { FileLoader } from "./fileLoader";
 import { Loader, setDefaultOpts } from "./loader";
-
-export interface JsonLoaderOption extends FileLoaderOption {
-  useJsonParser?: boolean;
-  eraseDescription?: boolean;
-  eraseXmsExamples?: boolean;
-  keepOriginalContent?: boolean;
-  transformRef?: boolean; // TODO implement transformRef: false
-  skipResolveRefKeys?: string[];
-  supportYaml?: boolean;
-}
-
-export interface FileCache {
-  resolved?: Json;
-  filePath: string;
-  originalContent?: string;
-  skipResolveRef?: boolean;
-  mockName: string;
-  resolveRef?: boolean;
-}
+import { FileCache, JsonLoaderOption, JsonLoaderRefError } from "./jsonLoader";
 
 export const $id = "$id";
 
-export class JsonLoaderRefError extends Error {
-  public position?: FilePosition;
-  public url?: string;
-  public ref?: string;
-
-  public constructor(source: { $ref: string }) {
-    super(`Failed to resolve ref for ${source.$ref}`);
-    const info = getInfo(source);
-    if (info !== undefined) {
-      const rootInfo = getRootObjectInfo(info);
-      this.position = info.position;
-      this.url = rootInfo.url;
-      this.ref = source.$ref;
-    }
-  }
-}
-
 @injectable()
-export class JsonLoader implements Loader<Json> {
+export class JsonFullResolvedLoader implements Loader<Json> {
   private mockNameMap: { [mockName: string]: string } = {};
   private globalMockNameId = 0;
 
@@ -63,7 +20,7 @@ export class JsonLoader implements Loader<Json> {
   private skipResolveRefKeys: Set<string>;
 
   private fileCache = new Map<string, FileCache>();
-  private loadFile = getLazyBuilder("resolved", async (cache: FileCache) => {
+  private async loadFile(cache: FileCache) {
     const fileString = await this.fileLoader.load(cache.filePath);
     if (this.opts.keepOriginalContent || cache.resolveRef) {
       // eslint-disable-next-line require-atomic-updates
@@ -78,7 +35,7 @@ export class JsonLoader implements Loader<Json> {
     }
     this.loadedFiles.push(fileContent);
     return fileContent;
-  });
+  }
 
   public constructor(
     @inject(TYPES.opts) private opts: JsonLoaderOption,
@@ -212,7 +169,8 @@ export class JsonLoader implements Loader<Json> {
           throw new JsonLoaderRefError(object);
         }
         const mockName = (rootObject as any)[$id];
-        return { $ref: `${mockName}#${refObjPath}` };
+        object.$ref = `${mockName}#${refObjPath}`;
+        return object;
       }
       const refObj = await this.load(
         pathJoin(pathDirname(relativeFilePath), refFilePath),
@@ -223,9 +181,11 @@ export class JsonLoader implements Loader<Json> {
         if (!jsonPointer.has(refObj as {}, refObjPath)) {
           throw new JsonLoaderRefError(object);
         }
-        return { $ref: `${refMockName}#${refObjPath}` };
+        object.$ref = `${refMockName}#${refObjPath}`;
+        return object;
       } else {
-        return { $ref: refMockName };
+        object.$ref = refMockName;
+        return object;
       }
     }
 

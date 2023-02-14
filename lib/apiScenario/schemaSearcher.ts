@@ -5,6 +5,7 @@
 
 import { Schema } from "../swagger/swaggerTypes";
 import { JsonLoader, isRefLike } from "../swagger/jsonLoader";
+import { JsonFullResolvedLoader } from "../swagger/jsonFullResolvedLoader";
 import { logger } from "./logger";
 import { getObjValueFromPointer } from "./diffUtils";
 
@@ -12,7 +13,7 @@ export class SchemaSearcher {
   public static findSchemaByJsonPointer(
     jsonPointer: string,
     schema: Schema,
-    jsonLoader: JsonLoader,
+    jsonLoader: JsonLoader | JsonFullResolvedLoader,
     body?: any
   ) {
     const steps = jsonPointer.split("/");
@@ -65,7 +66,10 @@ export class SchemaSearcher {
     }
   }
 
-  public static getProperties(schema: Schema, jsonLoader: JsonLoader): any {
+  public static getProperties(
+    schema: Schema,
+    jsonLoader: JsonLoader | JsonFullResolvedLoader
+  ): any {
     let ret: any = {};
     if (isRefLike(schema)) {
       ret = jsonLoader.resolveRefObj(schema);

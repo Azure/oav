@@ -6,6 +6,7 @@ import { xmsExamples } from "../util/constants";
 import { getProviderFromSpecPath } from "../util/utils";
 import { FileLoader, FileLoaderOption } from "./fileLoader";
 import { JsonLoader, JsonLoaderOption } from "./jsonLoader";
+import { JsonFullResolvedLoader } from "./jsonFullResolvedLoader";
 import { Loader, setDefaultOpts } from "./loader";
 import { SuppressionLoader, SuppressionLoaderOption } from "./suppressionLoader";
 import { SwaggerExample, SwaggerSpec } from "./swaggerTypes";
@@ -31,6 +32,7 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
     @inject(TYPES.opts) private opts: SwaggerLoaderOption,
     private suppressionLoader: SuppressionLoader,
     private jsonLoader: JsonLoader,
+    private resolvedJsonLoader: JsonFullResolvedLoader,
     private fileLoader: FileLoader
   ) {
     setDefaultOpts(opts, {
@@ -38,9 +40,15 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
     });
   }
 
+  public getResolvedJsonLoader() {
+    return this.resolvedJsonLoader;
+  }
+
   // TODO reportError
-  public async load(specFilePath: string): Promise<SwaggerSpec> {
-    const swaggerSpec = (await (this.jsonLoader.load(specFilePath) as unknown)) as SwaggerSpec;
+  public async load(specFilePath: string, shouldResolve?: boolean): Promise<SwaggerSpec> {
+    const swaggerSpec = shouldResolve
+      ? ((await (this.resolvedJsonLoader.load(specFilePath) as unknown)) as SwaggerSpec)
+      : ((await (this.jsonLoader.load(specFilePath) as unknown)) as SwaggerSpec);
 
     if (this.opts.setFilePath) {
       const pathProvider = getProviderFromSpecPath(this.fileLoader.resolvePath(specFilePath));
