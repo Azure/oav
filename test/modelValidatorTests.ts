@@ -9,7 +9,7 @@ import * as validate from "../lib/validate";
 const testPath = __dirname;
 
 const specPath =
-  `${testPath}/modelValidation/swaggers/specification/scenarios/resource-manager/` +
+  `${testPath}/modelValidation/swaggers/specification/testrp/resource-manager/` +
   `Microsoft.Test/2016-01-01/test.json`;
 
 describe("Model Validation", () => {

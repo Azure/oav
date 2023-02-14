@@ -375,7 +375,7 @@ class PostmanCollectionRunner {
         coverageRate: result.coverage,
         apiVersion: getApiVersionFromFilePath(specPath),
         unCoveredOperations: result.uncoveredOperationIds.length,
-        coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
+        coveredOperations: result.totalOperationNumber - result.uncoveredOperationIds.length,
         validationFailOperations: new Set(
           trafficValidationResult
             .filter((it) => key.indexOf(it.specFilePath!) !== -1 && it.errors!.length > 0)
@@ -516,6 +516,7 @@ class PostmanCollectionRunner {
     const newmanReport = parseNewmanSummary(summary as any);
 
     const newmanReportValidatorOption: NewmanReportValidatorOption = {
+      swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
       apiScenarioFilePath: scenario._scenarioDef._filePath,
       reportOutputFilePath: defaultQualityReportFilePath(reportExportPath),
       checkUnderFileRoot: false,
