@@ -28,7 +28,8 @@ function checkReplacedSchemaInParameter(
     if (
       foundSchema.readOnly ||
       foundSchema.default ||
-      (foundSchema["x-ms-mutability"] && isSubset(foundSchema["x-ms-mutability"], ["create", "read"]))
+      (foundSchema["x-ms-mutability"] &&
+        isSubset(foundSchema["x-ms-mutability"], ["create", "read"]))
     ) {
       return allowed;
     }
@@ -47,7 +48,8 @@ function checkRemovedSchemaInParameter(
     const foundSchema = SchemaSearcher.findSchemaByJsonPointer(jsonPath, schema, jsonLoader);
     if (
       foundSchema["x-ms-secret"] ||
-      (foundSchema["x-ms-mutability"] && isSubset(foundSchema["x-ms-mutability"], ["create", "update"]))
+      (foundSchema["x-ms-mutability"] &&
+        isSubset(foundSchema["x-ms-mutability"], ["create", "update"]))
     ) {
       return allowed;
     }
