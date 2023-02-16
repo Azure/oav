@@ -161,15 +161,15 @@ describe("Live Validator", () => {
       //roundtrip validation
       const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_circularReference_analyzetext.json`);
       const rest = await validator.validateRoundTrip(payload);
-      assert.equal(rest.errors.length, 3);
+      assert.equal(rest.errors.length, 5);
       assert.equal(rest.isSuccessful, false);
       for (const re of rest.errors) {
-        if (re.pathsInPayload[0].includes("location")) {
+        if (re.pathsInPayload[0].includes("text")) {
           assert.equal(re.code, "ROUNDTRIP_ADDITIONAL_PROPERTY");
-        } else if (re.pathsInPayload[0].includes("properties")) {
-          assert.equal(re.code, "ROUNDTRIP_ADDITIONAL_PROPERTY");
-        } else if (re.pathsInPayload[0].includes("identity")) {
-          assert.equal(re.code, "ROUNDTRIP_ADDITIONAL_PROPERTY");
+        } else if (re.pathsInPayload[0].includes("defaultLanguage")) {
+          assert.equal(re.code, "ROUNDTRIP_INCONSISTENT_PROPERTY");
+        } else if (re.pathsInPayload[0].includes("version")) {
+          assert.equal(re.code, "ROUNDTRIP_MISSING_PROPERTY");
         }
       }
       //end of roundtrip validation

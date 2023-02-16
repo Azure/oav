@@ -1,7 +1,7 @@
 {
   "liveRequest": {
-    "url": "https://coglanapitest.cognitiveservices.azure.com/analyze-text/jobs?api-version=2022-10-01-preview",
-    "method": "put",
+    "url": "https://coglanapitest.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
+    "method": "post",
     "headers": {
       "Content-Type": "application/json",
       "Authorization": "<bearer token>",
@@ -17,17 +17,19 @@
     "body": {
       "displayName": "displayName_inconsist_allowed",
       "defaultLanguage": "defaultLanguage_inconsist_notAllowed",
+      "multiLanguageInput": {
+        "language": "document language1_remove_allowed",
+        "version": "0.1 remove_notAllowed"
+      },
       "analysisInput": {
         "documents": [
           {
-            "id": "documentid1_additional_allowed",
-            "text": "document text1",
-            "language": "document language1"
+            "language": "document language1_remove_allowed",
+            "version": "0.1 remove_notAllowed"
           },
           {
-            "id": "documentid2",
-            "text": "document text2",
-            "language": "document language2"
+            "language": "document language2",
+            "version": "0.1"
           }
         ]
       },
@@ -42,7 +44,7 @@
     }
   },
   "liveResponse": {
-    "statusCode": "201",
+    "statusCode": "202",
     "headers": {
       "Cache-Control": "no-cache",
       "Pragma": "no-cache",
@@ -63,14 +65,17 @@
       "Date": "Wed, 06 Jul 2022 02:36:14 GMT"
     },
     "body": {
-      "displayName": "displayName",
-      "defaultLanguage": "defaultLanguage",
+      "displayName": "displayName_inconsist_allowed1",
+      "defaultLanguage": "defaultLanguage_inconsist_notAllowed1",
+      "multiLanguageInput": {
+        "id": "documentid1_additional_allowed",
+        "text": "document text1_additional_notAllowed"
+      },
       "analysisInput": {
         "documents": [
           {
-            "id": "documentid1",
-            "text": "document text1",
-            "language": "document language1"
+            "id": "documentid1_additional_allowed",
+            "text": "document text1_additional_notAllowed"
           },
           {
             "id": "documentid2",
