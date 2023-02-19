@@ -1056,6 +1056,27 @@ describe("Live Validator", () => {
       const result = await liveValidator.validateLiveRequestResponse(payload);
       assert.equal(result.responseValidationResult.isSuccessful, true);
     });
+
+    it(`should only log error for additionalProperties type mismatch and shouldn't return error for rpaas calls`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2022-04-13-preview/vi.json",
+        ],
+        git: {
+          shouldClone: false,
+        },
+        isArmCall: false,
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/additionalProperties_invalid_mapType.json`);
+      const result = await liveValidator.validateLiveRequestResponse(payload);
+      assert.strictEqual(result.responseValidationResult.isSuccessful, true);
+      assert.strictEqual(result.requestValidationResult.isSuccessful, true);
+    });
   });
 });
 describe("Live validator snapshot validation", () => {
