@@ -28,10 +28,14 @@ directive:
       - Microsoft.VideoIndexer/preview/2021-11-10-preview/vi.json
       - Microsoft.VideoIndexer/preview/2022-04-03-preview/vi.json
       - Microsoft.VideoIndexer/preview/2022-04-13-preview/vi.json
-
     where:
       - $.definitions.AccessToken.properties.accessToken
     reason: Secrets are OK to return in a POST response.
+  - suppress: INVALID_TYPE
+    from: Microsoft.VideoIndexer/preview/2022-04-13-preview/vi.json
+    where:
+      - $.definitions.Tags.properties.tags.additionalProperties
+    reason: fix swagger later
 ```
 ---
 
