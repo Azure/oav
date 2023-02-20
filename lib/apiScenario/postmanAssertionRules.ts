@@ -99,8 +99,7 @@ const DetailResponseLog: AssertionRule = {
   name: "DetailResponseLog",
   assertion: {
     postmanTestScript: [
-      "pm.response.to.be.success;",
-      'pm.expect(pm.response.json().status).to.be.oneOf(["Succeeded", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Updating"]);',
+      "console.log(pm.response.text());",
     ],
   },
   conditions: {
