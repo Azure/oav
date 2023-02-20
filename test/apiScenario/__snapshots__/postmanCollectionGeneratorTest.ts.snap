@@ -3452,6 +3452,20 @@ if (pm.response.code === 201) {
           "id": "7wi32c",
           "name": "_createStorageAccount_delay",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -3894,6 +3908,20 @@ if (pm.response.code === 201) {
           "id": "d39qgw",
           "name": "_createStorageAccount_delay",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -4336,6 +4364,20 @@ if (pm.response.code === 201) {
           "id": "yh0zn8",
           "name": "_createStorageAccount_delay",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -4791,6 +4833,20 @@ if (pm.response.code === 201) {
           "id": "d9yng9",
           "name": "_createStorageAccount_delay",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
