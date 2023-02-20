@@ -830,13 +830,17 @@ if (pollingUrl) {
 }`
     );
 
-    const { item: delayItem } = this.addNewItem("Blank", {
-      name: `_${item.name}_delay`,
-      request: {
-        url: "https://postman-echo.com/delay/{{x_retry_after}}",
-        method: "GET",
+    const { item: delayItem } = this.addNewItem(
+      "Blank",
+      {
+        name: `_${item.name}_delay`,
+        request: {
+          url: "https://postman-echo.com/delay/{{x_retry_after}}",
+          method: "GET",
+        },
       },
-    });
+      baseUri
+    );
     const delayItemMetadata: DelayItemMetadata = {
       type: "delay",
       lro_item_name: item.name,
