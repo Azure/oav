@@ -605,6 +605,7 @@ describe("Live Validator", () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
         swaggerPathsPattern: ["test.json"],
+        enableRoundTripValidator: true
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -639,6 +640,7 @@ describe("Live Validator", () => {
         directory:
           "./test/liveValidation/swaggers/specification/storage/resource-manager/Microsoft.Storage/2015-05-01-preview",
         swaggerPathsPattern: ["*.json"],
+        enableRoundTripValidator: true
       };
       // Upper and lowercased provider and api-version strings for testing purpose
       const adjustedUrl =
@@ -694,6 +696,7 @@ describe("Live Validator", () => {
         swaggerPathsPattern: [
           "specification/resources/resource-manager/Microsoft.Resources/2015-11-01/*.json",
         ],
+        enableRoundTripValidator: true
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -731,6 +734,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -752,6 +756,7 @@ describe("Live Validator", () => {
           git: {
             shouldClone: false,
           },
+          enableRoundTripValidator: true
         };
         const liveValidator = new LiveValidator(options);
         await liveValidator.initialize();
@@ -773,6 +778,7 @@ describe("Live Validator", () => {
           git: {
             shouldClone: false,
           },
+          enableRoundTripValidator: true
         };
         const liveValidator = new LiveValidator(options);
         await liveValidator.initialize();
@@ -793,6 +799,7 @@ describe("Live Validator", () => {
           git: {
             shouldClone: false,
           },
+          enableRoundTripValidator: true
         };
         const liveValidator = new LiveValidator(options);
         await liveValidator.initialize();
@@ -830,6 +837,7 @@ describe("Live Validator", () => {
             git: {
               shouldClone: false,
             },
+            enableRoundTripValidator: true
           };
           const liveValidator = new LiveValidator(options);
           await liveValidator.initialize();
@@ -862,6 +870,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -882,6 +891,7 @@ describe("Live Validator", () => {
           shouldClone: false,
         },
         isArmCall: true,
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -902,6 +912,7 @@ describe("Live Validator", () => {
           shouldClone: false,
         },
         isArmCall: true,
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -922,6 +933,7 @@ describe("Live Validator", () => {
           shouldClone: false,
         },
         isArmCall: true,
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -942,6 +954,7 @@ describe("Live Validator", () => {
           shouldClone: false,
         },
         isArmCall: true,
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -962,6 +975,7 @@ describe("Live Validator", () => {
           shouldClone: false,
         },
         isArmCall: true,
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -979,6 +993,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -996,6 +1011,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -1008,6 +1024,7 @@ describe("Live Validator", () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
         swaggerPathsPattern: ["test.json"],
+        enableRoundTripValidator: true
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -1044,6 +1061,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
+        enableRoundTripValidator: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();

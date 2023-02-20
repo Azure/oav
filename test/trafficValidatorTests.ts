@@ -10,6 +10,7 @@ describe("TrafficValidator", () => {
     const options = {
       swaggerPathsPattern: [tableSwaggerFilePath],
       directory: "./test/liveValidation/swaggers/specification",
+      enableRoundTripValidator: true
     };
     const liveValidator = new LiveValidator(options);
     await liveValidator.initialize();

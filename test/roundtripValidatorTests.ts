@@ -7,7 +7,7 @@ jest.setTimeout(999999);
 
 describe("Live Validator", () => {
   describe("Initialization", () => {
-    it.skip("OperationLoader should be completely initialized", async () => {
+    it("OperationLoader should be completely initialized", async () => {
       console.log("OperationLoader should be completely initialized");
       const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/runCommands.json";
       const glob = require("glob");
@@ -30,7 +30,7 @@ describe("Live Validator", () => {
       assert.equal(validator.resolvedOperationSearcher.cache.size, 1);
     });
 
-    it.skip("readonly properties should not cause error", async () => {
+    it("readonly properties should not cause error", async () => {
       console.log("readonly properties should not cause error");
       const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
@@ -59,7 +59,7 @@ describe("Live Validator", () => {
       //end of roundtrip validation
     });
 
-    it.skip("Round trip validation fail", async () => {
+    it("Round trip validation fail", async () => {
       console.log("Round trip validation fail");
       const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
@@ -101,7 +101,7 @@ describe("Live Validator", () => {
       //end of roundtrip validation
     });
 
-    it.skip("Round trip validation of circular spec", async () => {
+    it("Round trip validation of circular spec", async () => {
       console.log("Round trip validation fail");
       const swaggerPattern = "specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/*.json";
       const glob = require("glob");
