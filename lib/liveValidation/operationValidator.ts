@@ -69,13 +69,13 @@ export interface LiveResponse {
 
 export const validateSwaggerLiveRequest = async (
   request: LiveRequest,
-  info: OperationContext,
+  operationContext: OperationContext,
   loader?: LiveValidatorLoader,
   includeErrors?: ApiValidationErrorCode[],
   isArmCall?: boolean,
   logging?: LoggingFn
 ) => {
-  const { operation } = info.operationMatch!;
+  const { operation } = operationContext.operationMatch!;
   const { body, query } = request;
   const result: LiveValidationIssue[] = [];
 
@@ -94,7 +94,7 @@ export const validateSwaggerLiveRequest = async (
         LiveValidatorLoggingTypes.trace,
         "Oav.OperationValidator.validateSwaggerLiveRequest.loader.getRequestValidator",
         undefined,
-        info.validationRequest
+        operationContext.validationRequest
       );
       logging(
         `On-demand build request validator`,
@@ -102,12 +102,12 @@ export const validateSwaggerLiveRequest = async (
         LiveValidatorLoggingTypes.perfTrace,
         "Oav.OperationValidator.validateSwaggerLiveRequest.loader.getRequestValidator",
         elapsedTime,
-        info.validationRequest
+        operationContext.validationRequest
       );
     }
   }
 
-  const pathParam = extractPathParamValue(info.operationMatch!);
+  const pathParam = extractPathParamValue(operationContext.operationMatch!);
   transformMapValue(pathParam, operation._pathTransform);
   transformMapValue(query, operation._queryTransform);
   const headers = transformLiveHeader(request.headers ?? {}, operation);
@@ -127,7 +127,7 @@ export const validateSwaggerLiveRequest = async (
     operation,
     ctx,
     result,
-    info,
+    operationContext,
     isArmCall,
     logging
   );
@@ -137,13 +137,13 @@ export const validateSwaggerLiveRequest = async (
 
 export const validateSwaggerLiveResponse = async (
   response: LiveResponse,
-  info: OperationContext,
+  operationContext: OperationContext,
   loader?: LiveValidatorLoader,
   includeErrors?: ApiValidationErrorCode[],
   isArmCall?: boolean,
   logging?: LoggingFn
 ) => {
-  const { operation } = info.operationMatch!;
+  const { operation } = operationContext.operationMatch!;
   const { statusCode, body } = response;
   const rspDef = operation.responses;
   const result: LiveValidationIssue[] = [];
@@ -173,7 +173,7 @@ export const validateSwaggerLiveResponse = async (
         LiveValidatorLoggingTypes.trace,
         "Oav.OperationValidator.validateSwaggerLiveResponse.loader.getResponseValidator",
         undefined,
-        info.validationRequest
+        operationContext.validationRequest
       );
       logging(
         `On-demand build request validator`,
@@ -181,7 +181,7 @@ export const validateSwaggerLiveResponse = async (
         LiveValidatorLoggingTypes.perfTrace,
         "Oav.OperationValidator.validateSwaggerLiveResponse.loader.getResponseValidator",
         elapsedTime,
-        info.validationRequest
+        operationContext.validationRequest
       );
     }
   }
@@ -209,7 +209,7 @@ export const validateSwaggerLiveResponse = async (
     operation,
     ctx,
     result,
-    info,
+    operationContext,
     isArmCall,
     logging
   );
@@ -283,7 +283,7 @@ export const schemaValidateIssueToLiveValidationIssue = (
   operation: Operation,
   ctx: SchemaValidateContext,
   output: LiveValidationIssue[],
-  info: OperationContext,
+  operationContext: OperationContext,
   isArmCall?: boolean,
   logging?: LoggingFn
 ) => {
@@ -305,7 +305,7 @@ export const schemaValidateIssueToLiveValidationIssue = (
           skipIssue = true;
           return "";
         }
-      } else if (issue.code === "INVALID_TYPE" && isArmCall !== undefined && isArmCall === false) {
+      } else if (issue.code === "INVALID_TYPE" && isArmCall === false) {
         if (issue.schemaPath.includes("additionalProperties")) {
           skipIssue = true;
           if (logging) {
@@ -315,7 +315,7 @@ export const schemaValidateIssueToLiveValidationIssue = (
               LiveValidatorLoggingTypes.trace,
               "Oav.OperationValidator.schemaValidateIssueToLiveValidationIssue",
               undefined,
-              info.validationRequest
+              operationContext.validationRequest
             );
           }
           return "";
