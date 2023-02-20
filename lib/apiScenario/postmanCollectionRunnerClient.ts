@@ -820,12 +820,12 @@ function getProxyUrl(url) {
         this.opts.testProxy ?? ""
       }") : url
 }
-const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Operation-Location") || ${
+const pollingUrl = pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Location") || pm.response.headers.get("Operation-Location") || ${
         isArmResourceCreate ? `'${urlStr}'` : "''"
       }
 if (pollingUrl) {
-    pm.variables.set("x_polling_url",getProxyUrl(pollingUrl));
-    pm.variables.set("x_final_get_url",getProxyUrl(getLroFinalGetUrl("${finalStateVia ?? ""}")))
+    pm.variables.set("x_polling_url", getProxyUrl(pollingUrl));
+    pm.variables.set("x_final_get_url", getProxyUrl(getLroFinalGetUrl("${finalStateVia ?? ""}")))
     pm.variables.set("x_retry_after", "3");
 }`
     );

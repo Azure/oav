@@ -3322,10 +3322,10 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 function getProxyUrl(url) {
   return  \\"http://localhost:5000\\" ? url.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -3764,10 +3764,10 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 function getProxyUrl(url) {
   return  \\"http://localhost:5000\\" ? url.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -4206,10 +4206,10 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 function getProxyUrl(url) {
   return  \\"http://localhost:5000\\" ? url.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -4655,10 +4655,10 @@ try {
 function getProxyUrl(url) {
   return  \\"http://localhost:5000\\" ? url.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -5418,10 +5418,10 @@ if (
 function getProxyUrl(url) {
   return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -6422,10 +6422,10 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 function getProxyUrl(url) {
   return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -6818,10 +6818,10 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 function getProxyUrl(url) {
   return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -7214,10 +7214,10 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 function getProxyUrl(url) {
   return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -7615,10 +7615,10 @@ try {
 function getProxyUrl(url) {
   return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -8185,10 +8185,10 @@ if (
 function getProxyUrl(url) {
   return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
@@ -8480,10 +8480,10 @@ try {
 function getProxyUrl(url) {
   return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
 }
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01'
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\",getProxyUrl(pollingUrl));
-    pm.variables.set(\\"x_final_get_url\\",getProxyUrl(getLroFinalGetUrl(\\"\\")))
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
