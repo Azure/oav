@@ -98,9 +98,7 @@ const ArmTemplateStatusCodeCheck: AssertionRule = {
 const DetailResponseLog: AssertionRule = {
   name: "DetailResponseLog",
   assertion: {
-    postmanTestScript: [
-      "console.log(pm.response.text());",
-    ],
+    postmanTestScript: ["console.log(pm.response.text());"],
   },
   conditions: {
     openapiTypes: ["Management", "Dataplane"],
