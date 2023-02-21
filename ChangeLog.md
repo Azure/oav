@@ -1,12 +1,14 @@
 # Change Log - oav
 
+## 02/04/2023 3.2.7
+- Fix roundtrip validation model with circular reference
+
 ## 02/23/2023 3.2.6
 
 - Improved the API scenario long running operation pooling mechanism.
     - support for checking final-via-state
     - update the mechanism of gettig the lro polling url.
 - Support generating the ARM rules for api scenario.
-- Fix roundtrip validation model with circular reference
 
 ## 02/19/2023 3.2.6
 
