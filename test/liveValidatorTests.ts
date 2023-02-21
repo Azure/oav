@@ -12,7 +12,7 @@ import * as Constants from "../lib/util/constants";
 // eslint-disable-next-line no-var
 var glob = require("glob").glob;
 
-const numberOfSpecs = 19;
+const numberOfSpecs = 20;
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
@@ -1055,6 +1055,27 @@ describe("Live Validator", () => {
       const payload = require(`${__dirname}/liveValidation/payloads/dateTime.json`);
       const result = await liveValidator.validateLiveRequestResponse(payload);
       assert.equal(result.responseValidationResult.isSuccessful, true);
+    });
+
+    it(`should only log error for additionalProperties type mismatch and shouldn't return error for rpaas calls`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2022-04-13-preview/vi.json",
+        ],
+        git: {
+          shouldClone: false,
+        },
+        //isArmCall is false by default
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/additionalProperties_invalid_mapType.json`);
+      const result = await liveValidator.validateLiveRequestResponse(payload);
+      assert.strictEqual(result.responseValidationResult.isSuccessful, true);
+      assert.strictEqual(result.requestValidationResult.isSuccessful, true);
     });
   });
 });
