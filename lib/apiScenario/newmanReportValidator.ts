@@ -257,7 +257,9 @@ export class NewmanReportValidator {
             },
           };
 
-          const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
+          const exampleFilePath = `./examples/${matchedStep.operationId}_${Object.keys(
+            statusCodes
+          ).join("_")}.json`;
           await this.fileLoader.writeFile(
             path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
             JSON.stringify(generatedExample, null, 2)
