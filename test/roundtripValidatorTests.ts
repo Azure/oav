@@ -31,7 +31,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
 
-      assert.equal(validator.withRefSibingsOperationSearcher.cache.size, 1);
+      assert.equal(validator.operationSearcher.cache.size, 1);
     });
 
     it("OperationLoader should be completely initialized", async () => {
@@ -54,7 +54,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
 
-      assert.equal(validator.withRefSibingsOperationSearcher.cache.size, 20);
+      assert.equal(validator.operationSearcher.cache.size, 20);
     });
 
     it("readonly properties should not cause error", async () => {

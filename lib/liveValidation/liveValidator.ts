@@ -126,8 +126,6 @@ export class LiveValidator {
 
   public operationSearcher: OperationSearcher;
 
-  public withRefSibingsOperationSearcher: OperationSearcher;
-
   public swaggerList: string[] = [];
 
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
@@ -180,7 +178,6 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions;
     this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
-    this.withRefSibingsOperationSearcher = new OperationSearcher(this.logging);
   }
 
   /**
@@ -694,7 +691,7 @@ export class LiveValidator {
         );
       }
       if (info.operationMatch === undefined) {
-        const result = this.withRefSibingsOperationSearcher.search(info.validationRequest);
+        const result = this.operationSearcher.search(info.validationRequest);
         info.apiVersion = result.apiVersion;
         info.operationMatch = result.operationMatch;
       }
@@ -750,7 +747,7 @@ export class LiveValidator {
     requestResponseObj: RequestResponsePair
   ): Promise<LiveValidationResult> {
     const startTime = Date.now();
-    if (this.withRefSibingsOperationSearcher === undefined) {
+    if (this.operationSearcher === undefined) {
       const msg = "withRefSibingsOperationSearcher should be initialized before this call.";
       const runtimeException = { code: C.ErrorCodes.RoundtripValidationError.name, message: msg };
       return {
@@ -878,10 +875,11 @@ export class LiveValidator {
       );
 
       const startTimeAddSpecToCache = Date.now();
-      this.operationSearcher.addSpecToCache(spec);
       if (this.options.enableRoundTripValidator) {
         resolvedSpec = await loader.load(pathResolve(swaggerPath), true);
-        this.withRefSibingsOperationSearcher.addSpecToCache(resolvedSpec);
+        this.operationSearcher.addSpecToCache(resolvedSpec);
+      } else {
+        this.operationSearcher.addSpecToCache(spec);
       }
       // TODO: add data-plane RP to cache.
       this.logging(
