@@ -590,8 +590,7 @@ describe("Live Validator", () => {
       it(`should validate request and response for "${livePath}"`, async () => {
         const options = {
           directory: "./test/liveValidation/swaggers/specification/storage",
-          swaggerPathsPattern: ["**/*.json"],
-          enableRoundTripValidator: true
+          swaggerPathsPattern: ["**/*.json"]
         };
         const validator = new LiveValidator(options);
         await validator.initialize();
@@ -605,8 +604,7 @@ describe("Live Validator", () => {
     it("should initialize for defaultErrorOnly and fail on unknown status code", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
-        swaggerPathsPattern: ["test.json"],
-        enableRoundTripValidator: true
+        swaggerPathsPattern: ["test.json"]
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -640,8 +638,7 @@ describe("Live Validator", () => {
       const options = {
         directory:
           "./test/liveValidation/swaggers/specification/storage/resource-manager/Microsoft.Storage/2015-05-01-preview",
-        swaggerPathsPattern: ["*.json"],
-        enableRoundTripValidator: true
+        swaggerPathsPattern: ["*.json"]
       };
       // Upper and lowercased provider and api-version strings for testing purpose
       const adjustedUrl =
@@ -696,8 +693,7 @@ describe("Live Validator", () => {
         directory: "./test/liveValidation/swaggers/",
         swaggerPathsPattern: [
           "specification/resources/resource-manager/Microsoft.Resources/2015-11-01/*.json",
-        ],
-        enableRoundTripValidator: true
+        ]
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -716,8 +712,7 @@ describe("Live Validator", () => {
         directory: `./test/liveValidation/swaggers/`,
         swaggerPathsPattern: [
           "specification/apimanagement/resource-manager/Microsoft.ApiManagement/**/*.json",
-        ],
-        enableRoundTripValidator: true
+        ]
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -735,8 +730,7 @@ describe("Live Validator", () => {
         swaggerPathsPattern: ["specification/contoso/resource-manager/Microsoft.Contoso/**/*.json"],
         git: {
           shouldClone: false,
-        },
-        enableRoundTripValidator: true
+        }
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -757,8 +751,7 @@ describe("Live Validator", () => {
           ],
           git: {
             shouldClone: false,
-          },
-          enableRoundTripValidator: true
+          }
         };
         const liveValidator = new LiveValidator(options);
         await liveValidator.initialize();
@@ -779,8 +772,7 @@ describe("Live Validator", () => {
           ],
           git: {
             shouldClone: false,
-          },
-          enableRoundTripValidator: true
+          }
         };
         const liveValidator = new LiveValidator(options);
         await liveValidator.initialize();
@@ -800,8 +792,7 @@ describe("Live Validator", () => {
           ],
           git: {
             shouldClone: false,
-          },
-          enableRoundTripValidator: true
+          }
         };
         const liveValidator = new LiveValidator(options);
         await liveValidator.initialize();
@@ -838,8 +829,7 @@ describe("Live Validator", () => {
             swaggerPathsPattern: [swagger],
             git: {
               shouldClone: false,
-            },
-            enableRoundTripValidator: true
+            }
           };
           const liveValidator = new LiveValidator(options);
           await liveValidator.initialize();
@@ -871,8 +861,7 @@ describe("Live Validator", () => {
         ],
         git: {
           shouldClone: false,
-        },
-        enableRoundTripValidator: true
+        }
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -892,8 +881,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
-        isArmCall: true,
-        enableRoundTripValidator: true
+        isArmCall: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -913,8 +901,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
-        isArmCall: true,
-        enableRoundTripValidator: true
+        isArmCall: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -934,8 +921,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
-        isArmCall: true,
-        enableRoundTripValidator: true
+        isArmCall: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -955,8 +941,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
-        isArmCall: true,
-        enableRoundTripValidator: true
+        isArmCall: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -976,8 +961,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
-        isArmCall: true,
-        enableRoundTripValidator: true
+        isArmCall: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -994,8 +978,7 @@ describe("Live Validator", () => {
         swaggerPathsPattern: ["specification/contoso/resource-manager/Microsoft.Contoso/**/*.json"],
         git: {
           shouldClone: false,
-        },
-        enableRoundTripValidator: true
+        }
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -1012,8 +995,7 @@ describe("Live Validator", () => {
         swaggerPathsPattern: ["specification/contoso/resource-manager/Microsoft.Contoso/**/*.json"],
         git: {
           shouldClone: false,
-        },
-        enableRoundTripValidator: true
+        }
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -1025,8 +1007,7 @@ describe("Live Validator", () => {
     it("should initialize for defaultErrorOnly and pass", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
-        swaggerPathsPattern: ["test.json"],
-        enableRoundTripValidator: true
+        swaggerPathsPattern: ["test.json"]
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -1062,8 +1043,7 @@ describe("Live Validator", () => {
         ],
         git: {
           shouldClone: false,
-        },
-        enableRoundTripValidator: true
+        }
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -1102,8 +1082,7 @@ describe("Live validator snapshot validation", () => {
       ],
       git: {
         shouldClone: false,
-      },
-      enableRoundTripValidator: true
+      }
     };
     validator = new LiveValidator(options);
     await validator.initialize();
@@ -1130,8 +1109,7 @@ describe("Live validator snapshot validation", () => {
       ],
       git: {
         shouldClone: false,
-      },
-      enableRoundTripValidator: true
+      }
     };
     const liveValidator = new LiveValidator(options);
     await liveValidator.initialize();
@@ -1164,8 +1142,7 @@ describe("Live validator snapshot validation", () => {
       swaggerPathsPattern: ["specification/contoso/resource-manager/Microsoft.Contoso/**/*.json"],
       git: {
         shouldClone: false,
-      },
-      enableRoundTripValidator: true
+      }
     };
     const liveValidator = new LiveValidator(options);
     await liveValidator.initialize();
@@ -1183,8 +1160,7 @@ describe("Live validator snapshot validation", () => {
       swaggerPathsPattern: ["specification/contoso/resource-manager/Microsoft.Contoso/**/*.json"],
       git: {
         shouldClone: false,
-      },
-      enableRoundTripValidator: true
+      }
     };
     const liveValidator = new LiveValidator(options);
     await liveValidator.initialize();

@@ -751,7 +751,7 @@ export class LiveValidator {
   ): Promise<LiveValidationResult> {
     const startTime = Date.now();
     if (this.withRefSibingsOperationSearcher === undefined) {
-      const msg = "OperationLoader should be initialized before this call.";
+      const msg = "withRefSibingsOperationSearcher should be initialized before this call.";
       const runtimeException = { code: C.ErrorCodes.RoundtripValidationError.name, message: msg };
       return {
         isSuccessful: undefined,
