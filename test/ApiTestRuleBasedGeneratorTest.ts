@@ -12,7 +12,7 @@ import { inversifyGetInstance } from "../lib/inversifyUtils";
 import { JsonLoader } from "../lib/swagger/jsonLoader";
 import { setDefaultOpts } from "../lib/swagger/loader";
 import { SwaggerLoader, SwaggerLoaderOption } from "../lib/swagger/swaggerLoader";
-import { getInputFiles } from "../lib/util/utils";
+import { getInputFiles, resetPseudoRandomSeed } from "../lib/util/utils";
 
 jest.setTimeout(9999999);
 
@@ -97,6 +97,10 @@ function isCommonSpec(swagger:string) {
 }
 
 describe("Api Test rule based generator test", () => {
+  beforeEach(() => {
+    resetPseudoRandomSeed(0);
+  });
+
   const specFolder = resolve(`${__dirname}/../regression/azure-rest-api-specs`);
   const specPaths: string[] = glob.sync(
     join(specFolder, "specification/**/resource-manager/readme.md"),

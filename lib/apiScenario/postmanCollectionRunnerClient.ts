@@ -13,7 +13,13 @@ import {
   VariableScope,
 } from "postman-collection";
 import { urlParse } from "@azure-tools/openapi-tools-common";
-import { xmsLongRunningOperation, xmsSkipUrlEncoding } from "../util/constants";
+import { isArray } from "lodash";
+import {
+  xmsLongRunningOperation,
+  xmsLongRunningOperationOptions,
+  xmsLongRunningOperationOptionsField,
+  xmsSkipUrlEncoding,
+} from "../util/constants";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { usePseudoRandom } from "../util/utils";
 import {
@@ -39,6 +45,7 @@ import {
 import { DEFAULT_ARM_API_VERSION } from "./constants";
 import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
+import { CallType, postmanArmRules } from "./postmanAssertionRules";
 
 export interface PostmanCollectionRunnerClientOption {
   scenarioFile: string;
@@ -64,6 +71,54 @@ interface PostmanAzureKeyAuthOption {
 }
 
 type PostmanAuthOption = PostmanAADTokenAuthOption | PostmanAzureKeyAuthOption;
+
+function generatePostmanAssertion(parameter: {
+  step: StepRestCall | StepArmTemplate;
+  item: Item;
+  type: CallType;
+  opts?: any;
+}) {
+  const scripts: string[] = [];
+  if (parameter.step.type === "armTemplateDeployment") {
+    return;
+  }
+  const rules = postmanArmRules;
+  for (const rule of rules) {
+    const conditions = rule.conditions;
+    const httpMethods = isArray(conditions.httpMethods)
+      ? conditions.httpMethods
+      : [conditions.httpMethods];
+    const openapiTypes = isArray(conditions.openapiTypes)
+      ? conditions.openapiTypes
+      : [conditions.openapiTypes];
+    const callTypes = isArray(conditions.callTypes) ? conditions.callTypes : [conditions.callTypes];
+    if (
+      !!(parameter.step as StepRestCall).isManagementPlane ===
+        openapiTypes.includes("Management") &&
+      httpMethods.includes(parameter.step.operation?._method as any) &&
+      callTypes.includes(parameter.type) &&
+      (conditions.isAsync === undefined ||
+        !!parameter.step.operation?.[xmsLongRunningOperation] === conditions.isAsync) &&
+      (!conditions.match || conditions.match(parameter))
+    ) {
+      if (rule.assertion?.stepAssertion) {
+        PostmanHelper.appendScripts(scripts, {
+          name: rule.name!,
+          types: ["ResponseDataAssertion", "StatusCodeAssertion"],
+          responseAssertion: rule.assertion.stepAssertion,
+        });
+      }
+      if (rule.assertion?.postmanTestScript) {
+        scripts.push(`pm.test("${rule.name}", function() {`);
+        rule.assertion.postmanTestScript.forEach((s) => scripts.push(s));
+        scripts.push("});");
+      }
+    }
+  }
+  if (scripts.length) {
+    PostmanHelper.addEvent(parameter.item.events, "test", scripts);
+  }
+}
 
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   private opts: PostmanCollectionRunnerClientOption;
@@ -656,9 +711,7 @@ pm.test("Stopped TestProxy recording", function() {
         value: `{{${outputName}}}`,
       });
     }
-    const scriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
-      ? ["DetailResponseLog", "StatusCodeAssertion"]
-      : ["StatusCodeAssertion"];
+    const scriptTypes: PostmanHelper.TestScriptType[] = ["StatusCodeAssertion"];
 
     if (step.responseAssertion) {
       step.responseAssertion = env.resolveObjectValues(step.responseAssertion);
@@ -681,14 +734,8 @@ pm.test("Stopped TestProxy recording", function() {
         step: item.name,
       };
       item.description = JSON.stringify(metadata);
-      this.lroPoll(
-        itemGroup!,
-        item,
-        clientRequest.host,
-        postScripts,
-        false,
-        step.responseAssertion
-      );
+
+      this.lroPoll(itemGroup!, item, step, clientRequest.host, postScripts);
 
       // generate final get
       if (step.operation?._method !== "post") {
@@ -696,9 +743,10 @@ pm.test("Stopped TestProxy recording", function() {
           this.generateFinalGetItem(
             item.name,
             baseUri,
-            item.request.url,
-            item.name,
-            step.operation._method
+            step,
+            step.operation._method,
+            undefined,
+            undefined
           )
         );
       }
@@ -716,38 +764,83 @@ pm.test("Stopped TestProxy recording", function() {
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(item.events, "test", postScripts);
     }
+    generatePostmanAssertion({ step, type: "stepCall", item, opts: this.opts });
   }
 
   private lroPoll(
     itemGroup: ItemGroup<Item>,
     item: Item,
+    step: StepRestCall | StepArmTemplate,
     baseUri: string,
-    postScripts: string[],
-    checkStatus: boolean = false,
-    responseAssertion?: StepResponseAssertion
+    postScripts: string[]
   ) {
+    const finalStateVia =
+      step.type === "restCall"
+        ? step?.operation?.[xmsLongRunningOperationOptions]?.[xmsLongRunningOperationOptionsField]
+        : undefined;
+    const isManagementPlane = step.type === "armTemplateDeployment" || step.isManagementPlane;
     if (this.opts.skipLroPoll) return;
+    const url = item.request.url;
+    const urlStr = `${baseUri}${url.getPathWithQuery()}`;
 
+    // For ARM put or patch operations , by default the final get is original url.
+    const isArmResourceCreate =
+      isManagementPlane && ["put", "patch"].includes(item.request.method.toLowerCase());
     postScripts.push(
       `
-const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Operation-Location");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return ${
+      isArmResourceCreate
+        ? `'${urlStr}'`
+        : `pm.response.headers.get("Location") || pm.response.headers.get("Operation-Location")`
+    }
+  }
+  switch (finalStateVia) {
+    case "location": {
+      return pm.response.headers.get("Location");
+    }
+    case "azure-async-operation": {
+      return pm.response.headers.get("Azure-AsyncOperation");
+    }
+    case "original-uri": {
+      return "${urlStr}";
+    }
+    case "operation-location": {
+      return pm.response.headers.get("Operation-Location");
+    }
+    default:
+      return "";
+  }
+}
+function getProxyUrl(url) {
+  return  "${this.opts.testProxy ?? ""}" ? url.replace("${baseUri}","${
+        this.opts.testProxy ?? ""
+      }") : url
+}
+const pollingUrl = pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Location") || pm.response.headers.get("Operation-Location") || ${
+        isArmResourceCreate ? `'${urlStr}'` : "''"
+      }
 if (pollingUrl) {
-    pm.variables.set("x_polling_url", ${
-      this.opts.testProxy
-        ? `pollingUrl.replace("${baseUri}","${this.opts.testProxy}")`
-        : "pollingUrl"
-    });
+    pm.variables.set("x_polling_url", getProxyUrl(pollingUrl));
+    pm.variables.set("x_final_get_url", getProxyUrl(getLroFinalGetUrl("${finalStateVia ?? ""}")))
     pm.variables.set("x_retry_after", "3");
 }`
     );
 
-    const { item: delayItem } = this.addNewItem("Blank", {
-      name: `_${item.name}_delay`,
-      request: {
-        url: "https://postman-echo.com/delay/{{x_retry_after}}",
-        method: "GET",
+    const { item: delayItem } = this.addNewItem(
+      "Blank",
+      {
+        name: `_${item.name}_delay`,
+        request: {
+          url: "https://postman-echo.com/delay/{{x_retry_after}}",
+          method: "GET",
+        },
       },
-    });
+      baseUri
+    );
     const delayItemMetadata: DelayItemMetadata = {
       type: "delay",
       lro_item_name: item.name,
@@ -799,25 +892,10 @@ try {
 `
     );
 
-    if (checkStatus) {
-      PostmanHelper.appendScripts(pollerPostScripts, {
-        name: "armTemplate deployment status check",
-        types: ["StatusCodeAssertion", "ARMDeploymentStatusAssertion"],
-      });
-    }
-
-    if (responseAssertion) {
-      PostmanHelper.appendScripts(pollerPostScripts, {
-        name: "LRO response assertion",
-        types: ["ResponseDataAssertion"],
-        responseAssertion: responseAssertion,
-      });
-    }
-
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(pollerItem.events, "test", pollerPostScripts);
     }
-
+    generatePostmanAssertion({ step, type: "lroPolling", item: pollerItem, opts: this.opts });
     itemGroup.items.add(pollerItem);
   }
 
@@ -825,12 +903,10 @@ try {
     types: PostmanHelper.TestScriptType[] = ["StatusCodeAssertion"],
     overwriteVariables?: Map<string, string>,
     armTemplate?: ArmTemplate,
-    responseAssertion?: StepResponseAssertion
+    responseAssertion?: StepResponseAssertion,
+    name?: string
   ): string[] {
     const scripts: string[] = [];
-    if (this.opts.verbose) {
-      types.push("DetailResponseLog");
-    }
     if (overwriteVariables !== undefined) {
       types.push("OverwriteVariables");
     }
@@ -841,7 +917,7 @@ try {
     if (types.length > 0) {
       // generate assertion from example
       PostmanHelper.appendScripts(scripts, {
-        name: "response status code assertion.",
+        name: name || "response status code assertion.",
         types: types,
         variables: overwriteVariables,
         armTemplate,
@@ -901,9 +977,7 @@ try {
       raw: JSON.stringify(body, null, 2),
     });
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
-    const scriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
-      ? ["StatusCodeAssertion", "DetailResponseLog"]
-      : ["StatusCodeAssertion"];
+    const scriptTypes: PostmanHelper.TestScriptType[] = ["StatusCodeAssertion"];
 
     const postScripts: string[] = [];
     PostmanHelper.appendScripts(postScripts, {
@@ -912,20 +986,20 @@ try {
       variables: undefined,
     });
 
-    this.lroPoll(itemGroup!, item, armEndpoint, postScripts, true);
+    this.lroPoll(itemGroup!, item, step, armEndpoint, postScripts);
 
     if (postScripts.length > 0) {
+      // to be improved
       PostmanHelper.addEvent(item.events, "test", postScripts);
     }
 
-    const generatedGetScriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
-      ? ["DetailResponseLog", "ExtractARMTemplateOutput"]
-      : ["ExtractARMTemplateOutput"];
+    generatePostmanAssertion({ step, type: "armTemplateCall", item: item, opts: this.opts });
+
+    const generatedGetScriptTypes: PostmanHelper.TestScriptType[] = ["ExtractARMTemplateOutput"];
     const generatedGetOperationItem = this.generateFinalGetItem(
       item.name,
       armEndpoint,
-      item.request.url,
-      step.step,
+      step,
       "put",
       generatedGetScriptTypes,
       armTemplate
@@ -936,11 +1010,11 @@ try {
   private generateFinalGetItem(
     name: string,
     baseUri: string,
-    url: Url,
-    step: string,
+    step: StepRestCall | StepArmTemplate,
     prevMethod: string = "put",
     scriptTypes: PostmanHelper.TestScriptType[] = [],
-    armTemplate?: ArmTemplate
+    armTemplate?: ArmTemplate,
+    finalStateVia?: string
   ): Item {
     const { item } = this.addNewItem(
       "Blank",
@@ -948,26 +1022,36 @@ try {
         name: `_${name}_final_get`,
         request: {
           method: "GET",
-          url: "",
+          url: `{{x_final_get_url}}`,
         },
       },
       baseUri
     );
-    item.request.url = url;
+
     const metadata: FinalGetItemMetadata = {
       type: "finalGet",
       lro_item_name: name,
-      step,
+      step: step.step,
     };
     item.description = JSON.stringify(metadata);
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
     if (prevMethod !== "delete") {
       scriptTypes.push("StatusCodeAssertion");
     }
-    const postScripts = this.generatePostScripts(scriptTypes, undefined, armTemplate);
+    const postScripts = this.generatePostScripts(scriptTypes, undefined, armTemplate, undefined);
     if (postScripts.length > 0) {
+      // to be improved
       PostmanHelper.addEvent(item.events, "test", postScripts);
     }
+    if (finalStateVia && finalStateVia !== "original-uri") {
+      PostmanHelper.addEvent(item.events, "prerequest", [
+        `pm.test("LRO final-state-via is valid", () => 
+        {
+          pm.expect(pm.variables.get("x_final_get_url")).to.be.not.undefined;
+        })`,
+      ]);
+    }
+    generatePostmanAssertion({ step, type: "lroFinalGet", item: item, opts: this.opts });
     return item;
   }
 }
