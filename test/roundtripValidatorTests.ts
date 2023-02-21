@@ -1,7 +1,11 @@
 import * as assert from "assert";
+import * as path from "path";
 import { DefaultConfig } from "../lib/util/constants";
 import { RequestResponsePair } from "../lib/liveValidation/liveValidator";
 import { LiveValidator } from "../lib/liveValidation/liveValidator";
+
+// eslint-disable-next-line no-var
+var glob = require("glob").glob;
 
 jest.setTimeout(999999);
 
