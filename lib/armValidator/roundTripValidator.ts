@@ -3,7 +3,7 @@ import { RequestResponsePair, LiveValidationIssue } from "../liveValidation/live
 import { OperationContext } from "../liveValidation/operationValidator";
 import { roundTripValidationErrors } from "../util/errorDefinitions";
 import { Parameter, Operation } from "../swagger/swaggerTypes";
-import { JsonFullResolvedLoader } from "../swagger/jsonFullResolvedLoader";
+import { JsonLoader } from "../swagger/jsonLoader";
 import { SchemaSearcher } from "../apiScenario/schemaSearcher";
 
 const statusCodeMap = new Map([
@@ -20,7 +20,7 @@ const notAllowed = false;
 function checkReplacedSchemaInParameter(
   jsonPath: string,
   parameter: Parameter,
-  jsonLoader: JsonFullResolvedLoader
+  jsonLoader: JsonLoader
 ) {
   if (parameter.in === "body") {
     const schema = jsonLoader.resolveRefObj(parameter.schema!);
@@ -41,7 +41,7 @@ function checkReplacedSchemaInParameter(
 function checkRemovedSchemaInParameter(
   jsonPath: string,
   parameter: Parameter,
-  jsonLoader: JsonFullResolvedLoader
+  jsonLoader: JsonLoader
 ) {
   if (parameter.in === "body") {
     const schema = jsonLoader.resolveRefObj(parameter.schema!);
@@ -61,7 +61,7 @@ function checkRemovedSchemaInParameter(
 function checkSchemaInResponse(
   jsonPath: string,
   op: Operation,
-  jsonLoader: JsonFullResolvedLoader,
+  jsonLoader: JsonLoader,
   responseStatusCode: string
 ) {
   let statusCode;
@@ -92,7 +92,7 @@ function checkSchemaInResponse(
 export function diffRequestResponse(
   payload: RequestResponsePair,
   info: OperationContext,
-  jsonLoader: JsonFullResolvedLoader
+  jsonLoader: JsonLoader
 ) {
   const diffs = getJsonPatchDiff(payload.liveRequest.body ?? {}, payload.liveResponse.body ?? {}, {
     includeOldValue: true,

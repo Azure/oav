@@ -591,6 +591,7 @@ describe("Live Validator", () => {
         const options = {
           directory: "./test/liveValidation/swaggers/specification/storage",
           swaggerPathsPattern: ["**/*.json"],
+          enableRoundTripValidator: true
         };
         const validator = new LiveValidator(options);
         await validator.initialize();
@@ -716,6 +717,7 @@ describe("Live Validator", () => {
         swaggerPathsPattern: [
           "specification/apimanagement/resource-manager/Microsoft.ApiManagement/**/*.json",
         ],
+        enableRoundTripValidator: true
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -1101,6 +1103,7 @@ describe("Live validator snapshot validation", () => {
       git: {
         shouldClone: false,
       },
+      enableRoundTripValidator: true
     };
     validator = new LiveValidator(options);
     await validator.initialize();
@@ -1128,6 +1131,7 @@ describe("Live validator snapshot validation", () => {
       git: {
         shouldClone: false,
       },
+      enableRoundTripValidator: true
     };
     const liveValidator = new LiveValidator(options);
     await liveValidator.initialize();
@@ -1161,6 +1165,7 @@ describe("Live validator snapshot validation", () => {
       git: {
         shouldClone: false,
       },
+      enableRoundTripValidator: true
     };
     const liveValidator = new LiveValidator(options);
     await liveValidator.initialize();
@@ -1179,6 +1184,7 @@ describe("Live validator snapshot validation", () => {
       git: {
         shouldClone: false,
       },
+      enableRoundTripValidator: true
     };
     const liveValidator = new LiveValidator(options);
     await liveValidator.initialize();

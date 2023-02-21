@@ -126,7 +126,7 @@ export class LiveValidator {
 
   public operationSearcher: OperationSearcher;
 
-  public resolvedOperationSearcher: OperationSearcher;
+  public withRefSibingsOperationSearcher: OperationSearcher;
 
   public swaggerList: string[] = [];
 
@@ -180,7 +180,7 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions;
     this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
-    this.resolvedOperationSearcher = new OperationSearcher(this.logging);
+    this.withRefSibingsOperationSearcher = new OperationSearcher(this.logging);
   }
 
   /**
@@ -694,7 +694,7 @@ export class LiveValidator {
         );
       }
       if (info.operationMatch === undefined) {
-        const result = this.resolvedOperationSearcher.search(info.validationRequest);
+        const result = this.withRefSibingsOperationSearcher.search(info.validationRequest);
         info.apiVersion = result.apiVersion;
         info.operationMatch = result.operationMatch;
       }
@@ -750,7 +750,7 @@ export class LiveValidator {
     requestResponseObj: RequestResponsePair
   ): Promise<LiveValidationResult> {
     const startTime = Date.now();
-    if (this.resolvedOperationSearcher === undefined) {
+    if (this.withRefSibingsOperationSearcher === undefined) {
       const msg = "OperationLoader should be initialized before this call.";
       const runtimeException = { code: C.ErrorCodes.RoundtripValidationError.name, message: msg };
       return {
@@ -881,7 +881,7 @@ export class LiveValidator {
       this.operationSearcher.addSpecToCache(spec);
       if (this.options.enableRoundTripValidator) {
         resolvedSpec = await loader.load(pathResolve(swaggerPath), true);
-        this.resolvedOperationSearcher.addSpecToCache(resolvedSpec);
+        this.withRefSibingsOperationSearcher.addSpecToCache(resolvedSpec);
       }
       // TODO: add data-plane RP to cache.
       this.logging(

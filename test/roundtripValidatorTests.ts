@@ -27,7 +27,30 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
 
-      assert.equal(validator.resolvedOperationSearcher.cache.size, 1);
+      assert.equal(validator.withRefSibingsOperationSearcher.cache.size, 1);
+    });
+
+    it("OperationLoader should be completely initialized", async () => {
+      console.log("OperationLoader should be completely initialized");
+      const swaggerPattern = "specification/**/*.json";
+      const glob = require("glob");
+      const filePaths: string[] = glob.sync(swaggerPattern, {
+        ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
+        nodir: true,
+      });
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: [
+          "**/*.json"
+        ],
+        swaggerPaths: filePaths,
+        enableRoundTripValidator: true,
+        excludedSwaggerPathsPattern: []
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+
+      assert.equal(validator.withRefSibingsOperationSearcher.cache.size, 19);
     });
 
     it("readonly properties should not cause error", async () => {
