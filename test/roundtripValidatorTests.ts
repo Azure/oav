@@ -54,7 +54,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
 
-      assert.equal(validator.withRefSibingsOperationSearcher.cache.size, 19);
+      assert.equal(validator.withRefSibingsOperationSearcher.cache.size, 20);
     });
 
     it("readonly properties should not cause error", async () => {
