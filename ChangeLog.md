@@ -1,6 +1,6 @@
 # Change Log - oav
 
-## 02/04/2023 3.2.7
+## 02/24/2023 3.2.7
 - Fix roundtrip validation model with circular reference
 
 ## 02/23/2023 3.2.6
