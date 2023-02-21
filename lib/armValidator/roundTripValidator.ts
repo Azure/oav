@@ -2,17 +2,10 @@ import { getJsonPatchDiff } from "../apiScenario/diffUtils";
 import { RequestResponsePair, LiveValidationIssue } from "../liveValidation/liveValidator";
 import { OperationContext } from "../liveValidation/operationValidator";
 import { roundTripValidationErrors } from "../util/errorDefinitions";
+import * as utils from "../util/utils";
 import { Parameter, Operation } from "../swagger/swaggerTypes";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { SchemaSearcher } from "../apiScenario/schemaSearcher";
-
-const statusCodeMap = new Map([
-  ["OK", "200"],
-  ["CREATED", "201"],
-  ["ACCEPTED", "202"],
-  ["NO CONTENT", "204"],
-  ["INTERNAL SERVER ERROR", "500"],
-]);
 
 const allowed = true;
 const notAllowed = false;
@@ -22,14 +15,14 @@ function checkReplacedSchemaInParameter(
   parameter: Parameter,
   jsonLoader: JsonLoader
 ) {
+  const subSet = (currentValue: string) => ["create", "read"].includes(currentValue);
   if (parameter.in === "body") {
     const schema = jsonLoader.resolveRefObj(parameter.schema!);
     const foundSchema = SchemaSearcher.findSchemaByJsonPointer(jsonPath, schema, jsonLoader);
     if (
       foundSchema.readOnly ||
       foundSchema.default ||
-      (foundSchema["x-ms-mutability"] &&
-        isSubset(foundSchema["x-ms-mutability"], ["create", "read"]))
+      (foundSchema["x-ms-mutability"] && foundSchema["x-ms-mutability"].every(subSet))
     ) {
       return allowed;
     }
@@ -43,13 +36,13 @@ function checkRemovedSchemaInParameter(
   parameter: Parameter,
   jsonLoader: JsonLoader
 ) {
+  const subSet = (currentValue: string) => ["create", "update"].includes(currentValue);
   if (parameter.in === "body") {
     const schema = jsonLoader.resolveRefObj(parameter.schema!);
     const foundSchema = SchemaSearcher.findSchemaByJsonPointer(jsonPath, schema, jsonLoader);
     if (
       foundSchema["x-ms-secret"] ||
-      (foundSchema["x-ms-mutability"] &&
-        isSubset(foundSchema["x-ms-mutability"], ["create", "update"]))
+      (foundSchema["x-ms-mutability"] && foundSchema["x-ms-mutability"].every(subSet))
     ) {
       return allowed;
     }
@@ -66,7 +59,7 @@ function checkSchemaInResponse(
 ) {
   let statusCode;
   if (isNaN(+responseStatusCode)) {
-    statusCode = statusCodeMap.get(responseStatusCode.toUpperCase());
+    statusCode = utils.statusCodeStringToStatusCode[responseStatusCode.toLowerCase()];
     if (statusCode === undefined) {
       statusCode = "default";
     }
@@ -105,12 +98,16 @@ export function diffRequestResponse(
       if (it.replace !== undefined) {
         let isAllowed = false;
         for (let parameter of info.operationMatch?.operation.parameters ?? []) {
-          isAllowed =
-            isAllowed || checkReplacedSchemaInParameter(it.replace, parameter, jsonLoader);
+          if (isAllowed) {
+            break;
+          }
+          isAllowed = checkReplacedSchemaInParameter(it.replace, parameter, jsonLoader);
         }
         for (let parameter of info.operationMatch?.operation._path.parameters ?? []) {
-          isAllowed =
-            isAllowed || checkReplacedSchemaInParameter(it.replace, parameter, jsonLoader);
+          if (isAllowed) {
+            break;
+          }
+          isAllowed = checkReplacedSchemaInParameter(it.replace, parameter, jsonLoader);
         }
         if (!isAllowed) {
           return buildLiveValidationIssue("ROUNDTRIP_INCONSISTENT_PROPERTY", jsonPath, it);
@@ -129,10 +126,16 @@ export function diffRequestResponse(
       } else if (it.remove !== undefined) {
         let isAllowed = false;
         for (let parameter of info.operationMatch?.operation.parameters ?? []) {
-          isAllowed = isAllowed || checkRemovedSchemaInParameter(it.remove, parameter, jsonLoader);
+          if (isAllowed) {
+            break;
+          }
+          isAllowed = checkRemovedSchemaInParameter(it.remove, parameter, jsonLoader);
         }
         for (let parameter of info.operationMatch?.operation._path.parameters ?? []) {
-          isAllowed = isAllowed || checkRemovedSchemaInParameter(it.remove, parameter, jsonLoader);
+          if (isAllowed) {
+            break;
+          }
+          isAllowed = checkRemovedSchemaInParameter(it.remove, parameter, jsonLoader);
         }
         if (!isAllowed) {
           return buildLiveValidationIssue("ROUNDTRIP_MISSING_PROPERTY", jsonPath, it);
@@ -196,19 +199,4 @@ export function buildLiveValidationIssue(
   };
 
   return ret as LiveValidationIssue;
-}
-
-function isSubset(ele: string | string[], set: string[]) {
-  if (typeof ele === "string") {
-    if (set.includes(ele)) {
-      return true;
-    }
-    return false;
-  }
-  for (const e of ele) {
-    if (!set.includes(e)) {
-      return false;
-    }
-  }
-  return true;
 }
