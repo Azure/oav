@@ -233,16 +233,27 @@ export class NewmanReportValidator {
       if (matchedStep.type === "restCall" && !matchedStep.externalReference) {
         if (this.opts.generateExample) {
           const statusCode = `${it.response.statusCode}`;
+          let statusCodes = {
+            [statusCode]: {
+              headers: payload.liveResponse.headers,
+              body: payload.liveResponse.body,
+            },
+          };
+          if (lroFinalPayLoad) {
+            const statusCode = lroFinalPayLoad.liveResponse.statusCode;
+            statusCodes[statusCode] = {
+              headers: lroFinalPayLoad.liveResponse.headers,
+              body: lroFinalPayLoad.liveResponse.body,
+            };
+          }
+
           const generatedExample: SwaggerExample = {
             operationId: matchedStep.operationId,
             title: matchedStep.step,
             description: matchedStep.description,
             parameters: matchedStep._resolvedParameters!,
             responses: {
-              [statusCode]: {
-                headers: payload.liveResponse.headers,
-                body: payload.liveResponse.body,
-              },
+              ...statusCodes,
             },
           };
 
