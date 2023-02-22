@@ -457,6 +457,7 @@ export class LiveValidator {
         info,
         this.loader,
         options.includeErrors,
+        this.options.isArmCall,
         this.logging
       );
     } catch (reqValidationError) {
