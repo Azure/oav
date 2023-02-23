@@ -7,6 +7,11 @@
     - update the mechanism of gettig the lro polling url.
 - Support generating the ARM rules for api scenario.
 
+## 02/19/2023 3.2.6
+
+- LiveValidator - logging INVALID_TYPE error for additionalProperties for RpaaS call
+- TrafficValidator - bug fix about incorrect payload file path in html report
+
 ## 02/03/2023 3.2.5
 
 - Lock @apidevtools/swagger-parser@10.0.3 as 10.1.0 brings conflict of ajv package version
@@ -14,7 +19,6 @@
   - Support `--scope` option in static generator
 - API Scenario
   - Skip create and delete resource group if specify resource group name
-- bug fix about incorrect payload file path in html report
 
 ## 01/30/2023 3.2.4
 
