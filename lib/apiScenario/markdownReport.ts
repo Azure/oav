@@ -154,6 +154,8 @@ const stepIsFatal = (sr: StepResult) => sr.runtimeError && sr.runtimeError.lengt
 const stepIsFailed = (sr: StepResult) =>
   (sr.liveValidationResult && sr.liveValidationResult.requestValidationResult.errors.length > 0) ||
   (sr.liveValidationResult && sr.liveValidationResult.responseValidationResult.errors.length > 0) ||
+  (sr.liveValidationForLroFinalGetResult &&
+    sr.liveValidationForLroFinalGetResult.responseValidationResult.errors.length > 0) ||
   (sr.roundtripValidationResult && sr.roundtripValidationResult.errors.length > 0);
 
 const asMarkdownStepResult = (sr: StepResult): ApiScenarioMarkdownStepResult => {
@@ -167,6 +169,9 @@ const asMarkdownStepResult = (sr: StepResult): ApiScenarioMarkdownStepResult => 
   const failedErrorsCount =
     (sr.liveValidationResult ? sr.liveValidationResult.requestValidationResult.errors.length : 0) +
     (sr.liveValidationResult ? sr.liveValidationResult.responseValidationResult.errors.length : 0) +
+    (sr.liveValidationForLroFinalGetResult
+      ? sr.liveValidationForLroFinalGetResult.responseValidationResult.errors.length
+      : 0) +
     (sr.roundtripValidationResult ? sr.roundtripValidationResult.errors.length : 0);
 
   const r: ApiScenarioMarkdownStepResult = {

@@ -1,5 +1,12 @@
 # Change Log - oav
 
+## 02/23/2023 3.2.6
+
+- Improved the API scenario long running operation pooling mechanism.
+    - support for checking final-via-state
+    - update the mechanism of gettig the lro polling url.
+- Support generating the ARM rules for api scenario.
+
 ## 02/19/2023 3.2.6
 
 - LiveValidator - logging INVALID_TYPE error for additionalProperties for RpaaS call

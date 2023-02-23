@@ -60,6 +60,7 @@ export interface StepResult {
   runtimeError?: RuntimeError[];
   liveValidationResult?: RequestResponseLiveValidationResult;
   roundtripValidationResult?: LiveValidationResult;
+  liveValidationForLroFinalGetResult?: RequestResponseLiveValidationResult;
 }
 
 export interface RuntimeError {
@@ -173,14 +174,34 @@ export class NewmanReportValidator {
       }
 
       const payload = this.convertToLiveValidationPayload(it);
+      let lroFinalPayLoad;
+
+      // associate  final get response to the
+      if (it.annotation.type === "LRO" && [200, 201, 202].includes(it.response.statusCode)) {
+        const lroFinalGetExecution = this.getLROFinalResponse(
+          newmanReport.executions,
+          it.annotation.step
+        );
+        if (lroFinalGetExecution?.response.statusCode === 200) {
+          lroFinalPayLoad = this.convertToLROLiveValidationPayload(it, lroFinalGetExecution);
+        }
+      }
 
       let payloadFilePath;
+      let lroPayloadFilePath;
       if (this.opts.savePayload) {
         payloadFilePath = `./payloads/${it.annotation.itemName}.json`;
         await this.fileLoader.writeFile(
           path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
           JSON.stringify(payload, null, 2)
         );
+        if (lroFinalPayLoad) {
+          lroPayloadFilePath = `./payloads/${it.annotation.itemName}-finalResult.json`;
+          await this.fileLoader.writeFile(
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), lroPayloadFilePath),
+            JSON.stringify(lroFinalPayLoad, null, 2)
+          );
+        }
       }
 
       const matchedStep = this.getMatchedStep(it.annotation.step);
@@ -207,24 +228,38 @@ export class NewmanReportValidator {
 
       let liveValidationResult = undefined;
       let roundtripValidationResult = undefined;
+      let liveValidationForLroFinalGetResult = undefined;
       let specFilePath = undefined;
       if (matchedStep.type === "restCall" && !matchedStep.externalReference) {
         if (this.opts.generateExample) {
           const statusCode = `${it.response.statusCode}`;
+          let statusCodes = {
+            [statusCode]: {
+              headers: payload.liveResponse.headers,
+              body: payload.liveResponse.body,
+            },
+          };
+          if (lroFinalPayLoad) {
+            const statusCode = lroFinalPayLoad.liveResponse.statusCode;
+            statusCodes[statusCode] = {
+              headers: lroFinalPayLoad.liveResponse.headers,
+              body: lroFinalPayLoad.liveResponse.body,
+            };
+          }
+
           const generatedExample: SwaggerExample = {
             operationId: matchedStep.operationId,
             title: matchedStep.step,
             description: matchedStep.description,
             parameters: matchedStep._resolvedParameters!,
             responses: {
-              [statusCode]: {
-                headers: payload.liveResponse.headers,
-                body: payload.liveResponse.body,
-              },
+              ...statusCodes,
             },
           };
 
-          const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
+          const exampleFilePath = `./examples/${matchedStep.operationId}_${Object.keys(
+            statusCodes
+          ).join("_")}.json`;
           await this.fileLoader.writeFile(
             path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
             JSON.stringify(generatedExample, null, 2)
@@ -235,6 +270,11 @@ export class NewmanReportValidator {
         liveValidationResult = !this.opts.skipValidation
           ? await this.liveValidator.validateLiveRequestResponse(payload)
           : undefined;
+
+        liveValidationForLroFinalGetResult =
+          !this.opts.skipValidation && lroFinalPayLoad && matchedStep.isManagementPlane
+            ? await this.liveValidator.validateLiveRequestResponse(lroFinalPayLoad)
+            : undefined;
 
         // // Roundtrip validation
         // if (
@@ -271,6 +311,7 @@ export class NewmanReportValidator {
         stepName: it.annotation.step,
         liveValidationResult,
         roundtripValidationResult,
+        liveValidationForLroFinalGetResult,
       });
     }
   }
@@ -295,28 +336,28 @@ export class NewmanReportValidator {
     };
   }
 
-  // private convertToLROLiveValidationPayload(
-  //   putReq: NewmanExecution,
-  //   getReq: NewmanExecution
-  // ): RequestResponsePair {
-  //   const request = putReq.request;
-  //   const response = getReq.response;
-  //   const liveRequest: LiveRequest = {
-  //     url: request.url,
-  //     method: request.method.toLowerCase(),
-  //     headers: request.headers,
-  //     body: this.parseBody(request.body),
-  //   };
-  //   const liveResponse: LiveResponse = {
-  //     statusCode: `${response.statusCode}`,
-  //     headers: response.headers,
-  //     body: this.parseBody(response.body),
-  //   };
-  //   return {
-  //     liveRequest,
-  //     liveResponse,
-  //   };
-  // }
+  private convertToLROLiveValidationPayload(
+    putReq: NewmanExecution,
+    getReq: NewmanExecution
+  ): RequestResponsePair {
+    const request = putReq.request;
+    const response = getReq.response;
+    const liveRequest: LiveRequest = {
+      url: request.url,
+      method: request.method.toLowerCase(),
+      headers: request.headers,
+      body: this.parseBody(request.body),
+    };
+    const liveResponse: LiveResponse = {
+      statusCode: `${response.statusCode}`,
+      headers: response.headers,
+      body: this.parseBody(response.body),
+    };
+    return {
+      liveRequest,
+      liveResponse,
+    };
+  }
 
   // body may not be json string
   private parseBody(body: string): any {
@@ -348,11 +389,11 @@ export class NewmanReportValidator {
     return result;
   }
 
-  // private getLROFinalResponse(executions: NewmanExecution[], initialStep: string) {
-  //   return executions.find(
-  //     (it) => it.annotation?.type === "finalGet" && it.annotation.step === initialStep
-  //   );
-  // }
+  private getLROFinalResponse(executions: NewmanExecution[], initialStep: string) {
+    return executions.find(
+      (it) => it.annotation?.type === "finalGet" && it.annotation.step === initialStep
+    );
+  }
 
   private getMatchedStep(stepName: string): Step | undefined {
     return this.scenario.steps?.find((s) => s.step === stepName);
