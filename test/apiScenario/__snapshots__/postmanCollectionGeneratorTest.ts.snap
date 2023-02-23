@@ -3296,13 +3296,61 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"http://localhost:5000\\" ? url.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "m388ep",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "qq5z84",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "j917fd",
                 "type": "text/javascript",
               },
             },
@@ -3404,6 +3452,20 @@ if (pollingUrl) {
           "id": "7wi32c",
           "name": "_createStorageAccount_delay",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -3525,41 +3587,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "http://localhost:5000",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName_encoded}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -3584,35 +3615,35 @@ try {
       },
       "event": Array [
         Object {
-          "id": "j917fd",
+          "id": "un6yyw",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
               "pm.variables.set(\\"accountName\\", \\"stanprcrj2\\");",
             ],
-            "id": "rxgyxc",
+            "id": "igg58r",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "qq5z84",
+      "id": "rxgyxc",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
           "event": Array [
             Object {
-              "id": "igg58r",
+              "id": "9e4snq",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "zfkej6",
+                "id": "h1l4hw",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "9e4snq",
+              "id": "ezqs5q",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3624,12 +3655,12 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 ",
                   "});",
                 ],
-                "id": "h1l4hw",
+                "id": "cb8v3t",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "un6yyw",
+          "id": "zfkej6",
           "name": "checkName",
           "request": Object {
             "auth": Object {
@@ -3700,7 +3731,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "cb8v3t",
+              "id": "9vqoea",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
@@ -3708,12 +3739,12 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "x7qdfp",
+                "id": "9atymt",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "le21m4",
+              "id": "ssi2a8",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3721,18 +3752,66 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"http://localhost:5000\\" ? url.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "7oxzx1",
+                "id": "cdpopn",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "5sx5dw",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "49cuyt",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "ezqs5q",
+          "id": "x7qdfp",
           "name": "createStorageAccount",
           "request": Object {
             "auth": Object {
@@ -3826,9 +3905,23 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "9vqoea",
+          "id": "d39qgw",
           "name": "_createStorageAccount_delay",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -3850,7 +3943,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "d39qgw",
+              "id": "x6exws",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3876,12 +3969,12 @@ try {
 }
 ",
                 ],
-                "id": "jhzmpv",
+                "id": "6qbw4d",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "9atymt",
+          "id": "jhzmpv",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "header": Array [
@@ -3913,7 +4006,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "6qbw4d",
+              "id": "le21m4",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3921,12 +4014,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "bhuvqx",
+                "id": "7oxzx1",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "x6exws",
+          "id": "bhuvqx",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -3950,41 +4043,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "http://localhost:5000",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName_encoded}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -4009,35 +4071,35 @@ try {
       },
       "event": Array [
         Object {
-          "id": "5sx5dw",
+          "id": "i544h5",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
-              "pm.variables.set(\\"accountName\\", \\"foobarssi2a8\\");",
+              "pm.variables.set(\\"accountName\\", \\"foobar8ew1jk\\");",
             ],
-            "id": "49cuyt",
+            "id": "db187u",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "cdpopn",
+      "id": "x6oaag",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
           "event": Array [
             Object {
-              "id": "x6oaag",
+              "id": "b9q1ra",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "i544h5",
+                "id": "3zgew6",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "db187u",
+              "id": "wpbvc4",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4049,12 +4111,12 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 ",
                   "});",
                 ],
-                "id": "2tccjb",
+                "id": "6rfjty",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "8ew1jk",
+          "id": "2tccjb",
           "name": "checkName",
           "request": Object {
             "auth": Object {
@@ -4125,7 +4187,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "3zgew6",
+              "id": "odc2fc",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
@@ -4133,12 +4195,12 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "wpbvc4",
+                "id": "iqxxs7",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "k97wbk",
+              "id": "9ezdsu",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4146,18 +4208,66 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"http://localhost:5000\\" ? url.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "j58bgv",
+                "id": "vm8psu",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "lk4mhm",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "ivu9xy",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "b9q1ra",
+          "id": "hvl7jw",
           "name": "createStorageAccount",
           "request": Object {
             "auth": Object {
@@ -4251,9 +4361,23 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "6rfjty",
+          "id": "yh0zn8",
           "name": "_createStorageAccount_delay",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -4275,7 +4399,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "odc2fc",
+              "id": "p03jp7",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4301,12 +4425,12 @@ try {
 }
 ",
                 ],
-                "id": "iqxxs7",
+                "id": "k97wbk",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "hvl7jw",
+          "id": "h0fgel",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "header": Array [
@@ -4338,7 +4462,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "h0fgel",
+              "id": "dm09uw",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4346,12 +4470,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "p03jp7",
+                "id": "q1cfqt",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "yh0zn8",
+          "id": "j58bgv",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -4375,41 +4499,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "http://localhost:5000",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName_encoded}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -4418,21 +4511,21 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeletedAccounts_Get\\",\\"itemName\\":\\"DeletedAccounts_Get\\",\\"step\\":\\"DeletedAccounts_Get\\"}",
           "event": Array [
             Object {
-              "id": "9ezdsu",
+              "id": "qh9z16",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
-                  "pm.variables.set(\\"deletedAccountName\\", \\"foobardm09uw\\");",
+                  "pm.variables.set(\\"deletedAccountName\\", \\"foobarmge3qz\\");",
                   "pm.variables.set(\\"deletedAccountName_encoded\\", encodeURIComponent(pm.variables.get(\\"deletedAccountName\\")));",
                   "pm.variables.set(\\"location_encoded\\", encodeURIComponent(pm.variables.get(\\"location\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "vm8psu",
+                "id": "eq5yyi",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "lk4mhm",
+              "id": "kqos97",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4440,12 +4533,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "ivu9xy",
+                "id": "bsqg1o",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "q1cfqt",
+          "id": "spylrr",
           "name": "DeletedAccounts_Get",
           "request": Object {
             "auth": Object {
@@ -4539,24 +4632,24 @@ try {
       },
       "event": Array [
         Object {
-          "id": "spylrr",
+          "id": "65xm09",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
               "pm.variables.set(\\"parameters\\", {\\"properties\\":{\\"sku\\":{\\"name\\":\\"Standard_LRS\\"},\\"kind\\":\\"StorageV2\\",\\"location\\":\\"westus\\",\\"properties\\":{\\"encryption\\":{\\"services\\":{\\"blob\\":{}},\\"keySource\\":\\"Microsoft.Storage\\"}},\\"patches\\":[{\\"add\\":\\"/properties/kind\\",\\"value\\":\\"StorageV2\\"}]}});",
             ],
-            "id": "qh9z16",
+            "id": "tyolxx",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "mge3qz",
+      "id": "a7lkxi",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "kqos97",
+              "id": "gsyqal",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
@@ -4565,12 +4658,12 @@ try {
                   "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "bsqg1o",
+                "id": "wlgh2r",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "sp8ib7",
+              "id": "ehebqq",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4578,18 +4671,66 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"http://localhost:5000\\" ? url.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "ew9nh8",
+                "id": "zo75y7",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "9quvnq",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "odehko",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "eq5yyi",
+          "id": "c9wzyn",
           "name": "createStorageAccount",
           "request": Object {
             "auth": Object {
@@ -4689,9 +4830,23 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "a7lkxi",
+          "id": "d9yng9",
           "name": "_createStorageAccount_delay",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -4713,7 +4868,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "tyolxx",
+              "id": "ew9nh8",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4739,12 +4894,12 @@ try {
 }
 ",
                 ],
-                "id": "c9wzyn",
+                "id": "2vc31r",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "65xm09",
+          "id": "sp8ib7",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "header": Array [
@@ -4776,7 +4931,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "wlgh2r",
+              "id": "yzy1ec",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4784,12 +4939,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "d9yng9",
+                "id": "l0fzps",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "gsyqal",
+          "id": "bw1q38",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -4813,41 +4968,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "http://localhost:5000",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName_encoded}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -4857,12 +4981,12 @@ try {
     },
     Object {
       "event": Array [],
-      "id": "bw1q38",
+      "id": "f9zxy5",
       "item": Array [
         Object {
           "event": Array [
             Object {
-              "id": "yzy1ec",
+              "id": "76ivhq",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4870,12 +4994,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "l0fzps",
+                "id": "b3xozx",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "2vc31r",
+          "id": "col7eq",
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [
@@ -4932,7 +5056,7 @@ try {
         Object {
           "event": Array [
             Object {
-              "id": "zo75y7",
+              "id": "86w5gc",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4942,12 +5066,12 @@ try {
                   "});",
                   "",
                 ],
-                "id": "9quvnq",
+                "id": "fujl6i",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "ehebqq",
+          "id": "8ef99f",
           "name": "stopTestProxyRecording",
           "request": Object {
             "body": Object {
@@ -5324,13 +5448,61 @@ if (
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "1ueh28",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "3q0yb6",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "6w00ic",
                 "type": "text/javascript",
               },
             },
@@ -5551,43 +5723,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "https://management",
-                "azure",
-                "com",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName_encoded}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -5596,7 +5735,7 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_Update\\",\\"exampleName\\":\\"../examples/StorageAccountUpdate.json\\",\\"itemName\\":\\"updateStorageAccount\\",\\"step\\":\\"updateStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "6w00ic",
+              "id": "qq5z84",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
@@ -5604,12 +5743,12 @@ try {
                   "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "m388ep",
+                "id": "j917fd",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "qq5z84",
+              "id": "rxgyxc",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -5617,12 +5756,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "j917fd",
+                "id": "un6yyw",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "3q0yb6",
+          "id": "m388ep",
           "name": "updateStorageAccount",
           "request": Object {
             "auth": Object {
@@ -5736,7 +5875,7 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_GetProperties\\",\\"exampleName\\":\\"../examples/StorageAccountGetProperties.json\\",\\"itemName\\":\\"getStorageAccount\\",\\"step\\":\\"getStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "un6yyw",
+              "id": "zfkej6",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
@@ -5744,12 +5883,12 @@ try {
                   "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "igg58r",
+                "id": "9e4snq",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "zfkej6",
+              "id": "h1l4hw",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -5757,12 +5896,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "9e4snq",
+                "id": "ezqs5q",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "rxgyxc",
+          "id": "igg58r",
           "name": "getStorageAccount",
           "request": Object {
             "auth": Object {
@@ -5824,7 +5963,7 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_Delete\\",\\"exampleName\\":\\"../examples/StorageAccountDelete.json\\",\\"itemName\\":\\"deleteStorageAccount\\",\\"step\\":\\"deleteStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "ezqs5q",
+              "id": "x7qdfp",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
@@ -5832,12 +5971,12 @@ try {
                   "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "cb8v3t",
+                "id": "9vqoea",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "x7qdfp",
+              "id": "9atymt",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -5845,12 +5984,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "9vqoea",
+                "id": "d39qgw",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "h1l4hw",
+          "id": "cb8v3t",
           "name": "deleteStorageAccount",
           "request": Object {
             "auth": Object {
@@ -5913,12 +6052,12 @@ try {
     },
     Object {
       "event": Array [],
-      "id": "d39qgw",
+      "id": "x6exws",
       "item": Array [
         Object {
           "event": Array [
             Object {
-              "id": "jhzmpv",
+              "id": "6qbw4d",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -5926,12 +6065,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "x6exws",
+                "id": "bhuvqx",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "9atymt",
+          "id": "jhzmpv",
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [
@@ -6313,13 +6452,61 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "1ueh28",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "3q0yb6",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "6w00ic",
                 "type": "text/javascript",
               },
             },
@@ -6506,43 +6693,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "https://management",
-                "azure",
-                "com",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName_encoded}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -6567,35 +6721,35 @@ try {
       },
       "event": Array [
         Object {
-          "id": "6w00ic",
+          "id": "qq5z84",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
               "pm.variables.set(\\"accountName\\", \\"stanprcrj2\\");",
             ],
-            "id": "m388ep",
+            "id": "j917fd",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "3q0yb6",
+      "id": "m388ep",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
           "event": Array [
             Object {
-              "id": "j917fd",
+              "id": "un6yyw",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "rxgyxc",
+                "id": "igg58r",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "un6yyw",
+              "id": "zfkej6",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -6607,12 +6761,12 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 ",
                   "});",
                 ],
-                "id": "igg58r",
+                "id": "9e4snq",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "qq5z84",
+          "id": "rxgyxc",
           "name": "checkName",
           "request": Object {
             "auth": Object {
@@ -6673,7 +6827,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "9e4snq",
+              "id": "ezqs5q",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
@@ -6681,12 +6835,12 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "h1l4hw",
+                "id": "cb8v3t",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "x6exws",
+              "id": "bhuvqx",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -6694,18 +6848,66 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "6qbw4d",
+                "id": "le21m4",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "7oxzx1",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "ssi2a8",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "zfkej6",
+          "id": "h1l4hw",
           "name": "createStorageAccount",
           "request": Object {
             "auth": Object {
@@ -6789,7 +6991,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "ezqs5q",
+          "id": "x7qdfp",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -6813,7 +7015,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "x7qdfp",
+              "id": "9atymt",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -6839,12 +7041,12 @@ try {
 }
 ",
                 ],
-                "id": "9vqoea",
+                "id": "d39qgw",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "cb8v3t",
+          "id": "9vqoea",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "method": "GET",
@@ -6862,7 +7064,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "d39qgw",
+              "id": "x6exws",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -6870,12 +7072,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "jhzmpv",
+                "id": "6qbw4d",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "9atymt",
+          "id": "jhzmpv",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -6887,43 +7089,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "https://management",
-                "azure",
-                "com",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName_encoded}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -6948,35 +7117,35 @@ try {
       },
       "event": Array [
         Object {
-          "id": "7oxzx1",
+          "id": "49cuyt",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
-              "pm.variables.set(\\"accountName\\", \\"foobarbhuvqx\\");",
+              "pm.variables.set(\\"accountName\\", \\"foobarcdpopn\\");",
             ],
-            "id": "ssi2a8",
+            "id": "8ew1jk",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "le21m4",
+      "id": "5sx5dw",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
           "event": Array [
             Object {
-              "id": "5sx5dw",
+              "id": "i544h5",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "49cuyt",
+                "id": "db187u",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "8ew1jk",
+              "id": "2tccjb",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -6988,12 +7157,12 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 ",
                   "});",
                 ],
-                "id": "x6oaag",
+                "id": "b9q1ra",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "cdpopn",
+          "id": "x6oaag",
           "name": "checkName",
           "request": Object {
             "auth": Object {
@@ -7054,7 +7223,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "db187u",
+              "id": "wpbvc4",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
@@ -7062,12 +7231,12 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "2tccjb",
+                "id": "6rfjty",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "yh0zn8",
+              "id": "j58bgv",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -7075,18 +7244,66 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "h0fgel",
+                "id": "dm09uw",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "q1cfqt",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "9ezdsu",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "i544h5",
+          "id": "3zgew6",
           "name": "createStorageAccount",
           "request": Object {
             "auth": Object {
@@ -7170,7 +7387,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "b9q1ra",
+          "id": "hvl7jw",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -7194,7 +7411,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "wpbvc4",
+              "id": "iqxxs7",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -7220,12 +7437,12 @@ try {
 }
 ",
                 ],
-                "id": "6rfjty",
+                "id": "yh0zn8",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "3zgew6",
+          "id": "odc2fc",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "method": "GET",
@@ -7243,7 +7460,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "odc2fc",
+              "id": "p03jp7",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -7251,12 +7468,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "iqxxs7",
+                "id": "k97wbk",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "hvl7jw",
+          "id": "h0fgel",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -7268,43 +7485,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "https://management",
-                "azure",
-                "com",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName_encoded}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -7313,21 +7497,21 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeletedAccounts_Get\\",\\"itemName\\":\\"DeletedAccounts_Get\\",\\"step\\":\\"DeletedAccounts_Get\\"}",
           "event": Array [
             Object {
-              "id": "j58bgv",
+              "id": "ivu9xy",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
-                  "pm.variables.set(\\"deletedAccountName\\", \\"foobarp03jp7\\");",
+                  "pm.variables.set(\\"deletedAccountName\\", \\"foobarvm8psu\\");",
                   "pm.variables.set(\\"deletedAccountName_encoded\\", encodeURIComponent(pm.variables.get(\\"deletedAccountName\\")));",
                   "pm.variables.set(\\"location_encoded\\", encodeURIComponent(pm.variables.get(\\"location\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "dm09uw",
+                "id": "mge3qz",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "q1cfqt",
+              "id": "spylrr",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -7335,12 +7519,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "9ezdsu",
+                "id": "qh9z16",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "k97wbk",
+          "id": "lk4mhm",
           "name": "DeletedAccounts_Get",
           "request": Object {
             "auth": Object {
@@ -7422,24 +7606,24 @@ try {
       },
       "event": Array [
         Object {
-          "id": "lk4mhm",
+          "id": "kqos97",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
               "pm.variables.set(\\"parameters\\", {\\"properties\\":{\\"sku\\":{\\"name\\":\\"Standard_LRS\\"},\\"kind\\":\\"StorageV2\\",\\"location\\":\\"westus\\",\\"properties\\":{\\"encryption\\":{\\"services\\":{\\"blob\\":{}},\\"keySource\\":\\"Microsoft.Storage\\"}},\\"patches\\":[{\\"add\\":\\"/properties/kind\\",\\"value\\":\\"StorageV2\\"}]}});",
             ],
-            "id": "ivu9xy",
+            "id": "bsqg1o",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "vm8psu",
+      "id": "eq5yyi",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "spylrr",
+              "id": "65xm09",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
@@ -7448,12 +7632,12 @@ try {
                   "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "qh9z16",
+                "id": "tyolxx",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "gsyqal",
+              "id": "bw1q38",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -7461,18 +7645,66 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/{{accountName_encoded}}?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "wlgh2r",
+                "id": "yzy1ec",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "l0fzps",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "ehebqq",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "mge3qz",
+          "id": "a7lkxi",
           "name": "createStorageAccount",
           "request": Object {
             "auth": Object {
@@ -7562,7 +7794,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "eq5yyi",
+          "id": "c9wzyn",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -7586,7 +7818,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "bsqg1o",
+              "id": "wlgh2r",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -7612,12 +7844,12 @@ try {
 }
 ",
                 ],
-                "id": "a7lkxi",
+                "id": "d9yng9",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "kqos97",
+          "id": "gsyqal",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "method": "GET",
@@ -7635,7 +7867,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "tyolxx",
+              "id": "ew9nh8",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -7643,12 +7875,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "c9wzyn",
+                "id": "2vc31r",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "65xm09",
+          "id": "sp8ib7",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -7660,43 +7892,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "https://management",
-                "azure",
-                "com",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName_encoded}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -7706,12 +7905,12 @@ try {
     },
     Object {
       "event": Array [],
-      "id": "sp8ib7",
+      "id": "9quvnq",
       "item": Array [
         Object {
           "event": Array [
             Object {
-              "id": "ew9nh8",
+              "id": "odehko",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -7719,12 +7918,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "2vc31r",
+                "id": "col7eq",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "d9yng9",
+          "id": "zo75y7",
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [
@@ -8016,13 +8215,61 @@ if (
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "hlqn5m",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "7wi32c",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "1rcvet",
                 "type": "text/javascript",
               },
             },
@@ -8231,43 +8478,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "https://management",
-                "azure",
-                "com",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "sto131918",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -8276,19 +8490,19 @@ try {
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount1_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"exampleName\\":\\"../examples/StorageAccountCreateUserAssignedIdentityWithFederatedIdentityClientId.json\\",\\"itemName\\":\\"createStorageAccount1\\",\\"step\\":\\"createStorageAccount1\\"}",
           "event": Array [
             Object {
-              "id": "1rcvet",
+              "id": "vov58h",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
                   "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
                   "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "4fy274",
+                "id": "3l45xk",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "j917fd",
+              "id": "un6yyw",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -8296,18 +8510,66 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
+ // RPC-Async-V1-06 x-ms-long-running-operation-options should indicate the type of response header to track the async operation.
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01'
+  }
+  switch (finalStateVia) {
+    case \\"location\\": {
+      return pm.response.headers.get(\\"Location\\");
+    }
+    case \\"azure-async-operation\\": {
+      return pm.response.headers.get(\\"Azure-AsyncOperation\\");
+    }
+    case \\"original-uri\\": {
+      return \\"https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01\\";
+    }
+    case \\"operation-location\\": {
+      return pm.response.headers.get(\\"Operation-Location\\");
+    }
+    default:
+      return \\"\\";
+  }
+}
+function getProxyUrl(url) {
+  return  \\"\\" ? url.replace(\\"https://management.azure.com\\",\\"\\") : url
+}
+const pollingUrl = pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Operation-Location\\") || 'https://management.azure.com/subscriptions/{{subscriptionId_encoded}}/resourceGroups/{{resourceGroupName_encoded}}/providers/Microsoft.Storage/storageAccounts/sto131918?api-version=2021-08-01'
 if (pollingUrl) {
-    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_polling_url\\", getProxyUrl(pollingUrl));
+    pm.variables.set(\\"x_final_get_url\\", getProxyUrl(getLroFinalGetUrl(\\"\\")))
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "rxgyxc",
+                "id": "igg58r",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "zfkej6",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"AsyncPutShouldReturn201\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "if (pm.response.code === 200) {
+}
+if (pm.response.code === 201) {
+}
+",
+                  "});",
+                  "pm.test(\\"Async202ResponseShouldIncludeLocationHeader\\", function() {",
+                  "if(pm.response.code === 202) { pm.response.to.have.header(\\"Location\\");}",
+                  "});",
+                ],
+                "id": "9e4snq",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "7wi32c",
+          "id": "4fy274",
           "name": "createStorageAccount1",
           "request": Object {
             "auth": Object {
@@ -8413,7 +8675,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount1\\"}",
           "event": Array [],
-          "id": "vov58h",
+          "id": "1ueh28",
           "name": "_createStorageAccount1_delay",
           "request": Object {
             "method": "GET",
@@ -8437,7 +8699,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount1\\"}",
           "event": Array [
             Object {
-              "id": "1ueh28",
+              "id": "6w00ic",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -8463,12 +8725,12 @@ try {
 }
 ",
                 ],
-                "id": "3q0yb6",
+                "id": "m388ep",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "3l45xk",
+          "id": "3q0yb6",
           "name": "_createStorageAccount1_poller",
           "request": Object {
             "method": "GET",
@@ -8486,7 +8748,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount1\\",\\"step\\":\\"createStorageAccount1\\"}",
           "event": Array [
             Object {
-              "id": "m388ep",
+              "id": "j917fd",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -8494,12 +8756,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "qq5z84",
+                "id": "rxgyxc",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "6w00ic",
+          "id": "qq5z84",
           "name": "_createStorageAccount1_final_get",
           "request": Object {
             "header": Array [
@@ -8511,43 +8773,10 @@ try {
             "method": "GET",
             "url": Object {
               "host": Array [
-                "https://management",
-                "azure",
-                "com",
+                "{{x_final_get_url}}",
               ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName_encoded}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "sto131918",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId_encoded}}",
-                },
-              ],
+              "query": Array [],
+              "variable": Array [],
             },
           },
           "response": Array [],
@@ -8557,12 +8786,12 @@ try {
     },
     Object {
       "event": Array [],
-      "id": "igg58r",
+      "id": "ezqs5q",
       "item": Array [
         Object {
           "event": Array [
             Object {
-              "id": "zfkej6",
+              "id": "cb8v3t",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -8570,12 +8799,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "9e4snq",
+                "id": "x7qdfp",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "un6yyw",
+          "id": "h1l4hw",
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [

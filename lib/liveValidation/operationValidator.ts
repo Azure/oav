@@ -69,12 +69,13 @@ export interface LiveResponse {
 
 export const validateSwaggerLiveRequest = async (
   request: LiveRequest,
-  info: OperationContext,
+  operationContext: OperationContext,
   loader?: LiveValidatorLoader,
   includeErrors?: ApiValidationErrorCode[],
+  isArmCall?: boolean,
   logging?: LoggingFn
 ) => {
-  const { operation } = info.operationMatch!;
+  const { operation } = operationContext.operationMatch!;
   const { body, query } = request;
   const result: LiveValidationIssue[] = [];
 
@@ -93,7 +94,7 @@ export const validateSwaggerLiveRequest = async (
         LiveValidatorLoggingTypes.trace,
         "Oav.OperationValidator.validateSwaggerLiveRequest.loader.getRequestValidator",
         undefined,
-        info.validationRequest
+        operationContext.validationRequest
       );
       logging(
         `On-demand build request validator`,
@@ -101,16 +102,19 @@ export const validateSwaggerLiveRequest = async (
         LiveValidatorLoggingTypes.perfTrace,
         "Oav.OperationValidator.validateSwaggerLiveRequest.loader.getRequestValidator",
         elapsedTime,
-        info.validationRequest
+        operationContext.validationRequest
       );
     }
   }
 
-  const pathParam = extractPathParamValue(info.operationMatch!);
+  const pathParam = extractPathParamValue(operationContext.operationMatch!);
   transformMapValue(pathParam, operation._pathTransform);
   transformMapValue(query, operation._queryTransform);
   const headers = transformLiveHeader(request.headers ?? {}, operation);
   validateContentType(operation.consumes!, headers, true, result);
+
+  // for rpaas calls, temp solution to log invalid_type errors for additional properties
+  // rather than returning the error to rpaas
   const ctx = { isResponse: false, includeErrors: includeErrors as any };
   const errors = validate(ctx, {
     path: pathParam,
@@ -118,20 +122,28 @@ export const validateSwaggerLiveRequest = async (
     headers,
     query,
   });
-  schemaValidateIssueToLiveValidationIssue(errors, operation, ctx, result);
+  schemaValidateIssueToLiveValidationIssue(
+    errors,
+    operation,
+    ctx,
+    result,
+    operationContext,
+    isArmCall,
+    logging
+  );
 
   return result;
 };
 
 export const validateSwaggerLiveResponse = async (
   response: LiveResponse,
-  info: OperationContext,
+  operationContext: OperationContext,
   loader?: LiveValidatorLoader,
   includeErrors?: ApiValidationErrorCode[],
   isArmCall?: boolean,
   logging?: LoggingFn
 ) => {
-  const { operation } = info.operationMatch!;
+  const { operation } = operationContext.operationMatch!;
   const { statusCode, body } = response;
   const rspDef = operation.responses;
   const result: LiveValidationIssue[] = [];
@@ -161,7 +173,7 @@ export const validateSwaggerLiveResponse = async (
         LiveValidatorLoggingTypes.trace,
         "Oav.OperationValidator.validateSwaggerLiveResponse.loader.getResponseValidator",
         undefined,
-        info.validationRequest
+        operationContext.validationRequest
       );
       logging(
         `On-demand build request validator`,
@@ -169,7 +181,7 @@ export const validateSwaggerLiveResponse = async (
         LiveValidatorLoggingTypes.perfTrace,
         "Oav.OperationValidator.validateSwaggerLiveResponse.loader.getResponseValidator",
         elapsedTime,
-        info.validationRequest
+        operationContext.validationRequest
       );
     }
   }
@@ -192,7 +204,15 @@ export const validateSwaggerLiveResponse = async (
     headers,
     body,
   });
-  schemaValidateIssueToLiveValidationIssue(errors, operation, ctx, result);
+  schemaValidateIssueToLiveValidationIssue(
+    errors,
+    operation,
+    ctx,
+    result,
+    operationContext,
+    isArmCall,
+    logging
+  );
 
   return result;
 };
@@ -262,7 +282,10 @@ export const schemaValidateIssueToLiveValidationIssue = (
   input: SchemaValidateIssue[],
   operation: Operation,
   ctx: SchemaValidateContext,
-  output: LiveValidationIssue[]
+  output: LiveValidationIssue[],
+  operationContext: OperationContext,
+  isArmCall?: boolean,
+  logging?: LoggingFn
 ) => {
   for (const i of input) {
     const issue = i as Writable<LiveValidationIssue>;
@@ -276,16 +299,31 @@ export const schemaValidateIssueToLiveValidationIssue = (
 
     let skipIssue = false;
     issue.pathsInPayload = issue.jsonPathsInPayload.map((path, idx) => {
-      const isMissingRequiredProperty = issue.code === "OBJECT_MISSING_REQUIRED_PROPERTY";
-      const isBodyIssue = path.startsWith(".body");
-
       if (issue.code === "MISSING_RESOURCE_ID") {
         // ignore this error for sub level resources
         if (path.includes("properties")) {
           skipIssue = true;
           return "";
         }
+      } else if (issue.code === "INVALID_TYPE" && isArmCall === false) {
+        if (issue.schemaPath.includes("additionalProperties")) {
+          skipIssue = true;
+          if (logging) {
+            logging(
+              `AdditionalProperties validation failed:${JSON.stringify(issue, undefined, 2)}`,
+              LiveValidatorLoggingLevels.error,
+              LiveValidatorLoggingTypes.trace,
+              "Oav.OperationValidator.schemaValidateIssueToLiveValidationIssue",
+              undefined,
+              operationContext.validationRequest
+            );
+          }
+          return "";
+        }
       }
+
+      const isMissingRequiredProperty = issue.code === "OBJECT_MISSING_REQUIRED_PROPERTY";
+      const isBodyIssue = path.startsWith(".body");
 
       if (isBodyIssue && (path.length > 5 || !isMissingRequiredProperty)) {
         path = "$" + path.substr(5);
