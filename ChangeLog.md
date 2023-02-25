@@ -1,5 +1,8 @@
 # Change Log - oav
 
+## 02/24/2023 3.2.7
+- Fix roundtrip validation model with circular reference
+
 ## 02/23/2023 3.2.6
 
 - Improved the API scenario long running operation pooling mechanism.
@@ -19,6 +22,7 @@
   - Support `--scope` option in static generator
 - API Scenario
   - Skip create and delete resource group if specify resource group name
+- bug fix about incorrect payload file path in html report
 
 ## 01/30/2023 3.2.4
 

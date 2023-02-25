@@ -29,8 +29,7 @@ describe("Live Validator", () => {
         isArmCall: false,
         isPathCaseSensitive: false,
         loadValidatorInBackground: true,
-        loadValidatorInInitialize: false,
-        enableRoundTripLazyBuild: true,
+        loadValidatorInInitialize: false
       };
       const validator = new LiveValidator();
       assert.equal(0, validator.operationSearcher.cache.size);
@@ -79,8 +78,7 @@ describe("Live Validator", () => {
         },
         directory: path.resolve(os.homedir(), "repo"),
         loadValidatorInBackground: true,
-        loadValidatorInInitialize: false,
-        enableRoundTripLazyBuild: true,
+        loadValidatorInInitialize: false
       };
       const validator = new LiveValidator({ swaggerPaths });
       assert.equal(0, validator.operationSearcher.cache.size);
@@ -100,8 +98,7 @@ describe("Live Validator", () => {
         },
         directory,
         loadValidatorInBackground: true,
-        loadValidatorInInitialize: false,
-        enableRoundTripLazyBuild: true,
+        loadValidatorInInitialize: false
       };
       const validator = new LiveValidator({ swaggerPaths, directory });
       assert.equal(0, validator.operationSearcher.cache.size);
@@ -125,8 +122,7 @@ describe("Live Validator", () => {
         },
         directory,
         loadValidatorInBackground: true,
-        loadValidatorInInitialize: false,
-        enableRoundTripLazyBuild: true,
+        loadValidatorInInitialize: false
       };
       const validator = new LiveValidator({
         swaggerPaths,
@@ -152,8 +148,7 @@ describe("Live Validator", () => {
         isArmCall: false,
         isPathCaseSensitive: false,
         loadValidatorInBackground: true,
-        loadValidatorInInitialize: false,
-        enableRoundTripLazyBuild: true,
+        loadValidatorInInitialize: false
       };
       const validator = new LiveValidator({
         swaggerPaths,

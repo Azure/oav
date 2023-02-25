@@ -276,25 +276,25 @@ export class NewmanReportValidator {
             ? await this.liveValidator.validateLiveRequestResponse(lroFinalPayLoad)
             : undefined;
 
-        // // Roundtrip validation
-        // if (
-        //   !this.opts.skipValidation &&
-        //   matchedStep.isManagementPlane &&
-        //   matchedStep.operation?._method === "put" &&
-        //   it.response.statusCode >= 200 &&
-        //   it.response.statusCode <= 202
-        // ) {
-        //   if (it.annotation.type === "LRO") {
-        //     // For LRO, get the final response to compose payload
-        //     const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
-        //     if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
-        //       const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
-        //       roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
-        //     }
-        //   } else if (it.annotation.type === "simple") {
-        //     roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
-        //   }
-        // }
+        // Roundtrip validation
+        if (
+          !this.opts.skipValidation &&
+          matchedStep.isManagementPlane &&
+          matchedStep.operation?._method === "put" &&
+          it.response.statusCode >= 200 &&
+          it.response.statusCode <= 202
+        ) {
+          if (it.annotation.type === "LRO") {
+            // For LRO, get the final response to compose payload
+            const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
+            if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
+              const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
+              roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
+            }
+          } else if (it.annotation.type === "simple") {
+            roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
+          }
+        }
 
         specFilePath = matchedStep.operation?._path._spec._filePath;
       }

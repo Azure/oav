@@ -31,6 +31,7 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
     @inject(TYPES.opts) private opts: SwaggerLoaderOption,
     private suppressionLoader: SuppressionLoader,
     private jsonLoader: JsonLoader,
+    private siblingsJsonLoader: JsonLoader,
     private fileLoader: FileLoader
   ) {
     setDefaultOpts(opts, {
@@ -38,9 +39,19 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
     });
   }
 
+  public getResolvedJsonLoader() {
+    return this.siblingsJsonLoader;
+  }
+
   // TODO reportError
-  public async load(specFilePath: string): Promise<SwaggerSpec> {
-    const swaggerSpec = (await (this.jsonLoader.load(specFilePath) as unknown)) as SwaggerSpec;
+  public async load(specFilePath: string, keepRefSiblings?: boolean): Promise<SwaggerSpec> {
+    const swaggerSpec = keepRefSiblings
+      ? ((await (this.siblingsJsonLoader.load(
+          specFilePath,
+          false,
+          true
+        ) as unknown)) as SwaggerSpec)
+      : ((await (this.jsonLoader.load(specFilePath) as unknown)) as SwaggerSpec);
 
     if (this.opts.setFilePath) {
       const pathProvider = getProviderFromSpecPath(this.fileLoader.resolvePath(specFilePath));

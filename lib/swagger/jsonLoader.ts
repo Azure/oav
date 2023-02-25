@@ -24,10 +24,9 @@ export interface JsonLoaderOption extends FileLoaderOption {
   transformRef?: boolean; // TODO implement transformRef: false
   skipResolveRefKeys?: string[];
   supportYaml?: boolean;
-  shouldResolveRef?: boolean;
 }
 
-interface FileCache {
+export interface FileCache {
   resolved?: Json;
   filePath: string;
   originalContent?: string;
@@ -81,6 +80,30 @@ export class JsonLoader implements Loader<Json> {
     return fileContent;
   });
 
+  private loadFileWithRefSiblings = getLazyBuilder("resolved", async (cache: FileCache) => {
+    const fileString = await this.fileLoader.load(cache.filePath);
+    if (this.opts.keepOriginalContent || cache.resolveRef) {
+      // eslint-disable-next-line require-atomic-updates
+      cache.originalContent = fileString;
+    }
+    let fileContent = this.parseFileContent(cache, fileString);
+    // eslint-disable-next-line require-atomic-updates
+    cache.resolved = fileContent;
+    (fileContent as any)[$id] = cache.mockName;
+    if (cache.skipResolveRef !== true) {
+      fileContent = await this.resolveRef(
+        fileContent,
+        ["$"],
+        fileContent,
+        cache.filePath,
+        false,
+        true
+      );
+    }
+    this.loadedFiles.push(fileContent);
+    return fileContent;
+  });
+
   public constructor(
     @inject(TYPES.opts) private opts: JsonLoaderOption,
     private fileLoader: FileLoader
@@ -111,7 +134,11 @@ export class JsonLoader implements Loader<Json> {
     // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
   }
 
-  public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
+  public async load(
+    inputFilePath: string,
+    skipResolveRef?: boolean,
+    keepRefSiblings?: boolean
+  ): Promise<Json> {
     const filePath = this.fileLoader.relativePath(inputFilePath);
     let cache = this.fileCache.get(filePath);
     if (cache === undefined) {
@@ -125,6 +152,9 @@ export class JsonLoader implements Loader<Json> {
       cache.skipResolveRef = skipResolveRef;
     }
 
+    if (keepRefSiblings) {
+      return this.loadFileWithRefSiblings(cache);
+    }
     return this.loadFile(cache);
   }
 
@@ -197,7 +227,8 @@ export class JsonLoader implements Loader<Json> {
     pathArr: string[],
     rootObject: Json,
     relativeFilePath: string,
-    skipResolveChildRef: boolean
+    skipResolveChildRef: boolean,
+    keepRefSiblings?: boolean
   ): Promise<Json> {
     if (isRefLike(object)) {
       const ref = object.$ref;
@@ -213,6 +244,10 @@ export class JsonLoader implements Loader<Json> {
           throw new JsonLoaderRefError(object);
         }
         const mockName = (rootObject as any)[$id];
+        if (keepRefSiblings) {
+          object.$ref = `${mockName}#${refObjPath}`;
+          return object;
+        }
         return { $ref: `${mockName}#${refObjPath}` };
       }
       const refObj = await this.load(
@@ -224,8 +259,16 @@ export class JsonLoader implements Loader<Json> {
         if (!jsonPointer.has(refObj as {}, refObjPath)) {
           throw new JsonLoaderRefError(object);
         }
+        if (keepRefSiblings) {
+          object.$ref = `${refMockName}#${refObjPath}`;
+          return object;
+        }
         return { $ref: `${refMockName}#${refObjPath}` };
       } else {
+        if (keepRefSiblings) {
+          object.$ref = refMockName;
+          return object;
+        }
         return { $ref: refMockName };
       }
     }
