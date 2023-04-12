@@ -1,5 +1,10 @@
 # Change Log - oav
 
+# 04/12/2023 3.2.8
+- Dependency updates
+  - "@azure/core-http `^2.2.7` -> `^3.0.1`
+  - Upgrading core-http allows us to bump the dependency on `xmljs2` to one without a CVE
+
 ## 02/24/2023 3.2.7
 - Fix roundtrip validation model with circular reference
 
