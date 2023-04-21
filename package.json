@@ -35,7 +35,7 @@
     "mkdirp": "^1.0.4",
     "mockjs": "^1.1.0",
     "moment": "^2.29.3",
-    "ms-rest": "^2.5.6",
+    "@azure/core-rest-pipeline": "^1.10.3",
     "mustache": "^4.2.0",
     "newman": "^5.3.2",
     "path-to-regexp": "^6.2.1",
@@ -46,15 +46,6 @@
     "winston": "^3.3.4",
     "yargs": "^15.4.1",
     "z-schema": "^5.0.3"
-  },
-  "overrides": {
-    "qs@6.5.3": "6.8.3",
-    "request": {
-      "qs": "6.8.3"
-    },
-    "postman-collection": {
-      "file-type": "16.5.4"
-    }
   },
   "devDependencies": {
     "@types/commonmark": "^0.27.3",

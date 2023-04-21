@@ -3,11 +3,14 @@
 
 import { URL } from "url";
 import { mapEntries, MutableStringMap } from "@azure-tools/openapi-tools-common";
-import * as msRest from "ms-rest";
+
+// https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/core/core-rest-pipeline/src/interfaces.ts#L98
+// https://github.com/Azure/ms-rest-js/blob/3b57cdf3f4133dfed1396d0781fabb3ed4e1fb71/lib/webResource.ts#L188
+import { PipelineRequest} from "@azure/core-rest-pipeline";
 
 export type Headers = MutableStringMap<string | undefined>;
 
-export type Request = msRest.WebResource;
+export type Request = PipelineRequest;
 
 export interface Response {
   readonly body: unknown;
