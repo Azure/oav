@@ -125,7 +125,7 @@ export const ajvEnableByteFormat = (ajv: Ajv) => {
   ajv.addFormat("byte", {
     type: "string",
     validate: (x) => {
-      const decodedValue = Buffer.from(x, "base64").toString("ascii");
+      const decodedValue = Buffer.from(x, "base64");
       const reencodedValue = Buffer.from(decodedValue).toString("base64");
       return reencodedValue === x;
     },
