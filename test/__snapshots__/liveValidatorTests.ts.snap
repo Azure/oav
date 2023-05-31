@@ -383,10 +383,10 @@ Object {
         "jsonPathsInPayload": Array [
           "$.properties.options[0].restriction.primaryVerificationKey.keyValue",
         ],
-        "message": "Object didn't pass validation for format byte: aaaaaaaaaaaaaaaaaaaaaaaa",
+        "message": "Object didn't pass validation for format byte: not valid base64",
         "params": Array [
           "byte",
-          "aaaaaaaaaaaaaaaaaaaaaaaa",
+          "not valid base64",
         ],
         "pathsInPayload": Array [
           "/properties/options/0/restriction/primaryVerificationKey/keyValue",
@@ -418,10 +418,10 @@ Object {
         "jsonPathsInPayload": Array [
           "$.properties.policyId",
         ],
-        "message": "Object didn't pass validation for format uuid: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "message": "Object didn't pass validation for format uuid: not valid base64",
         "params": Array [
           "uuid",
-          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "not valid base64",
         ],
         "pathsInPayload": Array [
           "/properties/policyId",
@@ -492,10 +492,10 @@ Object {
         "jsonPathsInPayload": Array [
           "$.properties.options[0].restriction.primaryVerificationKey.keyValue",
         ],
-        "message": "Object didn't pass validation for format byte: aaaaaaaaaaaaaaaaaaaaaaaa",
+        "message": "Object didn't pass validation for format byte: not valid base64",
         "params": Array [
           "byte",
-          "aaaaaaaaaaaaaaaaaaaaaaaa",
+          "not valid base64",
         ],
         "pathsInPayload": Array [
           "/properties/options/0/restriction/primaryVerificationKey/keyValue",
