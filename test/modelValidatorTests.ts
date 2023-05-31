@@ -855,11 +855,22 @@ describe("Model Validation", () => {
     it("should fail when value is not in base64 format", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/formatValidation/format.json`;
       const result = await validate.validateExamples(specPath2, "Byte");
-      assert.strictEqual(result.length, 1);
+      console.log(result)
+      assert.strictEqual(result.length, 3);
       assert.strictEqual(result[0].code, "INVALID_FORMAT");
       assert.strictEqual(
         result[0].message,
-        "Object didn't pass validation for format byte: credentialValue1"
+        "Object didn't pass validation for format byte: space is not a valid base64 character"
+      );
+      assert.strictEqual(result[1].code, "INVALID_FORMAT");
+      assert.strictEqual(
+        result[1].message,
+        "Object didn't pass validation for format byte: ----"
+      );
+      assert.strictEqual(result[2].code, "INVALID_FORMAT");
+      assert.strictEqual(
+        result[2].message,
+        "Object didn't pass validation for format byte: Y3JlZGVudGlhbFZhbHVlMQ"
       );
     });
     it("should fail when value is not in arm-id format", async () => {
