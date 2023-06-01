@@ -89,7 +89,8 @@ Options:
      - The examples need to be provided in a separate file in the examples directory under the api-version directory `azure-rest-api-specs/arm-<yourService>/<api-version>/examples/<exampleName>.json`. You can take a look over [here](https://github.com/Azure/azure-rest-api-specs/tree/1c100daabed6a008c76f3e4e0cae4e7eac5a5bf4/specification/redis/resource-manager/Microsoft.Cache/stable/2016-04-01/examples) for the structure of examples.
 
      - We require you to provide us a minimum (just required properties/parameters of the request/response) and a maximum (full blown) example. Feel free to provide more examples as deemed necessary.
-     - We have provided schemas for examples to be provided in the examples directory. It can be found over [here](https://github.com/Azure/autorest/blob/main/packages/libs/autorest-schemas/example-schema.json). This will help you with intellisene and validation.
+     - We have provided schemas for examples to be provided in the examples directory. It can be found over [here](https://github.com/Azure/autorest/blob/27ab06c254c99af5c7de07a550f765713b1f71ee/packages/libs/autorest-schemas/example-schema.json). This will help you with intellisense and validation.
+
      - If you are using **vscode** to edit your swaggers in the azure-rest-api-specs repo then everything should work out of the box as the schemas have been added in the `.vscode/settings.json` file over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/.vscode/settings.json).
      - If you are using **Visual Studio** then you can use the urls provided in the settings.json file and put them in the drop down list at the top of a json file when the file is opened in VS.
 
