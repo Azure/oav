@@ -123,7 +123,7 @@ export const lowerHttpMethods = [
   "head",
   "patch",
 ] as const;
-export type LowerHttpMethods = (typeof lowerHttpMethods[number]);
+export type LowerHttpMethods = (typeof lowerHttpMethods)[number];
 export type Path = {
   [method in LowerHttpMethods]?: Operation;
 } & {
