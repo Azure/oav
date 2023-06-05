@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "3.2.9-beta.1",
+  "version": "3.2.9",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -47,15 +47,6 @@
     "yargs": "^15.4.1",
     "z-schema": "^5.0.3"
   },
-  "overrides": {
-    "qs@6.5.3": "6.8.3",
-    "request": {
-      "qs": "6.8.3"
-    },
-    "postman-collection": {
-      "file-type": "16.5.4"
-    }
-  },
   "devDependencies": {
     "@types/commonmark": "^0.27.3",
     "@types/difflib": "^0.2.0",
@@ -68,7 +59,7 @@
     "@types/json-merge-patch": "^0.0.5",
     "@types/json-pointer": "^1.0.30",
     "@types/json-schema-traverse": "^0.4.0",
-    "@types/lodash": "^4.14.149",
+    "@types/lodash": "4.14.182",
     "@types/md5-file": "^4.0.0",
     "@types/mkdirp": "^1.0.1",
     "@types/mustache": "^4.1.2",

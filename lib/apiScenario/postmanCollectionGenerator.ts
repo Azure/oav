@@ -506,10 +506,12 @@ class PostmanCollectionRunner {
     this.dataMasker.addMaskedValues(values);
     this.dataMasker.addMaskedKeys(keys);
 
-    // add mask environment secret value
-    for (const item of summary.environment.values.members) {
-      if (this.dataMasker.maybeSecretKey(item.key)) {
-        this.dataMasker.addMaskedValues([item.value]);
+    if (summary.environment.values) {
+      // add mask environment secret value
+      for (const item of summary.environment.values) {
+        if (this.dataMasker.maybeSecretKey(item.key)) {
+          this.dataMasker.addMaskedValues([item.value]);
+        }
       }
     }
 
