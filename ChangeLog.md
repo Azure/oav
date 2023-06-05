@@ -1,5 +1,19 @@
 # Change Log - oav
 
+## 06/05/2023 3.2.9
+
+- Reverting 3.2.9-beta.1 override changes.
+  - We made this update to address a problem in a node project that takes a dependency on `oav`. Unbeknownst to me, a package taking a dependency on `oav` does _not_ inherit the `override` settings defined in the `oav` `package.json`. With that being the case, there is no reason to leave these overrides added to the `package.json` for `oav`.
+- Pin `lodash` in dev dependencies to account for build failure on newer versions.
+- Update various other dependencies.
+
+## 04/18/2023 3.2.9-beta.1
+
+- Dependency updates
+  - Override transitive dependencies:
+    - `file-type@3.9.0 -> 16.5.4`
+    - `qs@6.5.3 -> 6.8.3`
+
 # 04/12/2023 3.2.8
 - Dependency updates
   - "@azure/core-http `^2.2.7` -> `^3.0.1`
