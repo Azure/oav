@@ -15027,63 +15027,6 @@ Array [
   },
   Object {
     "code": "INVALID_FORMAT",
-    "exampleJsonPath": "$responses.200.body.kubeconfigs[0].value",
-    "examplePosition": Object {
-      "column": 22,
-      "line": 14,
-    },
-    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2022-07-01/examples/ManagedClustersListClusterAdminCredentials.json",
-    "message": "Object didn't pass validation for format byte: credentialValue1",
-    "operationId": "ManagedClusters_ListClusterAdminCredentials",
-    "schemaJsonPath": "#/properties/value/format",
-    "schemaPosition": Object {
-      "column": 18,
-      "line": 4778,
-    },
-    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2022-07-01/managedClusters.json",
-    "severity": 0,
-    "source": "response",
-  },
-  Object {
-    "code": "INVALID_FORMAT",
-    "exampleJsonPath": "$responses.200.body.kubeconfigs[0].value",
-    "examplePosition": Object {
-      "column": 22,
-      "line": 14,
-    },
-    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2022-07-01/examples/ManagedClustersListClusterUserCredentials.json",
-    "message": "Object didn't pass validation for format byte: credentialValue1",
-    "operationId": "ManagedClusters_ListClusterUserCredentials",
-    "schemaJsonPath": "#/properties/value/format",
-    "schemaPosition": Object {
-      "column": 18,
-      "line": 4778,
-    },
-    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2022-07-01/managedClusters.json",
-    "severity": 0,
-    "source": "response",
-  },
-  Object {
-    "code": "INVALID_FORMAT",
-    "exampleJsonPath": "$responses.200.body.kubeconfigs[0].value",
-    "examplePosition": Object {
-      "column": 22,
-      "line": 14,
-    },
-    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2022-07-01/examples/ManagedClustersListClusterMonitoringUserCredentials.json",
-    "message": "Object didn't pass validation for format byte: credentialValue1",
-    "operationId": "ManagedClusters_ListClusterMonitoringUserCredentials",
-    "schemaJsonPath": "#/properties/value/format",
-    "schemaPosition": Object {
-      "column": 18,
-      "line": 4778,
-    },
-    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2022-07-01/managedClusters.json",
-    "severity": 0,
-    "source": "response",
-  },
-  Object {
-    "code": "INVALID_FORMAT",
     "exampleJsonPath": "$parameters.parameters",
     "examplePosition": Object {
       "column": 19,
@@ -21481,25 +21424,6 @@ Array [
   },
   Object {
     "code": "INVALID_FORMAT",
-    "exampleJsonPath": "$responses.200.body.value[1].properties.packageApplications[0].rawIcon",
-    "examplePosition": Object {
-      "column": 30,
-      "line": 80,
-    },
-    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2021-07-12/examples/MsixImage_Expand_Post.json",
-    "message": "Object didn't pass validation for format byte: RawIcon1",
-    "operationId": "MsixImages_Expand",
-    "schemaJsonPath": "#/properties/rawIcon/format",
-    "schemaPosition": Object {
-      "column": 20,
-      "line": 3347,
-    },
-    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2021-07-12/desktopvirtualization.json",
-    "severity": 0,
-    "source": "response",
-  },
-  Object {
-    "code": "INVALID_FORMAT",
     "exampleJsonPath": "$responses.200.body.value[1].properties.packageApplications[0].rawPng",
     "examplePosition": Object {
       "column": 29,
@@ -21512,25 +21436,6 @@ Array [
     "schemaPosition": Object {
       "column": 19,
       "line": 3352,
-    },
-    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2021-07-12/desktopvirtualization.json",
-    "severity": 0,
-    "source": "response",
-  },
-  Object {
-    "code": "INVALID_FORMAT",
-    "exampleJsonPath": "$responses.200.body.value[1].properties.packageApplications[1].rawIcon",
-    "examplePosition": Object {
-      "column": 30,
-      "line": 89,
-    },
-    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2021-07-12/examples/MsixImage_Expand_Post.json",
-    "message": "Object didn't pass validation for format byte: RawIcon2",
-    "operationId": "MsixImages_Expand",
-    "schemaJsonPath": "#/properties/rawIcon/format",
-    "schemaPosition": Object {
-      "column": 20,
-      "line": 3347,
     },
     "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2021-07-12/desktopvirtualization.json",
     "severity": 0,
@@ -29269,25 +29174,6 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 
 exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/recoveryservices/resource-manager/Microsoft.RecoveryServices/stable/2022-09-10/registeredidentities.json': returned results 1`] = `
 Array [
-  Object {
-    "code": "INVALID_FORMAT",
-    "exampleJsonPath": "$parameters.certificateRequest",
-    "examplePosition": Object {
-      "column": 27,
-      "line": 8,
-    },
-    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/recoveryservices/resource-manager/Microsoft.RecoveryServices/stable/2022-09-10/examples/PUTVaultCred.json",
-    "message": "Object didn't pass validation for format byte: MTTC3TCCAcWgAwIBAgIQEj9h+ZLlXK9KrqZX9UkAnzANBgkqhkiG9w0BAQUFADAeMRwwGgYDVQQDExNXaW5kb3dzIEF6dXJlIFRvb2xzMB4XDTE3MTIxODA5MTc1M1oXDTE3MTIyMzA5Mjc1M1owHjEcMBoGA1UEAxMTV2luZG93cyBBenVyZSBUb29sczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK773/eZZ69RbZZAT05r9MjUxu9y1L1Pn1EgPk62IPJyHlO3OZA922eSBahhP4bgmFljN4LVReqQ5eT/wqO0Zhc+yFkUy4U4RdbQLeUZt2W7yy9XLXgVvqeYDgsjg/QhHetgHArQBW+tlQq5+zPdU7zchI4rbShSJrWhLrZFWiOyFPsuAE4joUQHNlRifdCTsBGKk8HRCY3j1S3c4bfEn3zxlrvrXXssRuW5mJM95rMk0tskoRxXSCi6i9bnlki2Cs9mpVMmBFeofs41KwzlWU0TgpdD8s1QEdvfGB5NbByfetPX7MfJaTBeHZEGbv/Iq8l72u8sPBoOhcaH7qDE/mECAwEAAaMXMBUwEwYDVR0lBAwwCgYIKwYBBQUHAwIwDQYJKoZIhvcNAQEFBQADggEBAILfgHluye1Q+WelhgWhpBBdIq2C0btfV8eFsZaTlBUrM0fwpxQSlAWc2oYHVMQI4A5iUjbDOY35O4yc+TnWKDBKf+laqDP+yos4aiUPuadGUZfvDk7kuw7xeECs64JpHAIEKdRHFW9rD3gwG+nIWaDnEL/7rTyhL3kXrRW2MSUAL8g3GX8Z45c+MQY0jmASIqWdhGn1vpAGyA9mKkzsqg7FXjg8GZb24tGl5Ky85+ip4dkBfXinDD8WwaGyjhGGK97ErvNmN36qly/H0H1Qngiovg1FbHDmkcFO5QclnEJsFFmcO2CcHp5Fqh2wXn5O1cQaxCIRTpQ/uXRpDjl2wKs=",
-    "operationId": "VaultCertificates_Create",
-    "schemaJsonPath": "#/properties/certificate/format",
-    "schemaPosition": Object {
-      "column": 24,
-      "line": 151,
-    },
-    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/recoveryservices/resource-manager/Microsoft.RecoveryServices/stable/2022-09-10/registeredidentities.json",
-    "severity": 0,
-    "source": "request",
-  },
   Object {
     "code": "INVALID_FORMAT",
     "exampleJsonPath": "$responses.200.body.properties.certificate",
