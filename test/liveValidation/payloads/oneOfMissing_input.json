@@ -28,7 +28,7 @@
               "audience": "aaaaaaaaaaaaaaaaaaaaaa",
               "primaryVerificationKey": {
                 "@odata.type": "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey",
-                "keyValue": "aaaaaaaaaaaaaaaaaaaaaaaa"
+                "keyValue": "not valid base64"
               },
               "requiredClaims": [
                 {
@@ -64,7 +64,7 @@
       "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "type": "Microsoft.Media/mediaservices/contentKeyPolicies",
       "properties": {
-        "policyId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "policyId": "not valid base64",
         "created": "2019-03-29T21:20:55.38Z",
         "lastModified": "2019-03-29T21:20:55.38Z",
         "options": [
@@ -79,7 +79,7 @@
               "issuer": "aaaaaaaaaaaaaaaaaaaa",
               "primaryVerificationKey": {
                 "@odata.type": "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey",
-                "keyValue": "aaaaaaaaaaaaaaaaaaaaaaaa"
+                "keyValue": "not valid base64"
               },
               "alternateVerificationKeys": [],
               "requiredClaims": [

@@ -59,7 +59,17 @@
         "NotByteValue": {
           "type": "string",
           "format": "byte",
-          "description": "Base64-encoded data."
+          "description": "Invalid base64-encoded data."
+        },
+        "NotUriSafeValue": {
+          "type": "string",
+          "format": "byte",
+          "description": "Base64-encoded data using non URI-safe characters."
+        },
+        "NotPaddedValue": {
+          "type": "string",
+          "format": "byte",
+          "description": "Base64-encoded data without sufficient padding."
         },
         "ByteValue": {
           "type": "string",
