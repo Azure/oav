@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 06/14/2023 3.2.10
+
+- Patch `byte` type validation to properly decode and re-encode a base64 string. A `byte` formatted body's validity has **nothing** to do with whether or not one can successfully encode it to ascii.
+
 ## 06/05/2023 3.2.9
 
 - Reverting 3.2.9-beta.1 override changes.
