@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 07/05/2023 3.2.11
+
+- Re-enable `additionalProperties` validation where the `liveValidator` configuration has `isArmCall` set to `false`. The version of `oav` that is being used to validate `azure-rest-api-specs` has this behavior enabled, so this is not a breaking change.
+
 ## 06/15/2023 3.2.10
 
 - Patch `byte` type validation to properly decode and re-encode a base64 string. A `byte` formatted body's validity has **nothing** to do with whether or not one can successfully encode it to ascii.

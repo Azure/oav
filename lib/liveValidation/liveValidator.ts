@@ -58,6 +58,7 @@ export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   loadValidatorInBackground: boolean;
   loadValidatorInInitialize: boolean;
   enableRoundTripValidator?: boolean;
+  isArmCall?: boolean;
 }
 
 export interface RequestResponsePair {

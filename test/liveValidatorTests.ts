@@ -1063,7 +1063,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
-        //isArmCall is false by default
+        isArmCall: true
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
