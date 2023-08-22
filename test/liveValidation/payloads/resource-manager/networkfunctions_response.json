@@ -1,0 +1,49 @@
+{
+  "statusCode": "200",
+  "headers": {
+    "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    "x-ms-request-id": "7388e775-58be-4ca2-ab43-fd63ee973ee4",
+    "x-ms-correlation-request-id": "3b743f34-70a8-4f74-b812-892ebfe1b64f",
+    "date": "Wed, 12 Sep 2018 04:49:26 GMT",
+    "eTag": "\"AAAAAAAAR58=\"",
+    "server": "Microsoft-HTTPAPI/2.0",
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "id": "/subscriptions/6c204db9-7efd-4adb-98ac-e982a6e28084/resourceGroups/rgname/providers/Microsoft.HybridNetwork/networkFunctions/nf0001",
+    "name": "nf0001",
+    "type": "microsoft.hybridnetwork/networkfunctions",
+    "location": "eastus2euap",
+    "systemData": {
+      "createdBy": "alias@microsoft.com",
+      "createdByType": "User",
+      "createdAt": "2023-08-16T00:47:52.8414851Z",
+      "lastModifiedBy": "alias@microsoft.com",
+      "lastModifiedByType": "User",
+      "lastModifiedAt": "2023-08-16T00:47:52.8414851Z"
+    },
+    "properties": {
+      "provisioningState": "Accepted",
+      "device": null,
+      "skuName": "cnfsku1",
+      "skuType": "EvolvedPacketCore",
+      "vendorName": "v1",
+      "serviceKey": "6c204db9-7efd-4adb-98ac-e982a6e28084",
+      "vendorProvisioningState": "NotProvisioned",
+      "managedApplication": null,
+      "managedApplicationParameters": {
+        "extendedLocation": {
+          "Name": "/subscriptions/6c204db9-7efd-4adb-98ac-e982a6e28084/resourceGroups/rgname2/providers/Microsoft.ExtendedLocation/customLocations/nagouCl011",
+          "Type": "CustomLocation"
+        },
+        "vendorConfigurations": {
+          "releaseName": "cnf-runner-test",
+          "targetNamespace": "cnf-runner-test",
+          "values": "{\"repoBase\":\"xyz.azurecr.io3/\"}"
+        },
+        "userConfigurations": {}
+      },
+      "networkFunctionUserConfigurations": null
+    }
+  }
+}

@@ -2,17 +2,18 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as assert from "assert";
-import * as os from "os";
-import * as path from "path";
-import * as lodash from "lodash";
-import { LiveValidator, parseValidationRequest } from "../lib/liveValidation/liveValidator";
+// import * as os from "os";
+// import * as path from "path";
+// import * as lodash from "lodash";
+// import { method } from "lodash";
+import { LiveValidator, ValidateOptions } from "../lib/liveValidation/liveValidator";
 import { OperationSearcher } from "../lib/liveValidation/operationSearcher";
-import * as Constants from "../lib/util/constants";
+// import * as Constants from "../lib/util/constants";
 
 // eslint-disable-next-line no-var
-var glob = require("glob").glob;
+// var glob = require("glob").glob;
 
-const numberOfSpecs = 20;
+// const numberOfSpecs = 20;
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
@@ -579,6 +580,30 @@ describe("Live Validator", () => {
         const responses = operation.responses;
         assert.strictEqual(responses.default, undefined);
       }
+    });
+  });
+
+  describe("Debug Network Function", () => {
+    it(`should successfully validate a network functions request without crashing on parse`, async () => {
+      const options = {
+        directory: `./test/liveValidation/swaggers/`
+      };
+      const validator = new LiveValidator(options);
+
+      await validator.initialize();
+
+      const payload = require(`${__dirname}/liveValidation/payloads/resource-manager/networkfunctions_response.json`);
+
+      const result = await validator.validateLiveResponse(
+        payload,
+        {
+          url: "/subscriptions/0ea88f4b-dd87-43ee-af50-fbc25344df84/resourceGroups/nagoueastus2euap/providers/Microsoft.HybridNetwork/networkFunctions/nf0001?api-version=2021-05-01",
+          method: "PUT"
+        },
+        <ValidateOptions>options
+        );
+      
+      assert.equal(result.isSuccessful,true)
     });
   });
 
