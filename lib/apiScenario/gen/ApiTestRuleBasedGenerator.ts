@@ -1,9 +1,9 @@
 import { existsSync, writeFileSync } from "fs";
+import { dirname, join, relative, resolve } from "path";
 import { mkdirpSync } from "fs-extra";
 import { injectable } from "inversify";
 import { dump } from "js-yaml";
 import _ from "lodash";
-import { dirname, join, relative, resolve } from "path";
 import { inversifyGetInstance } from "../../inversifyUtils";
 import { JsonLoader } from "../../swagger/jsonLoader";
 import { setDefaultOpts } from "../../swagger/loader";
@@ -316,7 +316,7 @@ class ArmResourceDependencyGenerator {
     return [this._basicScenario?.prepareSteps, this._basicScenario?.cleanUpSteps];
   }
   generateResourceCleanup(resource: ArmResourceManipulator, scenario: RawScenario) {
-    this._restlerGenerator?.addCleanupSteps(resource,scenario);
+    this._restlerGenerator?.addCleanupSteps(resource, scenario);
   }
 }
 
@@ -493,7 +493,7 @@ export class ApiTestRuleBasedGenerator {
             if (apiSenarios) {
               apiSenarios.description = "[This scenario is auto-generated]" + rule.description;
               dependency?.updateExampleFile(resource, apiSenarios);
-              dependency?.generateResourceCleanup(resource,apiSenarios);
+              dependency?.generateResourceCleanup(resource, apiSenarios);
               definition.scenarios.push({ scenario: rule.name, ...apiSenarios });
             }
           }

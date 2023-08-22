@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 08/22/2023 3.2.12
+
+- Fix parsing issue introduced by sliding dependency A.
+- Added unit test to account for fixed functionality.
+
 ## 07/05/2023 3.2.11
 
 - Re-enable `additionalProperties` validation where the `liveValidator` configuration has `isArmCall` set to `false`. The version of `oav` that is being used to validate `azure-rest-api-specs` has this behavior enabled, so this is not a breaking change.

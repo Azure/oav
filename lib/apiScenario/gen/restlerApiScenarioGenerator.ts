@@ -28,10 +28,10 @@ import {
 import * as util from "../../generator/util";
 import { setDefaultOpts } from "../../swagger/loader";
 import Mocker from "../../generator/mocker";
-import { ArmResourceManipulator } from "./ApiTestRuleBasedGenerator";
 import { logger } from ".././logger";
 import { xmsExamples, xmsSkipUrlEncoding } from "../../util/constants";
 import { ApiScenarioYamlLoader } from "../apiScenarioYamlLoader";
+import { ArmResourceManipulator } from "./ApiTestRuleBasedGenerator";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   swaggerFilePaths: string[];
