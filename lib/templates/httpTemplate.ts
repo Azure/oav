@@ -3,7 +3,7 @@
 
 import { URL } from "url";
 import { mapEntries, MutableStringMap } from "@azure-tools/openapi-tools-common";
-import * as msRest from "ms-rest";
+import * as msRest from "@azure/ms-rest-js";
 
 export type Headers = MutableStringMap<string | undefined>;
 
