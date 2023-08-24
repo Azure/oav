@@ -45,11 +45,11 @@ export class YamlHttpTemplate extends HttpTemplate {
       result += `  Content-Length: ${JSON.stringify(this.request.body).length}\n`;
     }
     if (this.request.headers) {
-      const headers = toArray(keys(this.request.headers));
+      const headers = this.request.headers.headersArray();
 
       for (let i = 0; i < headers.length; i++) {
-        const headerName = headers[i];
-        result += `  ${headerName}: ${this.request.headers[headerName]}`;
+        const headerName = headers[i].name;
+        result += `  ${headerName}: ${headers[i].value}`;
         if (i !== headers.length - 1) {
           result += `\n`;
         }
