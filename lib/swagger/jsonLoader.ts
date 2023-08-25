@@ -336,9 +336,4 @@ export class JsonLoader implements Loader<Json> {
   }
 }
 
-export const isRefLike = (obj: any): obj is { $ref: string; readOnly?: boolean } => {
-  if (Object.keys(obj).includes("$ref")) {
-    return typeof obj.$ref === "string";
-  }
-  return false;
-};
+export const isRefLike = (obj: any): obj is { $ref: string; readOnly?: boolean } => typeof obj.$ref === "string";
