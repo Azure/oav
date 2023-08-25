@@ -231,6 +231,10 @@ export class JsonLoader implements Loader<Json> {
     keepRefSiblings?: boolean
   ): Promise<Json> {
     if (isRefLike(object)) {
+      const refObjResult: any = {};
+      if (object.readOnly !== undefined) {
+        refObjResult.refWithReadOnly = object.readOnly;
+      }
       const ref = object.$ref;
       const sp = ref.split("#");
       if (sp.length > 2) {
@@ -248,7 +252,8 @@ export class JsonLoader implements Loader<Json> {
           object.$ref = `${mockName}#${refObjPath}`;
           return object;
         }
-        return { $ref: `${mockName}#${refObjPath}` };
+        refObjResult.$ref = `${mockName}#${refObjPath}`;
+        return refObjResult;
       }
       const refObj = await this.load(
         pathJoin(pathDirname(relativeFilePath), refFilePath),
@@ -263,13 +268,15 @@ export class JsonLoader implements Loader<Json> {
           object.$ref = `${refMockName}#${refObjPath}`;
           return object;
         }
-        return { $ref: `${refMockName}#${refObjPath}` };
+        refObjResult.$ref = `${refMockName}#${refObjPath}`;
+        return refObjResult;
       } else {
         if (keepRefSiblings) {
           object.$ref = refMockName;
           return object;
         }
-        return { $ref: refMockName };
+        refObjResult.$ref = refMockName;
+        return refObjResult;
       }
     }
 
@@ -329,4 +336,9 @@ export class JsonLoader implements Loader<Json> {
   }
 }
 
-export const isRefLike = (obj: any): obj is { $ref: string } => typeof obj.$ref === "string";
+export const isRefLike = (obj: any): obj is { $ref: string; readOnly?: boolean } => {
+  if (Object.keys(obj).includes("$ref")) {
+    return typeof obj.$ref === "string";
+  }
+  return false;
+};
