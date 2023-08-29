@@ -305,7 +305,7 @@ export const schemaValidateIssueToLiveValidationIssue = (
           skipIssue = true;
           return "";
         }
-      } else if (issue.code === "INVALID_TYPE" && isArmCall === true) {
+      } else if (issue.code === "INVALID_TYPE" && isArmCall === false) {
         // See Azure/oav#983 for additional information as to why this special case is present.
         // RPs working with the RPaaS team were having dificulty with additionalProperties validation due to the fact
         // that when we turned it on, a LOT of real, live requests were being rejected due to invalid additionalProperties settings.
