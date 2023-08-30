@@ -26,13 +26,7 @@ Errors described below may apply in request or response, your result output will
 | [RESPONSE_SCHEMA_NOT_IN_SPEC](#RESPONSE_SCHEMA_NOT_IN_SPEC)                   |
 | [REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND](#REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND) |
 | [RESPONSE_STATUS_CODE_NOT_IN_SPEC](#RESPONSE_STATUS_CODE_NOT_IN_SPEC)         |
-
-RESPONSE_VALIDATION_ERROR
-SCHEMA_NOT_AN_OBJECT
-SCHEMA_NOT_REACHABLE
-SCHEMA_VALIDATION_FAILED
-UNKNOWN_FORMAT
-UNRESOLVABLE_REFERENCE
+| [RESPONSE_VALIDATION_ERROR](#RESPONSE_VALIDATION_ERROR)                       |
 
 ## Errors Descriptions
 
@@ -233,6 +227,18 @@ Links: [Index](#index) | [Error descriptions](#error-descriptions)
 **Description**: There is a status code specified in the example file referenced, which is not described in the OpenAPI spec.
 
 **How to fix the issue**: Remove the status code from example that is not specificed in the spec, or check whether the status code should be added to the OpenAPI spec.
+
+Links: [Index](#index) | [Error descriptions](#error-descriptions)
+
+### <a name="RESPONSE_VALIDATION_ERROR" />RESPONSE_VALIDATION_ERROR
+
+**Severity** : 1
+
+**Message** : ound errors in validating the response with statusCode {} ...
+
+**Description**: Found errors when validate the response defined in example.
+
+**How to fix the issue**: See inner details for the violations and fix.
 
 Links: [Index](#index) | [Error descriptions](#error-descriptions)
 

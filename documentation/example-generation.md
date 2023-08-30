@@ -1,10 +1,10 @@
 # Using `oav` to generate examples for a `swagger` specification
 
-An example is a JSON file representing the payload of a rest API call, which includes both request information and response information. An example is required to provide for each operation defined in a swagger. `oav` provides a tool to _gneerate_ examples given a swagger specification.
+An example is a JSON file representing the payload of a rest API call, which includes both request information and response information. An example is required to provide for each operation defined in a swagger. `oav` provides a tool to _generate_ examples given an swagger specification and optional REST payloads.
 
 ## Pre-requisite
 
-- `oav` installed. Reference the [Contributing.md](../CONTRIBUTING.md) for a guide on how to install `oav`.
+- `oav` installed. Reference the [base readme](../README.md) for a guide on how to install `oav`.
 - An operation example is based on the operation defined in a swagger specification. So, a valid swagger is the **pre-requisite** content. 
 
 ## Generation Workflow
