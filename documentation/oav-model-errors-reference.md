@@ -1,4 +1,4 @@
-# OAV Errors Reference
+# OAV Errors Reference (Model Validation)
 
 This document includes further reference for errors reported by `oav` validate-example command.
 
@@ -26,6 +26,13 @@ Errors described below may apply in request or response, your result output will
 | [RESPONSE_SCHEMA_NOT_IN_SPEC](#RESPONSE_SCHEMA_NOT_IN_SPEC)                   |
 | [REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND](#REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND) |
 | [RESPONSE_STATUS_CODE_NOT_IN_SPEC](#RESPONSE_STATUS_CODE_NOT_IN_SPEC)         |
+
+RESPONSE_VALIDATION_ERROR
+SCHEMA_NOT_AN_OBJECT
+SCHEMA_NOT_REACHABLE
+SCHEMA_VALIDATION_FAILED
+UNKNOWN_FORMAT
+UNRESOLVABLE_REFERENCE
 
 ## Errors Descriptions
 
@@ -216,3 +223,16 @@ Links: [Index](#index) | [Error descriptions](#error-descriptions)
 **How to fix the issue**: Remove the status code from example that is not specificed in the spec, or check whether the status code should be added to the OpenAPI spec.
 
 Links: [Index](#index) | [Error descriptions](#error-descriptions)
+
+### <a name="RESPONSE_STATUS_CODE_NOT_IN_SPEC" />RESPONSE_STATUS_CODE_NOT_IN_SPEC
+
+**Severity** : 0
+
+**Message** : Response statusCode X for operation Y is provided in example, however it is not present in the swagger spec.
+
+**Description**: There is a status code specified in the example file referenced, which is not described in the OpenAPI spec.
+
+**How to fix the issue**: Remove the status code from example that is not specificed in the spec, or check whether the status code should be added to the OpenAPI spec.
+
+Links: [Index](#index) | [Error descriptions](#error-descriptions)
+
