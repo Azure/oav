@@ -218,18 +218,6 @@ Links: [Index](#index) | [Error descriptions](#error-descriptions)
 
 Links: [Index](#index) | [Error descriptions](#error-descriptions)
 
-### <a name="RESPONSE_STATUS_CODE_NOT_IN_SPEC" />RESPONSE_STATUS_CODE_NOT_IN_SPEC
-
-**Severity** : 0
-
-**Message** : Response statusCode X for operation Y is provided in example, however it is not present in the swagger spec.
-
-**Description**: There is a status code specified in the example file referenced, which is not described in the OpenAPI spec.
-
-**How to fix the issue**: Remove the status code from example that is not specificed in the spec, or check whether the status code should be added to the OpenAPI spec.
-
-Links: [Index](#index) | [Error descriptions](#error-descriptions)
-
 ### <a name="RESPONSE_VALIDATION_ERROR" />RESPONSE_VALIDATION_ERROR
 
 **Severity** : 1
