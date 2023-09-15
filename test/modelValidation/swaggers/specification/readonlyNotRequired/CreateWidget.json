@@ -1,0 +1,28 @@
+{
+  "title": "Create Widget",
+  "operationId": "Widgets_Create",
+  "parameters": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "body": {
+      "description": "Description for sampleWidget",
+      "secret": "don't tell anyone but your mother",
+      "topSecret": "don't tell anyone"
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "widgetId": "00000000-0000-0000-0000-000000000000",
+        "description": "Description for sampleWidget",
+        "state": "Active"
+      }
+    },
+    "201": {
+      "body": {
+        "widgetId": "00000000-0000-0000-0000-000000000000",
+        "description": "Description for sampleWidget",
+        "state": "Active"
+      }
+    }
+  }
+}
