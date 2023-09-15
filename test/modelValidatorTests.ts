@@ -899,7 +899,7 @@ describe("Model Validation", () => {
         const specPath = `${testPath}/modelValidation/swaggers/specification/readonlyNotRequired/openapi.json`;
         const result = await validate.validateExamples(specPath, "Widgets_Create");
 
-        assert.strictEqual(result.length, 0)
+        assert.strictEqual(result.length, 0);
     });
   });
 });
