@@ -103,22 +103,6 @@
           "type": "string",
           "description": "The widget description."
         },
-        "secret": {
-          "type": "string",
-          "description": "A secret value.",
-          "x-ms-mutability": [
-            "update",
-            "create"
-          ]
-        },
-        "topSecret": {
-          "$ref": "#/definitions/secret",
-          "description": "A top secret value.",
-          "x-ms-mutability": [
-            "update",
-            "create"
-          ]
-        },
         "state": {
           "$ref": "#/definitions/WidgetState",
           "description": "The widget state.",
@@ -127,8 +111,6 @@
       },
       "required": [
         "widgetId",
-        "secret",
-        "topSecret",
         "state"
       ]
     },
