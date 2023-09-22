@@ -1,0 +1,171 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Widget Service",
+    "version": "1.0.0",
+    "x-typespec-generated": [
+      {
+        "emitter": "@azure-tools/typespec-autorest"
+      }
+    ]
+  },
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "Widgets"
+    }
+  ],
+  "paths": {
+    "/widgets/{id}": {
+      "patch": {
+        "operationId": "Widgets_Create",
+        "tags": [
+          "Widgets"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WidgetUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "schema": {
+              "$ref": "#/definitions/Widget"
+            }
+          },
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "schema": {
+              "$ref": "#/definitions/Widget"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Widgets_Create": {
+            "$ref": "./CreateWidget.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ]
+    },
+    "Widget": {
+      "type": "object",
+      "properties": {
+        "widgetId": {
+          "type": "string",
+          "description": "The widget id.",
+          "readOnly": true
+        },
+        "description": {
+          "type": "string",
+          "description": "The widget description."
+        },
+        "state": {
+          "$ref": "#/definitions/WidgetState",
+          "description": "The widget state.",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "widgetId",
+        "state"
+      ]
+    },
+    "WidgetState": {
+      "type": "string",
+      "description": "The widget state.",
+      "enum": [
+        "Active",
+        "Expired"
+      ],
+      "x-ms-enum": {
+        "name": "WidgetState",
+        "modelAsString": true,
+        "values": [
+          {
+            "name": "Active",
+            "value": "Active",
+            "description": "The widget is Active."
+          },
+          {
+            "name": "Expired",
+            "value": "Expired",
+            "description": "The widget is Expired."
+          }
+        ]
+      }
+    },
+    "WidgetUpdate": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The widget description."
+        },
+        "secret": {
+          "type": "string",
+          "description": "A secret value.",
+          "x-ms-mutability": [
+            "update",
+            "create"
+          ]
+        },
+        "topSecret": {
+          "$ref": "#/definitions/secret",
+          "description": "A top secret value.",
+          "x-ms-mutability": [
+            "update",
+            "create"
+          ]
+        }
+      }
+    },
+    "secret": {
+      "type": "string"
+    }
+  },
+  "parameters": {}
+}

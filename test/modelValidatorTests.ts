@@ -894,5 +894,12 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].message, "Expected type object but found type integer");
       assert.strictEqual(result[0].exampleJsonPath, "$responses.200.body.result1['id']");
     });
+
+    it("should validate mutable readonly properties without erroring", async() => {
+        const specPath = `${testPath}/modelValidation/swaggers/specification/readonlyNotRequired/openapi.json`;
+        const result = await validate.validateExamples(specPath, "Widgets_Create");
+
+        assert.strictEqual(result.length, 0);
+    });
   });
 });
