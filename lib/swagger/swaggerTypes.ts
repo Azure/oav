@@ -247,6 +247,7 @@ export interface Schema extends BaseSchema {
   [xmsDiscriminatorValue]?: string;
   readOnly?: boolean;
   [xmsMutability]?: Array<"create" | "read" | "update">;
+  refWithReadOnly?: boolean;
   xml?: XML;
   externalDocs?: ExternalDocs;
   example?: { [exampleName: string]: Example };

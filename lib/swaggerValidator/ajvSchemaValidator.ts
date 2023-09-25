@@ -300,6 +300,16 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     return true;
   }
 
+  // If a request is missing a required property that is readOnly we can skip this error
+  if (
+    !cxt.isResponse &&
+    keyword === "required" &&
+    (parentSchema.properties?.[(params as any).missingProperty]?.refWithReadOnly ||
+      parentSchema.properties?.[(params as any).missingProperty]?.readOnly)
+  ) {
+    return true;
+  }
+
   // If a response has property which x-ms-secret value is "true" in post we can skip this error
   if (
     cxt.isResponse &&
