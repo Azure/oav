@@ -37,7 +37,7 @@
     "moment": "^2.29.3",
     "ms-rest": "^2.5.6",
     "mustache": "^4.2.0",
-    "newman": "^5.3.2",
+    "newman": "^6.0.0",
     "path-to-regexp": "^6.2.1",
     "postman-collection": "^4.1.7",
     "reflect-metadata": "^0.1.13",
