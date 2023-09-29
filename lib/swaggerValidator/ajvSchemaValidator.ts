@@ -285,6 +285,11 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     return true;
   }
 
+  // If we're erroring on the added property refWithReadOnly simply ignore the error
+  if (error.keyword === "additionalProperties" && (params as any).additionalProperty === "refWithReadOnly"){
+    return true;
+  }
+
   // If a response has x-ms-mutability property and its missing the read we can skip this error
   if (
     cxt.isResponse &&
