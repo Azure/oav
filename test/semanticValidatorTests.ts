@@ -286,5 +286,13 @@ describe("Semantic validation", () => {
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === true);
     });
+    it("should validate without additionalProperty Error on the refWithReadOnly property injected by oav", async () => {
+      const specPath = `${testPath}/modelValidation/swaggers/specification/refWithReadOnlyProperyError/cognitiveservices.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(
+        result.validityStatus === true,
+        `swagger "${specPath}" contains semantic validation errors.`
+      );
+    });
   });
 });
