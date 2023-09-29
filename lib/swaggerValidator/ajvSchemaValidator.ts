@@ -286,7 +286,10 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   }
 
   // If we're erroring on the added property refWithReadOnly simply ignore the error
-  if (error.keyword === "additionalProperties" && (params as any).additionalProperty === "refWithReadOnly"){
+  if (
+    error.keyword === "additionalProperties" &&
+    (params as any).additionalProperty === "refWithReadOnly"
+  ) {
     return true;
   }
 
