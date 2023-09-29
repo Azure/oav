@@ -3,7 +3,7 @@ import { ApiTestGeneratorRule, ResourceManipulatorInterface } from "../ApiTestRu
 
 export const NoChildResourceCreated: ApiTestGeneratorRule = {
   name: "NoChildResourceCreated",
-  armRpcCodes: ["RPC-Put-V1-16","RPC-Put-V1-17"],
+  armRpcCodes: ["RPC-Put-V1-16", "RPC-Put-V1-17"],
   description: "Check if put operation will create nested resource implicitly.",
   resourceKinds: ["Tracked", "Extension"],
   appliesTo: ["ARM"],
@@ -13,18 +13,18 @@ export const NoChildResourceCreated: ApiTestGeneratorRule = {
     if (childResources.length === 0) {
       return null;
     }
-    let hit = false
+    let hit = false;
     for (resource of childResources) {
-      const listOperation = resource.getListOperations()[0]
+      const listOperation = resource.getListOperations()[0];
       if (listOperation && listOperation.examples[0]) {
-        const step:RawStep = {
+        const step: RawStep = {
           operationId: listOperation.operationId,
-          responses: {200: {body:{ value:[]}}}
+          responses: { 200: { body: { value: [] } } },
         };
         base.steps.push(step);
         hit = true;
       }
     }
-    return hit ? base : null
+    return hit ? base : null;
   },
 };

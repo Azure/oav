@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 09-29-2023 3.2.13
+
+- #1004 fixes an issue with the injected property refWithReadOnly causing additionalProperty error in schema validator.
+
 ## 09/25/2023 3.2.12
 
 - #996 Allows `required` properties to be ommitted from a response if they are also marked `readonly`.

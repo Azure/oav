@@ -3,9 +3,9 @@ import { URL } from "url";
 import { HttpMethods } from "@azure/core-http";
 import { injectable } from "inversify";
 import { Loader } from "../../swagger/loader";
+import { DEFAULT_ARM_ENDPOINT } from "../constants";
 import { RequestTracking, SingleRequestTracking } from "./testRecordingApiScenarioGenerator";
 import { parseRecordingBodyJson, transformRecordingHeaders } from "./dotnetRecordingLoader";
-import { DEFAULT_ARM_ENDPOINT } from "../constants";
 
 interface RecordingFile {
   interactions: RecordingEntry[];
