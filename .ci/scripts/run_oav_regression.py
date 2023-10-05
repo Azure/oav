@@ -123,26 +123,33 @@ def get_output_files(root_target_folder: str, choice: str, target_folder: str) -
 def prepare_output_folder(target_folder: str) -> str:
     must_repopulate_cache = False
 
-    if os.path.exists(output_folder):
-        cache_file = os.path.join(output_folder, CACHE_FILE_NAME)
+    if os.path.exists(target_folder):
+        cache_file = os.path.join(target_folder, CACHE_FILE_NAME)
         if os.path.exists(cache_file):
             tmp_dir = tempfile.gettempdir()
             cache_location = os.path.join(tmp_dir, CACHE_FILE_NAME)
             shutil.move(cache_file, cache_location)
             must_repopulate_cache = True
 
-        shutil.rmtree(output_folder)
+        shutil.rmtree(target_folder)
 
-    os.makedirs(output_folder)
+    os.makedirs(target_folder)
 
     if must_repopulate_cache:
         shutil.move(cache_location, cache_file)
 
-    return output_folder
+    return target_folder
 
 
 def dump_summary(summary: Dict[str, OAVScanResult]) -> None:
     print(f"Scanned {len(summary.keys())} files successfully.")
+
+
+def run(oav_exe: str, spec: str, output_folder: str, choice: str, oav_version: str):
+    collection_stdout_file, collection_stderr_file = get_output_files(args.target, choice, spec)
+    resolved_out = os.path.join(output_folder, collection_stdout_file)
+    resolved_err = os.path.join(output_folder, collection_stderr_file)
+    summary[f"{spec}-{choice}"] = get_oav_output(oav_exe, spec, resolved_out, resolved_err, choice, oav_version)
 
 
 if __name__ == "__main__":
@@ -152,7 +159,7 @@ if __name__ == "__main__":
         "-t",
         "--target",
         dest="target",
-        help="The azure-rest-api-specs repo root",
+        help="The azure-rest-api-specs repo root.",
         required=True,
     )
 
@@ -174,7 +181,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    oav_version = verify_oav_version(args.oav)
+    if args.oav:
+        oav_exe = args.oav
+    else:
+        oav_exe = "oav"
+
+    oav_version = verify_oav_version(oav_exe)
 
     if oav_version == "-1":
         print("OAV is not available on the PATH. Resolve this ane reinvoke.")
@@ -185,9 +197,7 @@ if __name__ == "__main__":
     summary: Dict[str, OAVScanResult] = {}
 
     for spec in specs:
-        collection_stdout_file, collection_stderr_file = get_output_files(args.target, args.choice, spec)
-        resolved_out = os.path.join(output_folder, collection_stdout_file)
-        resolved_err = os.path.join(output_folder, collection_stderr_file)
-        summary[spec] = get_oav_output(args.oav, spec, resolved_out, resolved_err, args.choice, oav_version)
+        run(oav_exe, spec, output_folder, "validate-spec", oav_version)
+        run(oav_exe, spec, output_folder, "validate-example", oav_version)
 
     dump_summary(summary)
