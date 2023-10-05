@@ -29,9 +29,9 @@ jobs:
   - job: RegressionB
     variables:
       - name: OutputFolder
-        value: $(ArtifactStagingFolder)/${{ parameters.AfterVersion }}
+        value: $(Build.ArtifactStagingDirectory)/${{ parameters.AfterVersion }}
       - name: RestSpecsRepo
-        value: $(ArtifactStagingFolder)/azure-rest-api-specs
+        value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
     timeoutInMinutes: 180
     displayName: Run ${{ parameters.AfterVersion }}
     steps:
