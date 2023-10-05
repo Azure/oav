@@ -156,7 +156,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scan azure-rest-api-specs repository, invoke oav")
 
     parser.add_argument(
-        "-t",
         "--target",
         dest="target",
         help="The azure-rest-api-specs repo root.",
@@ -164,7 +163,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-t",
         "--output",
         dest="output",
         help="The folder which will contain the oav output.",
@@ -172,7 +170,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "o",
         "--oav",
         dest="oav",
         help="The oav exe this script will be using! If OAV is on the PATH just pass nothing!",
