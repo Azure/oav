@@ -12,10 +12,6 @@ pool:
   name: azsdk-pool-mms-ubuntu-2004-general
   vmImage: MMSUbuntu20.04
 
-variables:
-  - name: RestSpecsRepo
-    value: $(ArtifactStagingFolder)/azure-rest-api-specs
-
 jobs:
   - job: RegressionA
     variables:
@@ -34,6 +30,8 @@ jobs:
     variables:
       - name: OutputFolder
         value: $(ArtifactStagingFolder)/${{ parameters.AfterVersion }}
+      - name: RestSpecsRepo
+        value: $(ArtifactStagingFolder)/azure-rest-api-specs
     timeoutInMinutes: 180
     displayName: Run ${{ parameters.AfterVersion }}
     steps:
