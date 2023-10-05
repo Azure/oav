@@ -1,0 +1,51 @@
+# TODO: refactor the hilariously common jobs
+
+parameters:
+  - name: BeforeVersion
+    type: string
+    default: ''
+  - name: AfterVersion
+    type: string
+    default: 'LOCAL' #specialcase value that will install the local version of oav
+
+pool:
+  name: azsdk-pool-mms-ubuntu-2004-general
+  vmImage: MMSUbuntu20.04
+
+variables:
+  - name: RestSpecsRepo
+    value: $(ArtifactStagingFolder)/azure-rest-api-specs
+
+- jobs:
+  - job: RegressionA
+    variables:
+      - name: OutputFolder
+        value: $(Build.ArtifactStagingDirectory)/${{ parameters.BeforeVersion }}
+      - name: RestSpecsRepo
+        value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
+    timeoutInMinutes: 180
+    displayName: Run ${{ parameters.BeforeVersion }}
+    steps:
+      - template: ./regression-steps.yml
+        parameters:
+          TargetVersion: ${{ parameters.BeforeVersion }}
+
+  - job: RegressionB
+    variables:
+      - name: OutputFolder
+        value: $(ArtifactStagingFolder)/${{ parameters.AfterVersion }}
+    timeoutInMinutes: 180
+    DisplayName: Run ${{ parameters.AfterVersion }}
+    steps:
+      - template: ./regression-steps.yml
+        parameters:
+          TargetVersion: ${{ parameters.AfterVersion }}
+
+  - job: RegressionB
+    timeoutInMinutes: 180
+    dependsOn: 
+      - RegressionA
+      - RegressionB
+    DisplayName: Run Diff
+
+
