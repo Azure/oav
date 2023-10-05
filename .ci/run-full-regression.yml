@@ -16,7 +16,7 @@ variables:
   - name: RestSpecsRepo
     value: $(ArtifactStagingFolder)/azure-rest-api-specs
 
-- jobs:
+jobs:
   - job: RegressionA
     variables:
       - name: OutputFolder
