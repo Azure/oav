@@ -41,11 +41,11 @@ jobs:
         parameters:
           TargetVersion: ${{ parameters.AfterVersion }}
 
-  - job: RegressionB
-    timeoutInMinutes: 180
-    dependsOn: 
-      - RegressionA
-      - RegressionB
-    DisplayName: Run Diff
+  # - job: RegressionB
+  #   timeoutInMinutes: 180
+  #   dependsOn: 
+  #     - RegressionA
+  #     - RegressionB
+  #   displayName: Run Diff
 
 
