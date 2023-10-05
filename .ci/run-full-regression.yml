@@ -35,7 +35,7 @@ jobs:
       - name: OutputFolder
         value: $(ArtifactStagingFolder)/${{ parameters.AfterVersion }}
     timeoutInMinutes: 180
-    DisplayName: Run ${{ parameters.AfterVersion }}
+    displayName: Run ${{ parameters.AfterVersion }}
     steps:
       - template: ./regression-steps.yml
         parameters:
