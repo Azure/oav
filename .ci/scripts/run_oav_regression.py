@@ -13,10 +13,10 @@ import os
 import shutil
 import sys
 import tempfile
-import difflib
-from dataclasses import dataclass
+import asyncio
 
 import subprocess
+from dataclasses import dataclass
 from typing import List, Dict, Tuple
 
 CACHE_FILE_NAME: str = ".spec_cache"
@@ -41,7 +41,7 @@ class OAVScanResult:
         return os.path.getsize(self.stderr)
 
 
-def get_oav_output(
+async def get_oav_output(
     oav_exe: str,
     target_folder: str,
     collection_std_out: str,
@@ -54,8 +54,7 @@ def get_oav_output(
             collection_std_err, "w", encoding="utf-8"
         ) as err:
             print([oav_exe, oav_command, target_folder])
-            result = subprocess.run(
-                [oav_exe, oav_command, target_folder], stdout=out, stderr=err, check=True, shell=True
+            result = await asyncio.create_subprocess_exec(oav_exe, oav_command, target_folder, stdout=out, stderr=err
             )
 
         return OAVScanResult(target_folder, collection_std_out, collection_std_err, result.returncode, oav_version)
@@ -145,14 +144,17 @@ def dump_summary(summary: Dict[str, OAVScanResult]) -> None:
     print(f"Scanned {len(summary.keys())} files successfully.")
 
 
-def run(oav_exe: str, spec: str, output_folder: str, choice: str, oav_version: str):
-    collection_stdout_file, collection_stderr_file = get_output_files(args.target, choice, spec)
+async def run(oav_exe: str, spec: str, output_folder: str, choice: str, oav_version: str):
+    collection_stdout_file, collection_stderr_file = get_output_files(output_folder, choice, spec)
     resolved_out = os.path.join(output_folder, collection_stdout_file)
     resolved_err = os.path.join(output_folder, collection_stderr_file)
-    summary[f"{spec}-{choice}"] = get_oav_output(oav_exe, spec, resolved_out, resolved_err, choice, oav_version)
+    dump_summary[f"{spec}-{choice}"] = await get_oav_output(oav_exe, spec, resolved_out, resolved_err, choice, oav_version)
 
+async def run_all(oav_exe: str, spec: str, output_folder: str, oav_version: str):
+    await run(oav_exe, spec, output_folder, "validate-spec", oav_version)
+    await run(oav_exe, spec, output_folder, "validate-example", oav_version)
 
-if __name__ == "__main__":
+async def self_main() -> None:
     parser = argparse.ArgumentParser(description="Scan azure-rest-api-specs repository, invoke oav")
 
     parser.add_argument(
@@ -193,8 +195,13 @@ if __name__ == "__main__":
     specs: List[str] = get_specification_files(args.target, output_folder)
     summary: Dict[str, OAVScanResult] = {}
 
-    for spec in specs:
-        run(oav_exe, spec, output_folder, "validate-spec", oav_version)
-        run(oav_exe, spec, output_folder, "validate-example", oav_version)
+    tasks = [run_all(oav_exe, spec, output_folder, oav_version) for spec in specs]
+
+    for i in range(0, len(tasks), 5):
+        group = tasks[i:i+5]
+        await asyncio.gather(*group)
 
     dump_summary(summary)
+
+if __name__ == "__main__":
+    asyncio.run(self_main())    
