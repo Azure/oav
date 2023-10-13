@@ -90,6 +90,7 @@ def get_specification_files(target_folder: str, output_folder: str) -> List[str]
             return [spec.strip() for spec in specs]
 
     print(f"Scanned directory, found {len(jsons)} json files.")
+
     for index, json_file in enumerate(jsons):
         if is_word_present_in_file(json_file, search_word):
             specs.append(json_file)
