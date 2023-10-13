@@ -25,7 +25,7 @@ steps:
 - bash: |
     if [[ "${{ parameters.TargetVersion }}" == "LOCAL" ]]; then
       echo "We're installing the local package"
-      npm install
+      npm ci
       npm link
     else
       npm install -g oav@${{ parameters.TargetVersion }}
