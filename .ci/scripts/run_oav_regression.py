@@ -20,7 +20,8 @@ import subprocess
 from dataclasses import dataclass
 from typing import List, Dict, Tuple
 
-sem = asyncio.Semaphore(value=10)
+CORES = 4
+sem = asyncio.Semaphore(value=CORES)
 
 CACHE_FILE_NAME: str = ".spec_cache"
 
@@ -95,6 +96,7 @@ def get_specification_files(target_folder: str, output_folder: str) -> List[str]
             return [spec.strip() for spec in specs]
 
     print(f"Scanned directory, found {len(jsons)} json files.")
+
     for index, json_file in enumerate(jsons):
         if is_word_present_in_file(json_file, search_word):
             specs.append(json_file)
@@ -207,8 +209,8 @@ async def self_main() -> None:
 
     tasks = [await run_all(oav_exe, spec, output_folder, oav_version, summary) for spec in specs]
 
-    for i in range(0, len(tasks), 5):
-        group = tasks[i : i + 5]
+    for i in range(0, len(tasks), CORES):
+        group = tasks[i : i + CORES]
         await asyncio.gather(*group)
 
     dump_summary(summary)
