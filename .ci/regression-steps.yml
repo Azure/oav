@@ -41,7 +41,7 @@ steps:
 - bash: |
     python $(Build.SourcesDirectory)/.ci/scripts/run_oav_regression.py --oav oav --target $(RestSpecsRepo) --output $(OutputFolder)
   displayName: Run the Regression Script
-  timeoutInMinutes: 180
+  timeoutInMinutes: 170
 
 - task: PublishBuildArtifacts@1
   condition: always()
