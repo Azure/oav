@@ -156,10 +156,7 @@ export class CoverageView {
               ? `${this.specLinkPrefix}/${element.specFilePath?.substring(
                   element.specFilePath?.indexOf("specification")
                 )}#L${error.source.position.line}`
-              : path.relative(
-                  __dirname,
-                  `../../${element.specFilePath}#L${error.source.position.line}`
-                ),
+              : `${element.specFilePath}#L${error.source.position.line}`,
             pathsInPayload: error.pathsInPayload,
             jsonPathsInPayload: error.jsonPathsInPayload,
             severity: error.severity,
@@ -170,10 +167,7 @@ export class CoverageView {
               : element.payloadFilePath,
             payloadFilePathWithPosition: this.overrideLinkInReport
               ? `${this.payloadLinkPrefix}/${payloadFile}#L${element.payloadFilePathPosition?.line}`
-              : path.relative(
-                  __dirname,
-                  `../../${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`
-                ),
+              : `${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`,
             payloadFileLinkLabel: payloadFile,
           });
         });
@@ -184,10 +178,7 @@ export class CoverageView {
           payloadFileLinkLabel: payloadFile,
           payloadFilePathWithPosition: this.overrideLinkInReport
             ? `${this.payloadLinkPrefix}/${payloadFile}#L${element.payloadFilePathPosition?.line}`
-            : path.relative(
-                __dirname,
-                `../../${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`
-              ),
+            : `${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`,
           errors: element.errors,
           specFilePath: this.overrideLinkInReport
             ? `${this.specLinkPrefix}/${element.specFilePath?.substring(
@@ -205,7 +196,7 @@ export class CoverageView {
           ? `${this.specLinkPrefix}/${element.spec?.substring(
               element.spec?.indexOf("specification")
             )}`
-          : path.relative(__dirname, `../../${element.spec}`);
+          : `${element.spec}`;
         this.coverageResultsForRendering.push({
           spec: specLink,
           specLinkLabel: element.spec?.substring(element.spec?.lastIndexOf("/") + 1),
@@ -224,7 +215,7 @@ export class CoverageView {
 
       this.resultsForRendering = this.coverageResultsForRendering.map((item) => {
         const data = this.validationResultsForRendering.find(
-          (i) => i.specFilePath && item.spec.includes(i.specFilePath)
+          (i) => i.specFilePath && item.spec.split(path.win32.sep).join(path.posix.sep).includes(i.specFilePath)
         );
         return {
           ...item,
@@ -272,10 +263,7 @@ export class CoverageView {
             ? `${this.specLinkPrefix}/${element[0].specFilePath?.substring(
                 element[0].specFilePath?.indexOf("specification")
               )}#L${element[0]!.operationInfo!.position!.line}`
-            : path.relative(
-                __dirname,
-                `../../${element[0].specFilePath}#L${element[0]!.operationInfo!.position!.line}`
-              ),
+            : `${element[0].specFilePath}#L${element[0]!.operationInfo!.position!.line}`,
         });
       });
 
@@ -464,5 +452,6 @@ export class ReportGenerator {
 
     const text = Mustache.render(template, view);
     fs.writeFileSync(this.reportPath, text, "utf-8");
+    fs.writeFileSync(this.reportPath.replace(".html", ".json"), JSON.stringify(view, null, 2), "utf-8");
   }
 }
