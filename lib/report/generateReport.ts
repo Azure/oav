@@ -215,7 +215,9 @@ export class CoverageView {
 
       this.resultsForRendering = this.coverageResultsForRendering.map((item) => {
         const data = this.validationResultsForRendering.find(
-          (i) => i.specFilePath && item.spec.split(path.win32.sep).join(path.posix.sep).includes(i.specFilePath)
+          (i) =>
+            i.specFilePath &&
+            item.spec.split(path.win32.sep).join(path.posix.sep).includes(i.specFilePath)
         );
         return {
           ...item,
@@ -452,6 +454,10 @@ export class ReportGenerator {
 
     const text = Mustache.render(template, view);
     fs.writeFileSync(this.reportPath, text, "utf-8");
-    fs.writeFileSync(this.reportPath.replace(".html", ".json"), JSON.stringify(view, null, 2), "utf-8");
+    fs.writeFileSync(
+      this.reportPath.replace(".html", ".json"),
+      JSON.stringify(view, null, 2),
+      "utf-8"
+    );
   }
 }
