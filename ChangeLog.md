@@ -1,5 +1,21 @@
 # Change Log - oav
 
+## 09-29-2023 3.2.13
+
+- #1004 fixes an issue with the injected property refWithReadOnly causing additionalProperty error in schema validator.
+
+## 09/25/2023 3.2.12
+
+- #996 Allows `required` properties to be ommitted from a response if they are also marked `readonly`.
+
+## 07/05/2023 3.2.11
+
+- Re-enable `additionalProperties` validation where the `liveValidator` configuration has `isArmCall` set to `false`. The version of `oav` that is being used to validate `azure-rest-api-specs` has this behavior enabled, so this is not a breaking change.
+
+## 06/15/2023 3.2.10
+
+- Patch `byte` type validation to properly decode and re-encode a base64 string. A `byte` formatted body's validity has **nothing** to do with whether or not one can successfully encode it to ascii.
+
 ## 06/05/2023 3.2.9
 
 - Reverting 3.2.9-beta.1 override changes.

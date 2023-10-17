@@ -285,6 +285,14 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     return true;
   }
 
+  // If we're erroring on the added property refWithReadOnly simply ignore the error
+  if (
+    error.keyword === "additionalProperties" &&
+    (params as any).additionalProperty === "refWithReadOnly"
+  ) {
+    return true;
+  }
+
   // If a response has x-ms-mutability property and its missing the read we can skip this error
   if (
     cxt.isResponse &&
@@ -296,6 +304,16 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
         (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] ===
           true)) ||
       (keyword === "type" && data === null && parentSchema[xmsMutability]?.indexOf("read") === -1))
+  ) {
+    return true;
+  }
+
+  // If a request is missing a required property that is readOnly we can skip this error
+  if (
+    !cxt.isResponse &&
+    keyword === "required" &&
+    (parentSchema.properties?.[(params as any).missingProperty]?.refWithReadOnly ||
+      parentSchema.properties?.[(params as any).missingProperty]?.readOnly)
   ) {
     return true;
   }
