@@ -64,6 +64,16 @@ export interface resultForRendering
   index?: number;
 }
 
+export async function loadErrorDefinitions(): Promise<Map<string, ErrorDefinition>> {
+  const errorDefinitionDoc =
+    require("../../../documentation/error-definitions.json") as ErrorDefinitionDoc;
+  const errorsMap: Map<string, ErrorDefinition> = new Map();
+  errorDefinitionDoc.ErrorDefinitions.forEach((def) => {
+    errorsMap.set(def.code, def);
+  });
+  return errorsMap;
+}
+
 // used to pass data to the template rendering engine
 export class CoverageView {
   public package: string;
@@ -137,7 +147,7 @@ export class CoverageView {
   public async prepareDataForRendering() {
     try {
       this.markdown = await this.readMarkdown();
-      const errorDefinitions = await this.loadErrorDefinitions();
+      const errorDefinitions = await loadErrorDefinitions();
       let errorsForRendering: LiveValidationIssueForRendering[];
       this.sortedValidationResults.forEach((element) => {
         const payloadFile = element.payloadFilePath?.substring(
@@ -301,16 +311,6 @@ export class CoverageView {
       console.error(`Failed in read report.md file`);
       return "";
     }
-  }
-
-  private async loadErrorDefinitions(): Promise<Map<string, ErrorDefinition>> {
-    const errorDefinitionDoc =
-      require("../../../documentation/error-definitions.json") as ErrorDefinitionDoc;
-    const errorsMap: Map<string, ErrorDefinition> = new Map();
-    errorDefinitionDoc.ErrorDefinitions.forEach((def) => {
-      errorsMap.set(def.code, def);
-    });
-    return errorsMap;
   }
 
   private sortOperationIds() {
