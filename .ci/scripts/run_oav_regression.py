@@ -177,6 +177,15 @@ if __name__ == "__main__":
         required=False,
     )
 
+    parser.add_argument(
+        "--type",
+        dest="type",
+        help="Are we running specs or examples?",
+        required=True,
+        options=["validate-spec","validate-example"]
+    )
+
+
     args = parser.parse_args()
 
     if args.oav:
@@ -195,7 +204,6 @@ if __name__ == "__main__":
     summary: Dict[str, OAVScanResult] = {}
 
     for spec in specs:
-        run(oav_exe, spec, output_folder, "validate-spec", oav_version)
-        run(oav_exe, spec, output_folder, "validate-example", oav_version)
+        run(oav_exe, spec, output_folder, args.type, oav_version)
 
     dump_summary(summary)

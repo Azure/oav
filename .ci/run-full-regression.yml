@@ -13,37 +13,69 @@ pool:
   vmImage: MMSUbuntu20.04
 
 jobs:
-  - job: RegressionA
+  - job: RegressionASpecs
     variables:
       - name: OutputFolder
         value: $(Build.ArtifactStagingDirectory)/${{ parameters.BeforeVersion }}
       - name: RestSpecsRepo
         value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
     timeoutInMinutes: 360
-    displayName: Run ${{ parameters.BeforeVersion }}
+    displayName: Run ${{ parameters.BeforeVersion }} Specs
     steps:
       - template: ./regression-steps.yml
         parameters:
           TargetVersion: ${{ parameters.BeforeVersion }}
+          Type: "validate-spec"
 
-  - job: RegressionB
+  - job: RegressionAExamples
+    variables:
+      - name: OutputFolder
+        value: $(Build.ArtifactStagingDirectory)/${{ parameters.BeforeVersion }}
+      - name: RestSpecsRepo
+        value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
+    timeoutInMinutes: 360
+    displayName: Run ${{ parameters.BeforeVersion }} Examples
+    steps:
+      - template: ./regression-steps.yml
+        parameters:
+          TargetVersion: ${{ parameters.BeforeVersion }}
+          Type: "validate-example"
+
+  - job: RegressionBSpecs
     variables:
       - name: OutputFolder
         value: $(Build.ArtifactStagingDirectory)/${{ parameters.AfterVersion }}
       - name: RestSpecsRepo
         value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
     timeoutInMinutes: 360
-    displayName: Run ${{ parameters.AfterVersion }}
+    displayName: Run ${{ parameters.AfterVersion }} Specs
     steps:
       - template: ./regression-steps.yml
         parameters:
           TargetVersion: ${{ parameters.AfterVersion }}
+          Type: "validate-spec"
+
+  - job: RegressionBExamples
+    variables:
+      - name: OutputFolder
+        value: $(Build.ArtifactStagingDirectory)/${{ parameters.AfterVersion }}
+      - name: RestSpecsRepo
+        value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
+    timeoutInMinutes: 360
+    displayName: Run ${{ parameters.AfterVersion }} Examples
+    steps:
+      - template: ./regression-steps.yml
+        parameters:
+          TargetVersion: ${{ parameters.AfterVersion }}
+          Type: "validate-example"
 
   # - job: RegressionB
   #   timeoutInMinutes: 180
   #   dependsOn: 
-  #     - RegressionA
-  #     - RegressionB
+  #     - RegressionASpecs
+  #     - RegressionBSpecs
+  #     - RegressionAExamples
+  #     - RegressionBExamples
   #   displayName: Run Diff
 
 
