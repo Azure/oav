@@ -50,4 +50,4 @@ steps:
   condition: always()
   inputs:
     pathtoPublish: $(OutputFolder)
-    artifactName: "${{ parameters.TargetVersion }}"
+    artifactName: "${{ parameters.TargetVersion }}-${{ parameters.Type }}"
