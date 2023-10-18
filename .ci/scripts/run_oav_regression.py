@@ -94,7 +94,6 @@ def get_specification_files(target_folder: str, output_folder: str) -> List[str]
     for index, json_file in enumerate(jsons):
         if is_word_present_in_file(json_file, search_word):
             specs.append(json_file)
-        print(f"{index} / {num}")
 
     print(f"Filtered to {len(specs)} swagger files.")
     with open(output_cache, "w", encoding="utf-8") as c:
@@ -202,8 +201,6 @@ if __name__ == "__main__":
     output_folder: str = prepare_output_folder(args.output)
     specs: List[str] = get_specification_files(args.target, output_folder)
     summary: Dict[str, OAVScanResult] = {}
-
-    print(f"Discovered {len(specs)} specs.")
 
     for spec in specs:
         run(oav_exe, spec, output_folder, args.type, oav_version)
