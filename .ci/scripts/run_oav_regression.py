@@ -203,6 +203,8 @@ if __name__ == "__main__":
     specs: List[str] = get_specification_files(args.target, output_folder)
     summary: Dict[str, OAVScanResult] = {}
 
+    print(f"Discovered {len(specs)} specs.")
+
     for spec in specs:
         run(oav_exe, spec, output_folder, args.type, oav_version)
 
