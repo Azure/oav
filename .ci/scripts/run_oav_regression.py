@@ -171,18 +171,18 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--oav",
-        dest="oav",
-        help="The oav exe this script will be using! If OAV is on the PATH just pass nothing!",
-        required=False,
+        "--type",
+        dest="type",
+        required=True,
+        help="Are we running specs or examples?",
+        choices=["validate-spec","validate-example"]
     )
 
     parser.add_argument(
-        "--type",
-        dest="type",
-        help="Are we running specs or examples?",
-        required=True,
-        options=["validate-spec","validate-example"]
+        "--oav",
+        dest="oav",
+        help="The oav exe this script will be using! If OAV is on the PATH just pass nothing!",
+        required=False
     )
 
 
