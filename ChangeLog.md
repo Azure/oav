@@ -1,6 +1,10 @@
 # Change Log - oav
 
-## 09-29-2023 3.2.13
+## 10/19/2023 3.2.14
+
+- #1011 Ehancing JSON report by exposing new properties including `coveredSpecFiles`, `unCoveredOperationsList`, `errorLink` and `schemaPathWithPosition`. 
+
+## 09/29/2023 3.2.13
 
 - #1004 fixes an issue with the injected property refWithReadOnly causing additionalProperty error in schema validator.
 
