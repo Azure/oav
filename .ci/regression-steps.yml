@@ -27,7 +27,6 @@ steps:
 
 - bash: |
     if [[ "${{ parameters.TargetVersion }}" == "LOCAL" ]]; then
-      echo "We're installing the local package"
       npm ci
       npm run build
       npm link

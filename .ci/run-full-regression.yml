@@ -69,13 +69,37 @@ jobs:
           TargetVersion: ${{ parameters.AfterVersion }}
           Type: "validate-example"
 
-  # - job: RegressionB
-  #   timeoutInMinutes: 180
-  #   dependsOn: 
-  #     - RegressionASpecs
-  #     - RegressionBSpecs
-  #     - RegressionAExamples
-  #     - RegressionBExamples
-  #   displayName: Run Diff
+  - job: Summarize
+    timeoutInMinutes: 180
+    dependsOn: 
+      - RegressionASpecs
+      - RegressionBSpecs
+      - RegressionAExamples
+      - RegressionBExamples
+    displayName: Run Diff
 
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: "${{ parameters.BeforeVersion }}-validate-spec"
+        targetPath: $(Build.ArtifactStagingDirectory)/before
+        
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: "${{ parameters.BeforeVersion }}-validate-example"
+        targetPath: $(Build.ArtifactStagingDirectory)/before
 
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: "${{ parameters.AfterVersion }}-validate-spec"
+        targetPath: $(Build.ArtifactStagingDirectory)/after
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: "${{ parameters.AfterVersion }}-validate-example"
+        targetPath: $(Build.ArtifactStagingDirectory)/after
+
+    - bash: |
+        ls -R $(Build.ArtifactStagingDirectory)
+        diff -qr $(Build.ArtifactStagingDirectory)/before $(Build.ArtifactStagingDirectory)/after
+      displayName: Dump Visible Artifacts
