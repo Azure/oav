@@ -1,8 +1,12 @@
 # Change Log - oav
 
-## 10/19/2023 3.2.14
+## 10/19/2023 3.3.0
 
 - #1011 Ehancing JSON report by exposing new properties including `coveredSpecFiles`, `unCoveredOperationsList`, `errorLink` and `schemaPathWithPosition`. 
+
+## 10/19/2023 3.2.14
+
+- #1010 Fix an issue with details of `Failed Operations` not displayed in Windows-generated HTML report. 
 
 ## 09/29/2023 3.2.13
 
