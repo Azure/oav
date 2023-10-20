@@ -55,8 +55,11 @@ def get_oav_output(
         ) as err:
             print([oav_exe, oav_command, target_folder])
             result = subprocess.run(
-                [oav_exe, oav_command, target_folder], stdout=out, stderr=err, check=True, shell=True
+                [oav_exe, oav_command, target_folder], capture_output=True, check=True, text=True
             )
+
+            out.write(result.stdout)
+            err.write(result.stderr)
 
         return OAVScanResult(target_folder, collection_std_out, collection_std_err, result.returncode, oav_version)
     except subprocess.CalledProcessError as e:

@@ -8,11 +8,12 @@ parameters:
     type: string
     default: 'LOCAL' #specialcase value that will install the local version of oav
 
+pool:
+  name: azsdk-pool-mms-ubuntu-2004-general
+  vmImage: MMSUbuntu20.04
+
 jobs:
   - job: RegressionASpecs
-    pool:
-      name: azsdk-pool-mms-win-2022-general
-      vmImage: MMS2022
     variables:
       - name: OutputFolder
         value: $(Build.ArtifactStagingDirectory)/${{ parameters.BeforeVersion }}
@@ -27,9 +28,6 @@ jobs:
           Type: "validate-spec"
 
   - job: RegressionAExamples
-    pool:
-      name: azsdk-pool-mms-win-2022-general
-      vmImage: MMS2022
     variables:
       - name: OutputFolder
         value: $(Build.ArtifactStagingDirectory)/${{ parameters.BeforeVersion }}
@@ -44,9 +42,6 @@ jobs:
           Type: "validate-example"
 
   - job: RegressionBSpecs
-    pool:
-      name: azsdk-pool-mms-win-2022-general
-      vmImage: MMS2022
     variables:
       - name: OutputFolder
         value: $(Build.ArtifactStagingDirectory)/${{ parameters.AfterVersion }}
@@ -61,9 +56,6 @@ jobs:
           Type: "validate-spec"
 
   - job: RegressionBExamples
-    pool:
-      name: azsdk-pool-mms-win-2022-general
-      vmImage: MMS2022
     variables:
       - name: OutputFolder
         value: $(Build.ArtifactStagingDirectory)/${{ parameters.AfterVersion }}
@@ -85,9 +77,6 @@ jobs:
       - RegressionAExamples
       - RegressionBExamples
     displayName: Run Diff
-    pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
     steps:
     - task: DownloadPipelineArtifact@2
       inputs:
