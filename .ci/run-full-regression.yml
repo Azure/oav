@@ -100,6 +100,13 @@ jobs:
         targetPath: $(Build.ArtifactStagingDirectory)/after
 
     - bash: |
-        ls -R $(Build.ArtifactStagingDirectory)
+        echo "CACHE BEFORE"
+        cat $(Build.ArtifactStagingDirectory)/before/.spec_cache && rm $(Build.ArtifactStagingDirectory)/before/.spec_cache
+
+        echo "CACHE AFTER"
+        cat $(Build.ArtifactStagingDirectory)/after/.spec_cache && rm $(Build.ArtifactStagingDirectory)/after/.spec_cache
+      displayName: Dump Spec Caches
+
+    - bash: |
         diff -qr $(Build.ArtifactStagingDirectory)/before $(Build.ArtifactStagingDirectory)/after
-      displayName: Dump Visible Artifacts
+      displayName: Diff outputs
