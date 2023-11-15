@@ -1,8 +1,12 @@
 # Change Log - oav
 
+## 11/14/2023 3.3.1
+
+- #1019 Fixing edge case caused by introduction of fake property `refWithReadOnly` used to handle `readonly` errors thrown when placed alongside a `ref` node in a swagger schema.
+
 ## 10/19/2023 3.3.0
 
-- #1011 Ehancing JSON report by exposing new properties including `coveredSpecFiles`, `unCoveredOperationsList`, `errorLink` and `schemaPathWithPosition`. 
+- #1011 Enhancing JSON report by exposing new properties including `coveredSpecFiles`, `unCoveredOperationsList`, `errorLink` and `schemaPathWithPosition`. 
 
 ## 10/19/2023 3.2.14
 

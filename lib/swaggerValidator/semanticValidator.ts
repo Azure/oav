@@ -104,6 +104,7 @@ export class SwaggerSemanticValidator {
     const properties = swaggerSchemaDoc.properties as any;
     properties[$id] = {};
     properties._filePath = {};
+
     this.validateSwaggerSch = await this.schemaValidator.compileAsync(swaggerSchemaDoc as Schema);
   }
 

@@ -10,7 +10,7 @@ import {
 import { load as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { inject, injectable } from "inversify";
-import { xmsExamples } from "../util/constants";
+import { xmsExamples, xmsReadonlyRef } from "../util/constants";
 import { getLazyBuilder } from "../util/lazyBuilder";
 import { TYPES } from "../inversifyUtils";
 import { FileLoader, FileLoaderOption } from "./fileLoader";
@@ -233,7 +233,7 @@ export class JsonLoader implements Loader<Json> {
     if (isRefLike(object)) {
       const refObjResult: any = {};
       if (object.readOnly !== undefined) {
-        refObjResult.refWithReadOnly = object.readOnly;
+        refObjResult[xmsReadonlyRef] = true;
       }
       const ref = object.$ref;
       const sp = ref.split("#");
