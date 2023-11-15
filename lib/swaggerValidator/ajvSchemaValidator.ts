@@ -12,7 +12,7 @@ import { $id, JsonLoader } from "../swagger/jsonLoader";
 import { isSuppressed } from "../swagger/suppressionLoader";
 import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
 import { getNameFromRef } from "../transform/context";
-import { xmsAzureResource, xmsEnum, xmsMutability, xmsSecret } from "../util/constants";
+import { xmsAzureResource, xmsEnum, xmsMutability, xMsReadonlyRef, xmsSecret } from "../util/constants";
 import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefinitions";
 import { Severity } from "../util/severity";
 import { Writable } from "../util/utils";
@@ -312,7 +312,7 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   if (
     !cxt.isResponse &&
     keyword === "required" &&
-    (parentSchema.properties?.[(params as any).missingProperty]?.refWithReadOnly ||
+    (parentSchema.properties?.[(params as any).missingProperty]?.[xMsReadonlyRef] ||
       parentSchema.properties?.[(params as any).missingProperty]?.readOnly)
   ) {
     return true;
