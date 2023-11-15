@@ -3,8 +3,8 @@
   "operationId": "DatabaseSecurityAlertPolicies_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgDatabaseSecurityAlertPolicies",
-    "serverName": "b",
-    "databaseName": "zuktkcbwzcemioqw",
+    "serverName": "kps",
+    "databaseName": "knkcsqzgpfxmrhcztwbjyekrti",
     "securityAlertPolicyName": "default",
     "parameters": {
       "properties": {
