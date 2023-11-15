@@ -2,7 +2,7 @@
 
 ## 11/14/2023 3.3.1
 
-- #1013 Fixing edge case caused by introduction of fake property `refWithReadOnly` used to handle `readonly` errors thrown when placed alongside a `ref` node in a swagger schema.
+- #1019 Fixing edge case caused by introduction of fake property `refWithReadOnly` used to handle `readonly` errors thrown when placed alongside a `ref` node in a swagger schema.
 
 ## 10/19/2023 3.3.0
 
