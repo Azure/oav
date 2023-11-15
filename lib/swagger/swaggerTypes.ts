@@ -18,7 +18,7 @@ import {
   xmsPaths,
   xmsSkipUrlEncoding,
   xNullable,
-  xMsReadonlyRef,
+  xmsReadonlyRef,
   xmsAzureResource,
   xmsLongRunningOperationOptions,
   xmsLongRunningOperationOptionsField,
@@ -248,7 +248,7 @@ export interface Schema extends BaseSchema {
   [xmsDiscriminatorValue]?: string;
   readOnly?: boolean;
   [xmsMutability]?: Array<"create" | "read" | "update">;
-  [xMsReadonlyRef]?: boolean;
+  [xmsReadonlyRef]?: boolean;
   xml?: XML;
   externalDocs?: ExternalDocs;
   example?: { [exampleName: string]: Example };

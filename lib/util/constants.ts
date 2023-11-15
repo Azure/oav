@@ -31,7 +31,7 @@ export const xNullable = "x-nullable";
 
 export const exampleInSpec = "example-in-spec";
 
-export const xMsReadonlyRef = "x-ms-readonly-ref";
+export const xmsReadonlyRef = "x-ms-readonly-ref";
 
 export const Errors = "Errors";
 

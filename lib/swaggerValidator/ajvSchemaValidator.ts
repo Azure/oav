@@ -16,7 +16,7 @@ import {
   xmsAzureResource,
   xmsEnum,
   xmsMutability,
-  xMsReadonlyRef,
+  xmsReadonlyRef,
   xmsSecret,
 } from "../util/constants";
 import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefinitions";
@@ -318,7 +318,7 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   if (
     !cxt.isResponse &&
     keyword === "required" &&
-    (parentSchema.properties?.[(params as any).missingProperty]?.[xMsReadonlyRef] ||
+    (parentSchema.properties?.[(params as any).missingProperty]?.[xmsReadonlyRef] ||
       parentSchema.properties?.[(params as any).missingProperty]?.readOnly)
   ) {
     return true;
