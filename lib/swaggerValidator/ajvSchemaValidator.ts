@@ -12,7 +12,13 @@ import { $id, JsonLoader } from "../swagger/jsonLoader";
 import { isSuppressed } from "../swagger/suppressionLoader";
 import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
 import { getNameFromRef } from "../transform/context";
-import { xmsAzureResource, xmsEnum, xmsMutability, xMsReadonlyRef, xmsSecret } from "../util/constants";
+import {
+  xmsAzureResource,
+  xmsEnum,
+  xmsMutability,
+  xMsReadonlyRef,
+  xmsSecret,
+} from "../util/constants";
 import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefinitions";
 import { Severity } from "../util/severity";
 import { Writable } from "../util/utils";

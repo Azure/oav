@@ -9,7 +9,7 @@ import * as validate from "../lib/validate";
 const testPath = __dirname.replace("\\", "/");
 
 describe("Semantic validation", () => {
-  it("should validate mutable readonly properties without erroring", async() => {
+  it("should validate mutable readonly properties without erroring", async () => {
     const specPath = `${testPath}/modelValidation/swaggers/specification/readonlyNotRequired/openapi.json`;
     const result = await validate.validateExamples(specPath, "Widgets_Create");
 
