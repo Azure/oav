@@ -12,7 +12,7 @@ describe("Semantic validation", () => {
   it("Debug an individual semantic validation.", async () => {
     const specPath = `${testPath}/modelValidation/swaggers/specification/anyOfNecessary/scvmm.json`;
     const result = await validate.validateExamples(specPath, undefined);
-;
+
     assert(
       result.length == 0,
       `swagger "${specPath}" contains unexpected model validation errors.`
