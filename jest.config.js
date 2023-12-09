@@ -14,7 +14,7 @@ module.exports = {
   coveragePathIgnorePatterns: ["/node_modules/", ".*/tests/.*"],
   globals: {
     "ts-jest": {
-      tsConfig: "tsconfig.json",
+      tsconfig: "tsconfig.json",
     },
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup-file.js"],

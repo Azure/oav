@@ -102,8 +102,8 @@ env.json
 generated_examples/
 generated_reports/
 generated_diff/
-test/exampleGenerator/specification
-test/debugTest
+test/exampleGenerator/specification/
+
 
 # customized
 .npmrc
