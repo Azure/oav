@@ -9,10 +9,13 @@ import * as validate from "../lib/validate";
 const testPath = __dirname.replace("\\", "/");
 
 describe("Semantic validation", () => {
-  it("should validate mutable readonly properties without erroring", async () => {
-    const specPath = `${testPath}/modelValidation/swaggers/specification/readonlyNotRequired/openapi.json`;
-    const result = await validate.validateExamples(specPath, "Widgets_Create");
-
-    assert.strictEqual(result.length, 0);
+  it("Debug an individual semantic validation.", async () => {
+    const specPath = `${testPath}/modelValidation/swaggers/specification/anyOfNecessary/scvmm.json`;
+    const result = await validate.validateExamples(specPath, undefined);
+;
+    assert(
+      result.length == 0,
+      `swagger "${specPath}" contains unexpected model validation errors.`
+    );
   });
 });

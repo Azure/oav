@@ -5,30 +5,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "address": "TCP/IP address of process to be debugged",
-      "localRoot": "${workspaceFolder}",
-      "name": "Attach to Remote",
-      "port": 9229,
-      "remoteRoot": "Absolute path to the remote directory containing the program",
-      "request": "attach",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "type": "pwa-node"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Validate Spec",
-      "program": "${workspaceRoot}/dist/cli.js",
-      "cwd": "${workspaceRoot}",
-      "args": [
-        "validate-spec",
-        "../azure-rest-api-specs/specification/storage/resource-manager/Microsoft.Storage/stable/2018-07-01/blob.json"
-      ],
-      "env": {}
-    },
-    {
       "type": "node",
       "request": "launch",
       "name": "Validate Traffic",
@@ -38,19 +14,6 @@
         "validate-traffic",
         "${workspaceRoot}/test/liveValidation/payloads/test-validate-traffic.json",
         "${workspaceRoot}/test/liveValidation/swaggers/specification/dns/resource-manager/Microsoft.Network/stable/2018-05-01/dns.json"
-      ],
-      "env": {}
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Validate example",
-      "program": "${workspaceRoot}/dist/cli.js",
-      "cwd": "${workspaceRoot}",
-      "args": [
-        "validate-example",
-        "C:/github.com/Azure/azure-rest-api-specs/specification/cdn/resource-manager/Microsoft.Cdn/stable/2017-10-12/cdn.json",
-        "--pretty"
       ],
       "env": {}
     },
@@ -91,18 +54,6 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Model Validation",
-      "program": "${workspaceRoot}/dist/cli.js",
-      "cwd": "${workspaceRoot}",
-      "args": [
-        "validate-example",
-        "../azure-rest-api-specs/specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-06-01-preview/apimversionsets.json"
-      ],
-      "env": {}
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Live Validator",
       "program": "${workspaceRoot}/dist/test/sample",
       "preLaunchTask": "tsc: build - tsconfig.json",
@@ -114,10 +65,9 @@
       "request": "launch",
       "name": "Jest All",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runInBand"],
+      "args": ["--runInBand", "--testPathIgnorePatterns", "test/debug_failing_model.ts", "test/debug_failing_semantic.ts"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/node_modules/jest/bin/jest"
       }
@@ -130,7 +80,6 @@
       "args": ["--runTestsByPath", "${file}", "--coverage", "false"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/node_modules/jest/bin/jest"
       }

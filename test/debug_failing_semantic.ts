@@ -9,12 +9,13 @@ import * as validate from "../lib/validate";
 const testPath = __dirname.replace("\\", "/");
 
 describe("Semantic validation", () => {
-  it("a valid minimal swagger should pass semantic validation", async () => {
+  it("Debug an individual semantic validation.", async () => {
     const specPath = `${testPath}/modelValidation/swaggers/specification/anyOfNecessary/scvmm.json`;
     const result = await validate.validateSpec(specPath, undefined);
+
     assert(
       result.validityStatus === true,
-      `swagger "${specPath}" contains semantic validation errors.`
+      `swagger "${specPath}" contains unexpected semantic validation errors.`
     );
   });
 });
