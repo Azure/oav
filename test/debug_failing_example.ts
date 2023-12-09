@@ -8,14 +8,14 @@ import * as validate from "../lib/validate";
 
 const testPath = __dirname.replace("\\", "/");
 
-describe("Semantic validation", () => {
-  it("Debug an individual semantic validation.", async () => {
+describe("Model Validation", () => {
+  it("Debug an individual spec failing model validation.", async () => {
     const specPath = `${testPath}/modelValidation/swaggers/specification/anyOfNecessary/scvmm.json`;
-    const result = await validate.validateSpec(specPath, undefined);
+    const result = await validate.validateExamples(specPath, undefined);
 
     assert(
-      result.validityStatus === true,
-      `swagger "${specPath}" contains unexpected semantic validation errors.`
+      result.length == 0,
+      `swagger "${specPath}" contains unexpected model validation errors.`
     );
   });
 });

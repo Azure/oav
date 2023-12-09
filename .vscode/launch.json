@@ -65,7 +65,7 @@
       "request": "launch",
       "name": "Jest All",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runInBand", "--testPathIgnorePatterns", "test/debug_failing_model.ts", "test/debug_failing_semantic.ts"],
+      "args": ["--runInBand", "--testPathIgnorePatterns", "test/debug_failing_example.ts", "test/debug_failing_spec.ts"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "windows": {
