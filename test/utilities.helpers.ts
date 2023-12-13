@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 
 interface PRData {
   number: number;
@@ -20,14 +20,19 @@ export function clonePR(url: string, prNumber: number): void {
     console.log(`Previously downloaded spec repo does not match targeted prNumber ${prNumber} or repo ${url}`);
 
     if (fs.existsSync(repoPath)) {
-      fs.rmdirSync(repoPath);
+      fs.removeSync(repoPath);
     }
     fs.mkdirSync(repoPath);
 
     try {
-      execSync(`git clone ${url} --no-checkout --filter=tree:0 .`, execOptions);
-      execSync(`git fetch origin ${prBranch}:b${prNumber}`, execOptions);
-      execSync(`git checkout b${prNumber}`, execOptions);
+      if (prNumber !== 0) {
+        execSync(`git clone ${url} --no-checkout --filter=tree:0 .`, execOptions);
+        execSync(`git fetch origin ${prBranch}:b${prNumber}`, execOptions);
+        execSync(`git checkout b${prNumber}`, execOptions);
+      }
+      else {
+        execSync(`git clone ${url} --depth 1 .`, execOptions);
+      }
       writePRData(outputFile, { repo: url, number: prNumber })
       console.log(`Sucessfully cloned pr ${prNumber}`);
     } catch (error) {

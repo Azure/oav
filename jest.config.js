@@ -13,7 +13,8 @@ module.exports = {
   coverageReporters: ["json", "lcov", "cobertura", "text", "html", "clover"],
   coveragePathIgnorePatterns: ["/node_modules/", ".*/tests/.*"],
   testPathIgnorePatterns: [
-    "/\\.autopull/"
+    "/\\.autopull/",
+    "/utilities.helpers.ts"
   ],
   globals: {
     "ts-jest": {

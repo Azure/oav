@@ -8,7 +8,7 @@ import * as validate from "../lib/validate";
 
 import { repoPath, clonePR } from "./utilities.helpers";
 
-const prNumber: number = 27067;
+const prNumber: number = 0;
 const prRepo: string = "azure/azure-rest-api-specs";
 const specPath = `${repoPath}/specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/blob.json`;
 
