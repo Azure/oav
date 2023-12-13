@@ -6,7 +6,7 @@
 import assert from "assert";
 import * as validate from "../lib/validate";
 
-import { repoPath, clonePR } from "./testUtilities";
+import { repoPath, clonePR } from "./utilities.helpers";
 
 const prNumber: number = 27067;
 const prRepo: string = "azure/azure-rest-api-specs";

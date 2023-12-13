@@ -13,8 +13,6 @@ module.exports = {
   coverageReporters: ["json", "lcov", "cobertura", "text", "html", "clover"],
   coveragePathIgnorePatterns: ["/node_modules/", ".*/tests/.*"],
   testPathIgnorePatterns: [
-    "test/debug_failing_example.js",
-    "test/debug_failing_spec.js",
     "/\\.autopull/"
   ],
   globals: {
