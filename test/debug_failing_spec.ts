@@ -6,12 +6,16 @@
 import assert from "assert";
 import * as validate from "../lib/validate";
 
-const testPath = __dirname.replace("\\", "/");
+import { repoPath, clonePR } from "./testUtilities";
 
+const prNumber: number = 27067;
+const prRepo: string = "azure/azure-rest-api-specs";
+const specPath = `${repoPath}/specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/blob.json`;
 
 describe("Semantic Validation", () => {
   it("Debug an individual spec failing semantic validation.", async () => {
-    const specPath = `${testPath}/modelValidation/swaggers/specification/anyOfNecessary/scvmm.json`;
+    clonePR(`https://github.com/${prRepo}.git`, prNumber)
+    
     const result = await validate.validateSpec(specPath, undefined);
 
     assert(
