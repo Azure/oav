@@ -14,7 +14,8 @@ module.exports = {
   coveragePathIgnorePatterns: ["/node_modules/", ".*/tests/.*"],
   testPathIgnorePatterns: [
     "test/debug_failing_example.js",
-    "test/debug_failing_spec.js"
+    "test/debug_failing_spec.js",
+    "/\\.autopull/"
   ],
   globals: {
     "ts-jest": {

@@ -19,22 +19,23 @@ export function clonePR(url: string, prNumber: number): void {
   if (existingData.number != prNumber || existingData.repo !== url ) {
     console.log(`Previously downloaded spec repo does not match targeted prNumber ${prNumber} or repo ${url}`);
 
-    if (!fs.existsSync(repoPath)) {
-      fs.mkdirSync(repoPath);
+    if (fs.existsSync(repoPath)) {
+      fs.rmdirSync(repoPath);
     }
+    fs.mkdirSync(repoPath);
 
     try {
       execSync(`git clone ${url} --no-checkout --filter=tree:0 .`, execOptions);
       execSync(`git fetch origin ${prBranch}:b${prNumber}`, execOptions);
       execSync(`git checkout b${prNumber}`, execOptions);
       writePRData(outputFile, { repo: url, number: prNumber })
-      console.error(`Sucessfully cloned pr ${prNumber}`);
+      console.log(`Sucessfully cloned pr ${prNumber}`);
     } catch (error) {
       console.error(`Error cloning PR: ${(<any>error).message}`);
     }
   }
   else {
-    console.log(`Previously downloaded spec repo does not match targeted prNumber ${prNumber} or repo ${url}`);
+    console.log(`Previously downloaded spec repo matches the expected PR Number ${prNumber} and repo ${url}. Skipping re-clone.`);
   }
 }
 
