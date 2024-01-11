@@ -1,0 +1,69 @@
+{
+  "liveRequest": {
+    "headers": {
+      "Host": "centraluseuap.management.azure.com",
+      "Authorization": "Bearer eyJ0...........",
+      "User-Agent": "ARMClient/1.9.0.0",
+      "Accept": "application/json",
+      "x-ms-request-id": "0319590d-9c88-4c91-9cf2-3e90dbf6f41c",
+      "x-ms-client-request-id": "0319590d-9c88-4c91-9cf2-3e90dbf6f41c",
+      "x-ms-correlation-request-id": "0319590d-9c88-4c91-9cf2-3e90dbf6f41c"
+    },
+    "method": "PUT",
+    "url": "/subscriptions/9a021c4c-ddcd-4e80-9155-a5b0e872f4c2/resourceGroups/susta/providers/Microsoft.NetworkAnalytics/MetricsIngestionEndpoints/susanta05?api-version=2023-04-30-preview",
+    "body": {
+      "location": "centraluseuap",
+      "properties": {
+        "ingressRegionName": "centraluseuap",
+        "targetResourceId": "testArmId"
+      }
+    }
+  },
+  "liveResponse": {
+    "statusCode": "201",
+    "headers": {
+      "Content-Length": "720",
+      "Content-Type": "application/json; charset=utf-8",
+      "Expires": "-1",
+      "Pragma": "no-cache",
+      "x-ms-operation-identifier": "tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47,objectId=67b145b7-8b29-4d6f-b72c-0e1a28391d0b/centraluseuap/b5be3cdb-1587-489f-9b04-bd080029e16b",
+      "x-ms-providerhub-traffic": "True",
+      "x-ms-request-id": "0319590d-9c88-4c91-9cf2-3e90dbf6f41c",
+      "x-ms-build-version": "<version>",
+      "Azure-AsyncOperation": "https://centraluseuap.management.azure.com/subscriptions/9a021c4c-ddcd-4e80-9155-a5b0e872f4c2/providers/Microsoft.NetworkAnalytics/locations/CENTRALUSEUAP/operationStatuses/d3010e86-4913-42a3-9fbb-de468b5aca56*AAE8548B42255D7D7AF5F52598D0FEC6A202D87A946EE8A0DDA312744F15942D?api-version=2022-11-15-preview",
+      "x-ms-correlation-request-id": "0319590d-9c88-4c91-9cf2-3e90dbf6f41c",
+      "x-ms-ratelimit-remaining-subscription-writes": "1199",
+      "x-ms-routing-request-id": "CENTRALUSEUAP: 20231010T171720Z:ade835e2-fe72-4deb-9e06-0cd00b2b486f",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-Cache": "CONFIG_NOCACHE",
+      "X-MSEdge-Ref": "Ref A: CC9EFDF8A3F546B096F8F68DBCAAA80B Ref B: MAA201060514025 Ref C: 2023-10-10T17: 17: 17Z",
+      "Cache-Control": "no-cache",
+      "Date": "Tue, 10 Oct 2023 17: 17: 20 GMT",
+      "ETag": "00008490-0000-3400-0000-652587200000"
+    },
+    "body": {
+      "id": "/subscriptions/9a021c4c-ddcd-4e80-9155-a5b0e872f4c2/resourceGroups/susta/providers/Microsoft.NetworkAnalytics/MetricsIngestionEndpoints/susanta05",
+      "name": "susanta05",
+      "type": "microsoft.networkanalytics/metricsingestionendpoints",
+      "location": "centraluseuap",
+      "systemData": {
+        "createdBy": "swains@microsoft.com",
+        "createdByType": "User",
+        "createdAt": "2023-10-10T17:17:19.6479752Z",
+        "lastModifiedBy": "swains@microsoft.com",
+        "lastModifiedByType": "User",
+        "lastModifiedAt": "2023-10-10T17:17:19.6479752Z"
+      },
+      "properties": {
+        "ingressRegionName": "centraluseuap",
+        "targetResourceId": "testArmId",
+        "managedResourceGroupConfiguration": {
+          "location": "centraluseuap",
+          "name": "susanta05-HostedResources-5F240974"
+        },
+        "provisioningState": "Accepted"
+      }
+    }
+  }
+}
