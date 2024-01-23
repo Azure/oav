@@ -23,7 +23,7 @@ import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefini
 import { Severity } from "../util/severity";
 import { Writable } from "../util/utils";
 import { SourceLocation } from "../util/validationError";
-import { ajvEnableAll, ajvEnableArmRule } from "./ajv";
+import { ajvEnableAll, ajvEnableArmRule, ajvEnableArmIdFormat } from "./ajv";
 import {
   getIncludeErrorsMap,
   SchemaValidateContext,
@@ -64,6 +64,9 @@ export class AjvSchemaValidator implements SchemaValidator {
       },
     });
     ajvEnableAll(this.ajv, loader);
+
+    // always enable the armId format
+    ajvEnableArmIdFormat(this.ajv);
 
     if (schemaValidatorOption?.isArmCall === true) {
       ajvEnableArmRule(this.ajv);

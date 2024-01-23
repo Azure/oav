@@ -197,5 +197,4 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
 
 export const ajvEnableArmRule = (ajv: Ajv) => {
   ajvEnableXmsAzureResource(ajv);
-  ajvEnableArmIdFormat(ajv);
 };

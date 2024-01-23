@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 01/34/2024 3.3.2-beta.1
+
+- Enabling armId enforcement by default, still leaving other armRules disabled for rPaaS configuration.
+
 ## 11/14/2023 3.3.1
 
 - #1019 Fixing edge case caused by introduction of fake property `refWithReadOnly` used to handle `readonly` errors thrown when placed alongside a `ref` node in a swagger schema.
