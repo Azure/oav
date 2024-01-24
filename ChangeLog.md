@@ -1,6 +1,10 @@
 # Change Log - oav
 
-## 01/34/2024 3.3.2-beta.1
+## 01/24/2024 3.3.2-beta.2
+
+- Removing `mockjs` dependency and corresponding function mockForPattern
+
+## 01/23/2024 3.3.2-beta.1
 
 - Enabling armId enforcement by default, still leaving other armRules disabled for rPaaS configuration.
 
