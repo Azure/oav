@@ -61,7 +61,7 @@ export default class Mocker {
     let mockedValue = randomString(length);
 
     if ("pattern" in paramSpec) {
-      return `Replace this value with a string matching RegExp ${paramSpec.pattern}`
+      return `Replace this value with a string matching RegExp ${paramSpec.pattern}`;
     }
 
     if (paramSpec.format === "uri") {
