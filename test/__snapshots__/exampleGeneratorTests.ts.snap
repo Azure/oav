@@ -2549,7 +2549,7 @@ Array [
       "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Get_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+    "message": "Object didn't pass validation for format uuid: ynxr",
     "operationId": "DataManagerForAgricultureResources_Get",
     "schemaJsonPath": "#/properties/principalId/format",
     "schemaPosition": Object {
@@ -2568,7 +2568,7 @@ Array [
       "line": 17,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Get_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+    "message": "Object didn't pass validation for format uuid: sbytzyxpb",
     "operationId": "DataManagerForAgricultureResources_Get",
     "schemaJsonPath": "#/properties/tenantId/format",
     "schemaPosition": Object {
@@ -2587,7 +2587,7 @@ Array [
       "line": 58,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Get_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+    "message": "Object didn't pass validation for format arm-id: ubfv",
     "operationId": "DataManagerForAgricultureResources_Get",
     "schemaJsonPath": "#/properties/id/format",
     "schemaPosition": Object {
@@ -2608,7 +2608,7 @@ Array [
         "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Get_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+      "message": "Object didn't pass validation for format uuid: ynxr",
       "operationId": "DataManagerForAgricultureResources_Get",
       "schemaJsonPath": "#/properties/principalId/format",
       "schemaPosition": Object {
@@ -2627,7 +2627,7 @@ Array [
         "line": 17,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Get_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+      "message": "Object didn't pass validation for format uuid: sbytzyxpb",
       "operationId": "DataManagerForAgricultureResources_Get",
       "schemaJsonPath": "#/properties/tenantId/format",
       "schemaPosition": Object {
@@ -2646,7 +2646,7 @@ Array [
         "line": 58,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Get_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+      "message": "Object didn't pass validation for format arm-id: ubfv",
       "operationId": "DataManagerForAgricultureResources_Get",
       "schemaJsonPath": "#/properties/id/format",
       "schemaPosition": Object {
@@ -2666,7 +2666,7 @@ Array [
       "line": 32,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+    "message": "Object didn't pass validation for format uuid: ynxr",
     "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
     "schemaJsonPath": "#/properties/principalId/format",
     "schemaPosition": Object {
@@ -2685,7 +2685,7 @@ Array [
       "line": 33,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+    "message": "Object didn't pass validation for format uuid: sbytzyxpb",
     "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
     "schemaJsonPath": "#/properties/tenantId/format",
     "schemaPosition": Object {
@@ -2704,7 +2704,7 @@ Array [
       "line": 74,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+    "message": "Object didn't pass validation for format arm-id: ubfv",
     "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
     "schemaJsonPath": "#/properties/id/format",
     "schemaPosition": Object {
@@ -2723,7 +2723,7 @@ Array [
       "line": 106,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+    "message": "Object didn't pass validation for format uuid: ynxr",
     "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
     "schemaJsonPath": "#/properties/principalId/format",
     "schemaPosition": Object {
@@ -2742,7 +2742,7 @@ Array [
       "line": 107,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+    "message": "Object didn't pass validation for format uuid: sbytzyxpb",
     "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
     "schemaJsonPath": "#/properties/tenantId/format",
     "schemaPosition": Object {
@@ -2761,7 +2761,7 @@ Array [
       "line": 148,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+    "message": "Object didn't pass validation for format arm-id: ubfv",
     "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
     "schemaJsonPath": "#/properties/id/format",
     "schemaPosition": Object {
@@ -2782,7 +2782,7 @@ Array [
         "line": 32,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+      "message": "Object didn't pass validation for format uuid: ynxr",
       "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
       "schemaJsonPath": "#/properties/principalId/format",
       "schemaPosition": Object {
@@ -2801,7 +2801,7 @@ Array [
         "line": 33,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+      "message": "Object didn't pass validation for format uuid: sbytzyxpb",
       "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
       "schemaJsonPath": "#/properties/tenantId/format",
       "schemaPosition": Object {
@@ -2820,7 +2820,7 @@ Array [
         "line": 74,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+      "message": "Object didn't pass validation for format arm-id: ubfv",
       "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
       "schemaJsonPath": "#/properties/id/format",
       "schemaPosition": Object {
@@ -2839,7 +2839,7 @@ Array [
         "line": 106,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+      "message": "Object didn't pass validation for format uuid: ynxr",
       "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
       "schemaJsonPath": "#/properties/principalId/format",
       "schemaPosition": Object {
@@ -2858,7 +2858,7 @@ Array [
         "line": 107,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+      "message": "Object didn't pass validation for format uuid: sbytzyxpb",
       "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
       "schemaJsonPath": "#/properties/tenantId/format",
       "schemaPosition": Object {
@@ -2877,7 +2877,7 @@ Array [
         "line": 148,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_CreateOrUpdate_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+      "message": "Object didn't pass validation for format arm-id: ubfv",
       "operationId": "DataManagerForAgricultureResources_CreateOrUpdate",
       "schemaJsonPath": "#/properties/id/format",
       "schemaPosition": Object {
@@ -2897,7 +2897,7 @@ Array [
       "line": 32,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+    "message": "Object didn't pass validation for format uuid: ynxr",
     "operationId": "DataManagerForAgricultureResources_Update",
     "schemaJsonPath": "#/properties/principalId/format",
     "schemaPosition": Object {
@@ -2916,7 +2916,7 @@ Array [
       "line": 33,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+    "message": "Object didn't pass validation for format uuid: sbytzyxpb",
     "operationId": "DataManagerForAgricultureResources_Update",
     "schemaJsonPath": "#/properties/tenantId/format",
     "schemaPosition": Object {
@@ -2935,7 +2935,7 @@ Array [
       "line": 74,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+    "message": "Object didn't pass validation for format arm-id: ubfv",
     "operationId": "DataManagerForAgricultureResources_Update",
     "schemaJsonPath": "#/properties/id/format",
     "schemaPosition": Object {
@@ -2954,7 +2954,7 @@ Array [
       "line": 109,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+    "message": "Object didn't pass validation for format uuid: ynxr",
     "operationId": "DataManagerForAgricultureResources_Update",
     "schemaJsonPath": "#/properties/principalId/format",
     "schemaPosition": Object {
@@ -2973,7 +2973,7 @@ Array [
       "line": 110,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+    "message": "Object didn't pass validation for format uuid: sbytzyxpb",
     "operationId": "DataManagerForAgricultureResources_Update",
     "schemaJsonPath": "#/properties/tenantId/format",
     "schemaPosition": Object {
@@ -2992,7 +2992,7 @@ Array [
       "line": 151,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+    "message": "Object didn't pass validation for format arm-id: ubfv",
     "operationId": "DataManagerForAgricultureResources_Update",
     "schemaJsonPath": "#/properties/id/format",
     "schemaPosition": Object {
@@ -3013,7 +3013,7 @@ Array [
         "line": 32,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+      "message": "Object didn't pass validation for format uuid: ynxr",
       "operationId": "DataManagerForAgricultureResources_Update",
       "schemaJsonPath": "#/properties/principalId/format",
       "schemaPosition": Object {
@@ -3032,7 +3032,7 @@ Array [
         "line": 33,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+      "message": "Object didn't pass validation for format uuid: sbytzyxpb",
       "operationId": "DataManagerForAgricultureResources_Update",
       "schemaJsonPath": "#/properties/tenantId/format",
       "schemaPosition": Object {
@@ -3051,7 +3051,7 @@ Array [
         "line": 74,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+      "message": "Object didn't pass validation for format arm-id: ubfv",
       "operationId": "DataManagerForAgricultureResources_Update",
       "schemaJsonPath": "#/properties/id/format",
       "schemaPosition": Object {
@@ -3070,7 +3070,7 @@ Array [
         "line": 109,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+      "message": "Object didn't pass validation for format uuid: ynxr",
       "operationId": "DataManagerForAgricultureResources_Update",
       "schemaJsonPath": "#/properties/principalId/format",
       "schemaPosition": Object {
@@ -3089,7 +3089,7 @@ Array [
         "line": 110,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+      "message": "Object didn't pass validation for format uuid: sbytzyxpb",
       "operationId": "DataManagerForAgricultureResources_Update",
       "schemaJsonPath": "#/properties/tenantId/format",
       "schemaPosition": Object {
@@ -3108,7 +3108,7 @@ Array [
         "line": 151,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_Update_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+      "message": "Object didn't pass validation for format arm-id: ubfv",
       "operationId": "DataManagerForAgricultureResources_Update",
       "schemaJsonPath": "#/properties/id/format",
       "schemaPosition": Object {
@@ -3128,7 +3128,7 @@ Array [
       "line": 81,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListBySubscription_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+    "message": "Object didn't pass validation for format uuid: ynxr",
     "operationId": "DataManagerForAgricultureResources_ListBySubscription",
     "schemaJsonPath": "#/properties/principalId/format",
     "schemaPosition": Object {
@@ -3147,7 +3147,7 @@ Array [
       "line": 82,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListBySubscription_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+    "message": "Object didn't pass validation for format uuid: sbytzyxpb",
     "operationId": "DataManagerForAgricultureResources_ListBySubscription",
     "schemaJsonPath": "#/properties/tenantId/format",
     "schemaPosition": Object {
@@ -3166,7 +3166,7 @@ Array [
       "line": 66,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListBySubscription_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+    "message": "Object didn't pass validation for format arm-id: ubfv",
     "operationId": "DataManagerForAgricultureResources_ListBySubscription",
     "schemaJsonPath": "#/properties/id/format",
     "schemaPosition": Object {
@@ -3187,7 +3187,7 @@ Array [
         "line": 81,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListBySubscription_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+      "message": "Object didn't pass validation for format uuid: ynxr",
       "operationId": "DataManagerForAgricultureResources_ListBySubscription",
       "schemaJsonPath": "#/properties/principalId/format",
       "schemaPosition": Object {
@@ -3206,7 +3206,7 @@ Array [
         "line": 82,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListBySubscription_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+      "message": "Object didn't pass validation for format uuid: sbytzyxpb",
       "operationId": "DataManagerForAgricultureResources_ListBySubscription",
       "schemaJsonPath": "#/properties/tenantId/format",
       "schemaPosition": Object {
@@ -3225,7 +3225,7 @@ Array [
         "line": 66,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListBySubscription_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+      "message": "Object didn't pass validation for format arm-id: ubfv",
       "operationId": "DataManagerForAgricultureResources_ListBySubscription",
       "schemaJsonPath": "#/properties/id/format",
       "schemaPosition": Object {
@@ -3245,7 +3245,7 @@ Array [
       "line": 82,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListByResourceGroup_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+    "message": "Object didn't pass validation for format uuid: ynxr",
     "operationId": "DataManagerForAgricultureResources_ListByResourceGroup",
     "schemaJsonPath": "#/properties/principalId/format",
     "schemaPosition": Object {
@@ -3264,7 +3264,7 @@ Array [
       "line": 83,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListByResourceGroup_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+    "message": "Object didn't pass validation for format uuid: sbytzyxpb",
     "operationId": "DataManagerForAgricultureResources_ListByResourceGroup",
     "schemaJsonPath": "#/properties/tenantId/format",
     "schemaPosition": Object {
@@ -3283,7 +3283,7 @@ Array [
       "line": 67,
     },
     "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListByResourceGroup_MaximumSet_Gen.json",
-    "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+    "message": "Object didn't pass validation for format arm-id: ubfv",
     "operationId": "DataManagerForAgricultureResources_ListByResourceGroup",
     "schemaJsonPath": "#/properties/id/format",
     "schemaPosition": Object {
@@ -3304,7 +3304,7 @@ Array [
         "line": 82,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListByResourceGroup_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: vxcxhliqcohixhavutdycoing",
+      "message": "Object didn't pass validation for format uuid: ynxr",
       "operationId": "DataManagerForAgricultureResources_ListByResourceGroup",
       "schemaJsonPath": "#/properties/principalId/format",
       "schemaPosition": Object {
@@ -3323,7 +3323,7 @@ Array [
         "line": 83,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListByResourceGroup_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format uuid: bcpczprowjkjobbgxwvweeh",
+      "message": "Object didn't pass validation for format uuid: sbytzyxpb",
       "operationId": "DataManagerForAgricultureResources_ListByResourceGroup",
       "schemaJsonPath": "#/properties/tenantId/format",
       "schemaPosition": Object {
@@ -3342,7 +3342,7 @@ Array [
         "line": 67,
       },
       "exampleUrl": "test/exampleGenerator/specification/agrifood/resource-manager/Microsoft.AgFoodPlatform/preview/2023-06-01-preview/examples/DataManagerForAgricultureResources_ListByResourceGroup_MaximumSet_Gen.json",
-      "message": "Object didn't pass validation for format arm-id: ybmfzmkdiaykwrrgittdgsv",
+      "message": "Object didn't pass validation for format arm-id: ubfv",
       "operationId": "DataManagerForAgricultureResources_ListByResourceGroup",
       "schemaJsonPath": "#/properties/id/format",
       "schemaPosition": Object {
