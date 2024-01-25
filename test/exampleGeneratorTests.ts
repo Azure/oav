@@ -80,6 +80,7 @@ describe("test generate example", () => {
     ["sql", "package-pure-2020-02-preview"],
     ["signalr", "package-2020-05-01"],
     ["eventgrid", "package-2020-06"],
+    ["agrifood", "package-preview-2023-06"]
   ])(
     "from mocker,readme:%s",
     async (resourceProviderName, tag) => {
