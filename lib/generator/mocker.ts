@@ -60,16 +60,8 @@ export default class Mocker {
     const length = this.getRandomInt(minLength, maxLength);
     let mockedValue = randomString(length);
 
-    // NOTE: hard to handle minLength/maxLength and regular expressions at the same time. Length limit should be set by regex.
-    // If the mocked value fails to meet the constraints, error info will be logged and empty string will return.
     if ("pattern" in paramSpec) {
-      return this.mockForPattern(
-        undefined, // todo, this is intentionally going to break when used.
-        paramSpec.pattern,
-        paramSpec.minLength,
-        paramSpec.maxLength,
-        paramName
-      );
+      return `Replace this value with a string matching RegExp ${paramSpec.pattern}`
     }
 
     if (paramSpec.format === "uri") {
@@ -78,23 +70,6 @@ export default class Mocker {
     }
 
     return mockedValue;
-  }
-
-  // Note: complex regular expression may produce wrong value,
-  // e.g. "^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$", this is caused by the lib mockjs
-  private mockForPattern(
-    Mock: any,
-    pattern: string,
-    _minLength: any,
-    _maxLength: any,
-    _paramName: string
-  ) {
-    for (let i = 0; i < 10; i++) {
-      const { data } = Mock.mock({
-        data: new RegExp(pattern),
-      });
-      return data;
-    }
   }
 
   private generateInteger(paramSpec: any) {
