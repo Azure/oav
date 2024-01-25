@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 01/25/2024 3.3.2-beta.3
+
+- Updating `isArmCall` check to false in additional properties suppression. Updating test to reflect.
+
 ## 01/24/2024 3.3.2-beta.2
 
 - Removing `mockjs` dependency and corresponding function mockForPattern
