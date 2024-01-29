@@ -95,6 +95,12 @@ See configuration in [readme.csharp.md](./readme.csharp.md)
 ```yaml
 directive:
   - from: agfood.json
+    suppress: LRO_RESPONSE_HEADER
+    reason: Ignoring for testcase
+  - from: agfood.json
+    suppress: INVALID_FORMAT
+    reason: Ignoring for testcase
+  - from: agfood.json
     suppress: R3010 # TrackedResourceListByImmediateParent
     where:
       - $.definitions
