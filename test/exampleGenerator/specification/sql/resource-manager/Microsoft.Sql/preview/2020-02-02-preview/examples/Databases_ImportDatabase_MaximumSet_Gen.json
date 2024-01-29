@@ -12,12 +12,12 @@
       "administratorLogin": "login",
       "administratorLoginPassword": "password",
       "authenticationType": "Sql",
-      "edition": "eifldfcuai",
-      "serviceObjectiveName": "whtvxbotxbcwlcpfpkqkwets",
-      "maxSizeBytes": "zhdevxrsteubanf",
+      "edition": "faknogmvcmqrdjdbugklgogs",
+      "serviceObjectiveName": "dxd",
+      "maxSizeBytes": "siruzfknkvfnmkgcvxffytgit",
       "networkIsolation": {
-        "storageAccountResourceId": "jpcw",
-        "sqlServerResourceId": "gxvdvapevadsjirkf"
+        "storageAccountResourceId": "zi",
+        "sqlServerResourceId": "bjtwqnvrenlljbp"
       }
     },
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
@@ -35,12 +35,12 @@
           "serverName": "testsvr.database.windows.net",
           "databaseName": "testdb",
           "status": "Completed",
-          "errorMessage": "uftfasoshnwyrb",
+          "errorMessage": "bseifogtimomq",
           "privateEndpointConnections": [
             {
-              "privateLinkServiceId": "etxylrqgsfvxzzktyybmg",
-              "privateEndpointConnectionName": "gtajercofdmpojjrrpkvmmojtplw",
-              "status": "lhatqnxcqtj"
+              "privateLinkServiceId": "sbqcfwgwzwzjujybcpmrseyetcxy",
+              "privateEndpointConnectionName": "dcleklw",
+              "status": "tcgns"
             }
           ]
         },
