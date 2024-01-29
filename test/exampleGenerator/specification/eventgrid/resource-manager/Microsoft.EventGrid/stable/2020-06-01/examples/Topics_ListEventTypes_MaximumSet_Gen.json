@@ -4,9 +4,9 @@
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "providerNamespace": "xmfukkwddrljtbnwkixcllwcekrsy",
-    "resourceTypeName": "grpljsfjkixqgfdglmldp",
-    "resourceName": "tfgcobvxbkomxikxubjhcfclj",
+    "providerNamespace": "kmqqnfqg",
+    "resourceTypeName": "zhgaqepefhmtfroxpj",
+    "resourceName": "etdivcv",
     "api-version": "2020-06-01"
   },
   "responses": {
@@ -17,7 +17,7 @@
             "properties": {
               "schemaUrl": "tbd",
               "displayName": "Blob Created",
-              "description": "aregopblzaxebzaaeaeoaaiwpz",
+              "description": "npfsokwnbvadvdbzalmiim",
               "isInDefaultSet": true
             },
             "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Storage.StorageAccounts/eventTypes/Microsoft.Storage.BlobCreated",
@@ -28,7 +28,7 @@
             "properties": {
               "schemaUrl": "tbd",
               "displayName": "Blob Deleted",
-              "description": "fgfstmrwugrfyyqlirwekkjahbe",
+              "description": "rdlyuodmqguvh",
               "isInDefaultSet": true
             },
             "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Storage.StorageAccounts/eventTypes/Microsoft.Storage.BlobDeleted",

@@ -4,7 +4,7 @@
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "c",
+    "domainName": "ypghrxlbi",
     "domainUpdateParameters": {
       "tags": {},
       "properties": {
@@ -51,18 +51,18 @@
                   "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"
                 },
                 "groupIds": [
-                  "bwmmnipnuwxzizifqyj"
+                  "egkunsjumrmebsehnmhskrthaquly"
                 ],
                 "privateLinkServiceConnectionState": {
                   "status": "Pending",
-                  "description": "ckyopmubtpsguw",
-                  "actionsRequired": "jpgbdhvzozadernuwxlv"
+                  "description": "mrphqeraeqrrbd",
+                  "actionsRequired": "uyunjjoxnujgwkmttrsg"
                 },
                 "provisioningState": "Creating"
               },
-              "id": "rhszdfftga",
-              "name": "ccbc",
-              "type": "qxetina"
+              "id": "pyhmwq",
+              "name": "dsruunaacrewv",
+              "type": "naxqrkhejplkx"
             }
           ],
           "provisioningState": "Succeeded",
@@ -71,30 +71,30 @@
           "inputSchemaMapping": {
             "properties": {
               "id": {
-                "sourceField": "nphcykydcgnniz"
+                "sourceField": "uwjxmdkwnjcnsahguodyeq"
               },
               "topic": {
-                "sourceField": "nphcykydcgnniz"
+                "sourceField": "uwjxmdkwnjcnsahguodyeq"
               },
               "eventTime": {
-                "sourceField": "nphcykydcgnniz"
+                "sourceField": "uwjxmdkwnjcnsahguodyeq"
               },
               "eventType": {
-                "sourceField": "pxsmaln",
-                "defaultValue": "j"
+                "sourceField": "ezyvfkqyqfmnvfkxavjjyvcgkuvrxj",
+                "defaultValue": "cvgoovwmsinwmxnyfbzd"
               },
               "subject": {
-                "sourceField": "pxsmaln",
-                "defaultValue": "j"
+                "sourceField": "ezyvfkqyqfmnvfkxavjjyvcgkuvrxj",
+                "defaultValue": "cvgoovwmsinwmxnyfbzd"
               },
               "dataVersion": {
-                "sourceField": "pxsmaln",
-                "defaultValue": "j"
+                "sourceField": "ezyvfkqyqfmnvfkxavjjyvcgkuvrxj",
+                "defaultValue": "cvgoovwmsinwmxnyfbzd"
               }
             },
             "inputSchemaMappingType": "Json"
           },
-          "metricResourceId": "qtmpjtqcn"
+          "metricResourceId": "ulcweuvytjktvgihoeixr"
         },
         "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.EventGrid/domains/exampledomain2",
         "name": "exampledomain2",

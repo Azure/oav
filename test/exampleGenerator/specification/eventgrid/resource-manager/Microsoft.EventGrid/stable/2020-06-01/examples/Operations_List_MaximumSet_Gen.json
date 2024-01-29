@@ -14,7 +14,7 @@
               "provider": "Microsoft Event Grid",
               "resource": "EventGrid Resource Provider",
               "operation": "Registers the EventGrid Resource Provider",
-              "description": "rxxxkyg"
+              "description": "lospftjonapoadgusjtiqfdztklil"
             },
             "origin": "UserAndSystem",
             "properties": {}
@@ -25,7 +25,7 @@
               "provider": "Microsoft Event Grid",
               "resource": "eventSubscriptions",
               "operation": "Write EventSubscription",
-              "description": "qqrfmhjpdcpi"
+              "description": "sqfpxd"
             },
             "origin": "UserAndSystem",
             "properties": {}
@@ -36,7 +36,7 @@
               "provider": "Microsoft Event Grid",
               "resource": "eventSubscriptions",
               "operation": "Read EventSubscription",
-              "description": "rnmyxkhgdao"
+              "description": "asjixvfgzoxvvuscn"
             },
             "origin": "UserAndSystem",
             "properties": {}
@@ -47,7 +47,7 @@
               "provider": "Microsoft Event Grid",
               "resource": "eventSubscriptions",
               "operation": "Delete EventSubscription",
-              "description": "ujsagme"
+              "description": "frptmczvhb"
             },
             "origin": "UserAndSystem",
             "properties": {}
@@ -58,7 +58,7 @@
               "provider": "Microsoft Event Grid",
               "resource": "topics",
               "operation": "Write Topic",
-              "description": "naufzdxpptpfkpbr"
+              "description": "aslydnpszhemfifypjk"
             },
             "origin": "UserAndSystem",
             "properties": {}
@@ -69,7 +69,7 @@
               "provider": "Microsoft Event Grid",
               "resource": "topics",
               "operation": "Read Topic",
-              "description": "neuqnxbosrjgqvmtubrjihexdui"
+              "description": "uksr"
             },
             "origin": "UserAndSystem",
             "properties": {}
@@ -80,7 +80,7 @@
               "provider": "Microsoft Event Grid",
               "resource": "topics",
               "operation": "Delete Topic",
-              "description": "snvmxwukhgvmuu"
+              "description": "i"
             },
             "origin": "UserAndSystem",
             "properties": {}

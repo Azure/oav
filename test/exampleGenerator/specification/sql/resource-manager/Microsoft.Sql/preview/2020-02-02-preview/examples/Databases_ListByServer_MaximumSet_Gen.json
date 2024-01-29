@@ -16,8 +16,8 @@
               "name": "BC_Gen4",
               "tier": "BusinessCritical",
               "capacity": 2,
-              "size": "rtxobnwxcviadadubcbwqfcbtxar",
-              "family": "rkudgrjztlqjajnqyeiujqw"
+              "size": "sfthzgdvqxlwzb",
+              "family": "nckptsavzkkzzbapqctrtycrg"
             },
             "kind": "v12.0,user,vcore",
             "properties": {
@@ -33,40 +33,40 @@
               "maxLogSizeBytes": 104857600,
               "readScale": "Enabled",
               "readReplicaCount": 1,
-              "elasticPoolId": "xhjvsvwndzggogyhgmtjd",
-              "requestedServiceObjectiveName": "gmepywljwxhxymyedxwlidcyds",
-              "failoverGroupId": "gykqpm",
+              "elasticPoolId": "szvpvawhepcudrofdqn",
+              "requestedServiceObjectiveName": "qbr",
+              "failoverGroupId": "yivwphtr",
               "zoneRedundant": true,
-              "earliestRestoreDate": "2023-11-15T01:31:53.214Z",
+              "earliestRestoreDate": "2024-01-29T21:41:59.672Z",
               "currentSku": {
-                "name": "cj",
-                "tier": "cmwndzapdmnupkhluszsvwnujnedlx",
-                "size": "khunxlgf",
-                "family": "xzokyiwbysgznk",
-                "capacity": 6
+                "name": "sg",
+                "tier": "wd",
+                "size": "qinxmbfaa",
+                "family": "eznfmmocq",
+                "capacity": 8
               },
-              "autoPauseDelay": 4,
+              "autoPauseDelay": 28,
               "storageAccountType": "GRS",
-              "minCapacity": 21,
-              "pausedDate": "2023-11-15T01:31:53.215Z",
-              "resumedDate": "2023-11-15T01:31:53.215Z"
+              "minCapacity": 26,
+              "pausedDate": "2024-01-29T21:41:59.672Z",
+              "resumedDate": "2024-01-29T21:41:59.672Z"
             },
             "location": "southeastasia",
             "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/Default-SQL-SouthEastAsia/providers/Microsoft.Sql/servers/testsvr/databases/testdb",
             "name": "testdb",
             "type": "Microsoft.Sql/servers/databases",
-            "managedBy": "jwgcj",
+            "managedBy": "wzqz",
             "tags": {
-              "key9058": "gcbwlmyqpfaxghxp"
+              "key9150": "azrxkqghxtqxodpujencicrnuv"
             }
           },
           {
             "sku": {
               "name": "System0",
               "tier": "System",
-              "size": "aeddrrcdnjjqgjyzqoiya",
-              "family": "omlgtvm",
-              "capacity": 13
+              "size": "npkhbkgyj",
+              "family": "vhkujodquilylmsxfhluruufannmj",
+              "capacity": 14
             },
             "kind": "v12.0,system",
             "properties": {
@@ -78,39 +78,39 @@
               "currentServiceObjectiveName": "System0",
               "defaultSecondaryLocation": "North Europe",
               "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
-              "elasticPoolId": "tdpnzlnwzssgs",
-              "requestedServiceObjectiveName": "hwhy",
-              "failoverGroupId": "yfpglqlzvoeylwzuuo",
+              "elasticPoolId": "jwhhql",
+              "requestedServiceObjectiveName": "mlkgchuoqcaxunjwjjqycdoh",
+              "failoverGroupId": "bl",
               "zoneRedundant": true,
               "licenseType": "LicenseIncluded",
-              "maxLogSizeBytes": 24,
-              "earliestRestoreDate": "2023-11-15T01:31:53.216Z",
+              "maxLogSizeBytes": 28,
+              "earliestRestoreDate": "2024-01-29T21:41:59.673Z",
               "readScale": "Enabled",
-              "readReplicaCount": 26,
+              "readReplicaCount": 1,
               "currentSku": {
-                "name": "cj",
-                "tier": "cmwndzapdmnupkhluszsvwnujnedlx",
-                "size": "khunxlgf",
-                "family": "xzokyiwbysgznk",
-                "capacity": 6
+                "name": "sg",
+                "tier": "wd",
+                "size": "qinxmbfaa",
+                "family": "eznfmmocq",
+                "capacity": 8
               },
-              "autoPauseDelay": 27,
+              "autoPauseDelay": 22,
               "storageAccountType": "GRS",
-              "minCapacity": 21,
-              "pausedDate": "2023-11-15T01:31:53.217Z",
-              "resumedDate": "2023-11-15T01:31:53.217Z"
+              "minCapacity": 19,
+              "pausedDate": "2024-01-29T21:41:59.673Z",
+              "resumedDate": "2024-01-29T21:41:59.673Z"
             },
             "location": "southeastasia",
             "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/Default-SQL-SouthEastAsia/providers/Microsoft.Sql/servers/testsvr/databases/master",
             "name": "master",
             "type": "Microsoft.Sql/servers/databases",
-            "managedBy": "daazmuwn",
+            "managedBy": "imdtsdeazeyxy",
             "tags": {
-              "key3589": "afakltvnrmbdocarkfomdfss"
+              "key4921": "rgnmazwbkrvtz"
             }
           }
         ],
-        "nextLink": "vltpwffnrvbcvi"
+        "nextLink": "ptnmnbopqsxasepbjgq"
       }
     }
   }

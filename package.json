@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -33,7 +33,6 @@
     "lodash": "^4.17.21",
     "md5-file": "^5.0.0",
     "mkdirp": "^1.0.4",
-    "mockjs": "^1.1.0",
     "moment": "^2.29.3",
     "ms-rest": "^2.5.6",
     "mustache": "^4.2.0",
