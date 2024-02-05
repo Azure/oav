@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 02/05/2024 3.3.2-beta.4
+
+- Suppressing hard error of `INVALID_FORMAT` when thrown from `arm-id` validation, only in cases where `isArmCall === false`.
+
 ## 01/25/2024 3.3.2-beta.3
 
 - Updating `isArmCall` check to false in additional properties suppression. Updating test to reflect.
