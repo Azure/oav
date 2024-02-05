@@ -327,7 +327,11 @@ export const schemaValidateIssueToLiveValidationIssue = (
           }
           return "";
         }
-      } else if(issue.code === "INVALID_FORMAT" && isArmCall === false && (issue.message.indexOf("Object didn't pass validation for format arm-id") > -1)) {
+      } else if (
+          issue.code === "INVALID_FORMAT"
+          && isArmCall === false
+          && (issue.message.indexOf("Object didn't pass validation for format arm-id") > -1)
+        ) {
         skipIssue = true;
         if (logging) {
           logging(
