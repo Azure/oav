@@ -1063,7 +1063,7 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
-        isArmCall: true,
+        isArmCall: false,
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -1071,6 +1071,26 @@ describe("Live Validator", () => {
       const result = await liveValidator.validateLiveRequestResponse(payload);
       assert.strictEqual(result.responseValidationResult.isSuccessful, true);
       assert.strictEqual(result.requestValidationResult.isSuccessful, true);
+    });
+
+    it(`should only log error invalid format on arm-id if isArmCall is set to false`, async () => {
+      const options = {
+        directory: `${__dirname}/modelValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification/formatValidation/format.json",
+        ],
+        git: {
+          shouldClone: false,
+        },
+        isArmCall: false,
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/invalid_armid_format.json`);
+      const result = await liveValidator.validateLiveRequestResponse(payload);
+      assert.strictEqual(result.responseValidationResult.errors.some((err) => err.code === "INVALID_FORMAT"), false)
     });
   });
 });

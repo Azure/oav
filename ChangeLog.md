@@ -1,5 +1,13 @@
 # Change Log - oav
 
+## 02/12/2024 3.3.3
+
+- #1014 Set armId format validation to always enabled, but allow suppression of errors when `isArmCall` validator argument is set to `false`. Update the special casing on additionalProperties validation. This error was was erroneously skipping validation validation error when isArmCall is set to `true`. This value is _defaulted_ to `true` when used for `Model Validation` and `Semantic Validation`.
+
+## 01/29/2024 3.3.2
+
+- Remove `mockjs` dependency.
+
 ## 11/14/2023 3.3.1
 
 - #1019 Fixing edge case caused by introduction of fake property `refWithReadOnly` used to handle `readonly` errors thrown when placed alongside a `ref` node in a swagger schema.
