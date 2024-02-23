@@ -2,8 +2,8 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import { URL } from "url";
-import { mapEntries, MutableStringMap } from "@azure-tools/openapi-tools-common";
-import * as msRest from "ms-rest";
+import { MutableStringMap } from "@azure-tools/openapi-tools-common";
+import * as msRest from "@azure/ms-rest-js";
 
 export type Headers = MutableStringMap<string | undefined>;
 
@@ -44,8 +44,8 @@ export class HttpTemplate {
       result += `\n${padding}-H 'Content-Length: ${JSON.stringify(this.request.body).length}' \\`;
     }
     if (this.request.headers) {
-      for (const [headerName, header] of mapEntries(this.request.headers)) {
-        result += `\n${padding}-H '${headerName}: ${header}' \\`;
+      for (var header of this.request.headers.headersArray()) {
+        result += `\n${padding}-H '${header.name}: ${header.value}' \\`;
       }
     }
     return result;
