@@ -78,32 +78,41 @@ describe("Utility functions", () => {
     const key = "operationId";
     const value = "ConfigurationStores_List";
     const spec = {
-      "swagger": "2.0",
-      "paths": {
-        "/subscriptions/{subscriptionId}/providers/Microsoft.AppConfiguration/configurationStores": {
-          "get": {
-            "description": "Lists the configuration stores for a given resource group.",
-            "operationId": "ConfigurationStores_List"
-          }
-        },
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores": {
-          "get": {
-            "description": "Lists the configuration stores for a given resource group.",
-            "operationId": "ConfigurationStores_ListByResourceGroup"
-          }
-        },
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}": {
-          "put": {
-            "description": "Creates a configuration store with the specified parameters.",
-            "operationId": "ConfigurationStores_Create"
-          }
-        }
-      }
-    }
-    
-    const paths = utils.findPathsToKey({key, obj: spec})
-    expect(paths).toEqual([".paths['/subscriptions/{subscriptionId}/providers/Microsoft.AppConfiguration/configurationStores'].get.operationId", ".paths['/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores'].get.operationId", ".paths['/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}'].put.operationId"]);
-    const path = utils.findPathToValue(paths, spec, value)
-    expect(path).toEqual([".paths['/subscriptions/{subscriptionId}/providers/Microsoft.AppConfiguration/configurationStores'].get.operationId"]);
-  })
+      swagger: "2.0",
+      paths: {
+        "/subscriptions/{subscriptionId}/providers/Microsoft.AppConfiguration/configurationStores":
+          {
+            get: {
+              description: "Lists the configuration stores for a given resource group.",
+              operationId: "ConfigurationStores_List",
+            },
+          },
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores":
+          {
+            get: {
+              description: "Lists the configuration stores for a given resource group.",
+              operationId: "ConfigurationStores_ListByResourceGroup",
+            },
+          },
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}":
+          {
+            put: {
+              description: "Creates a configuration store with the specified parameters.",
+              operationId: "ConfigurationStores_Create",
+            },
+          },
+      },
+    };
+
+    const paths = utils.findPathsToKey({ key, obj: spec });
+    expect(paths).toEqual([
+      ".paths['/subscriptions/{subscriptionId}/providers/Microsoft.AppConfiguration/configurationStores'].get.operationId",
+      ".paths['/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores'].get.operationId",
+      ".paths['/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}'].put.operationId",
+    ]);
+    const path = utils.findPathToValue(paths, spec, value);
+    expect(path).toEqual([
+      ".paths['/subscriptions/{subscriptionId}/providers/Microsoft.AppConfiguration/configurationStores'].get.operationId",
+    ]);
+  });
 });

@@ -24,7 +24,7 @@ import {
   TrafficValidationOptions,
   TrafficValidator,
 } from "./swaggerValidator/trafficValidator";
-import { ReportGenerator } from "./report/generateReport";
+import { ReportGenerator, loadErrorDefinitions } from "./report/generateReport";
 
 export interface Options extends XMsExampleExtractor.Options {
   consoleLogLevel?: unknown;
@@ -214,13 +214,27 @@ export async function validateTraffic(
       });
     }
     if (options.jsonReportPath) {
+      const errorDefinitions = await loadErrorDefinitions();
       const report = {
+        coveredSpecFiles: validator.operationCoverageResult.map((item) =>
+          options.overrideLinkInReport
+            ? `${options.specLinkPrefix}/${item.spec?.substring(
+                item.spec?.indexOf("specification")
+              )}`
+            : `${item.spec}`
+        ),
         allOperations: validator.operationCoverageResult
           .map((item) => item.totalOperations)
           .reduce((a, b) => a + b, 0),
         coveredOperations: validator.operationCoverageResult
           .map((item) => item.coveredOperations)
           .reduce((a, b) => a + b, 0),
+        unCoveredOperationsList: validator.operationCoverageResult.map((item) => {
+          return {
+            spec: item.spec,
+            operationIds: item.unCoveredOperationsList.map((opeartion) => opeartion.operationId),
+          };
+        }),
         failedOperations: validator.operationCoverageResult
           .map((item) => item.validationFailOperations)
           .reduce((a, b) => a + b, 0),
@@ -229,11 +243,22 @@ export async function validateTraffic(
             trafficValidationResult,
             (item) =>
               item.errors?.map((it) => {
+                const errorDef = errorDefinitions.get(it.code);
+                const specFilePath = item.specFilePath || "";
+                const overrideLinkInReport = options.overrideLinkInReport || false;
+                const specLinkPrefix = options.specLinkPrefix || "";
                 return {
+                  spec: specFilePath,
                   errorCode: it.code,
+                  errorLink: errorDef?.link,
                   errorMessage: it.message,
                   issueSource: it.issueSource,
                   operationId: item.operationInfo?.operationId,
+                  schemaPathWithPosition: overrideLinkInReport
+                    ? `${specLinkPrefix}/${specFilePath.substring(
+                        specFilePath.indexOf("specification")
+                      )}#L${it.source.position.line}`
+                    : `${specFilePath}#L${it.source.position.line}`,
                 };
               }) ?? []
           )

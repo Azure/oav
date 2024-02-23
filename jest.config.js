@@ -12,9 +12,13 @@ module.exports = {
   collectCoverageFrom: ["./lib/**/*.ts", "!**/node_modules/**"],
   coverageReporters: ["json", "lcov", "cobertura", "text", "html", "clover"],
   coveragePathIgnorePatterns: ["/node_modules/", ".*/tests/.*"],
+  testPathIgnorePatterns: [
+    "/\\.autopull/",
+    "/utilities.helpers.ts"
+  ],
   globals: {
     "ts-jest": {
-      tsConfig: "tsconfig.json",
+      tsconfig: "tsconfig.json",
     },
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup-file.js"],

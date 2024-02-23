@@ -1,5 +1,33 @@
 # Change Log - oav
 
+## 02/12/2024 3.3.3
+
+- #1014 Set armId format validation to always enabled, but allow suppression of errors when `isArmCall` validator argument is set to `false`. Update the special casing on additionalProperties validation. This error was was erroneously skipping validation validation error when isArmCall is set to `true`. This value is _defaulted_ to `true` when used for `Model Validation` and `Semantic Validation`.
+
+## 01/29/2024 3.3.2
+
+- Remove `mockjs` dependency.
+
+## 11/14/2023 3.3.1
+
+- #1019 Fixing edge case caused by introduction of fake property `refWithReadOnly` used to handle `readonly` errors thrown when placed alongside a `ref` node in a swagger schema.
+
+## 10/19/2023 3.3.0
+
+- #1011 Enhancing JSON report by exposing new properties including `coveredSpecFiles`, `unCoveredOperationsList`, `errorLink` and `schemaPathWithPosition`. 
+
+## 10/19/2023 3.2.14
+
+- #1010 Fix an issue with details of `Failed Operations` not displayed in Windows-generated HTML report. 
+
+## 09/29/2023 3.2.13
+
+- #1004 fixes an issue with the injected property refWithReadOnly causing additionalProperty error in schema validator.
+
+## 09/25/2023 3.2.12
+
+- #996 Allows `required` properties to be ommitted from a response if they are also marked `readonly`.
+
 ## 07/05/2023 3.2.11
 
 - Re-enable `additionalProperties` validation where the `liveValidator` configuration has `isArmCall` set to `false`. The version of `oav` that is being used to validate `azure-rest-api-specs` has this behavior enabled, so this is not a breaking change.

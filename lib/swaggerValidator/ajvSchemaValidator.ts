@@ -12,12 +12,18 @@ import { $id, JsonLoader } from "../swagger/jsonLoader";
 import { isSuppressed } from "../swagger/suppressionLoader";
 import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
 import { getNameFromRef } from "../transform/context";
-import { xmsAzureResource, xmsEnum, xmsMutability, xmsSecret } from "../util/constants";
+import {
+  xmsAzureResource,
+  xmsEnum,
+  xmsMutability,
+  xmsReadonlyRef,
+  xmsSecret,
+} from "../util/constants";
 import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefinitions";
 import { Severity } from "../util/severity";
 import { Writable } from "../util/utils";
 import { SourceLocation } from "../util/validationError";
-import { ajvEnableAll, ajvEnableArmRule } from "./ajv";
+import { ajvEnableAll, ajvEnableArmRule, ajvEnableArmIdFormat } from "./ajv";
 import {
   getIncludeErrorsMap,
   SchemaValidateContext,
@@ -58,6 +64,9 @@ export class AjvSchemaValidator implements SchemaValidator {
       },
     });
     ajvEnableAll(this.ajv, loader);
+
+    // always enable the armId format validation
+    ajvEnableArmIdFormat(this.ajv);
 
     if (schemaValidatorOption?.isArmCall === true) {
       ajvEnableArmRule(this.ajv);
@@ -285,6 +294,14 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     return true;
   }
 
+  // If we're erroring on the added property refWithReadOnly simply ignore the error
+  if (
+    error.keyword === "additionalProperties" &&
+    (params as any).additionalProperty === "refWithReadOnly"
+  ) {
+    return true;
+  }
+
   // If a response has x-ms-mutability property and its missing the read we can skip this error
   if (
     cxt.isResponse &&
@@ -304,7 +321,7 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   if (
     !cxt.isResponse &&
     keyword === "required" &&
-    (parentSchema.properties?.[(params as any).missingProperty]?.refWithReadOnly ||
+    (parentSchema.properties?.[(params as any).missingProperty]?.[xmsReadonlyRef] ||
       parentSchema.properties?.[(params as any).missingProperty]?.readOnly)
   ) {
     return true;
