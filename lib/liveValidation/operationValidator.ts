@@ -305,35 +305,15 @@ export const schemaValidateIssueToLiveValidationIssue = (
           skipIssue = true;
           return "";
         }
-      } else if (issue.code === "INVALID_TYPE" && isArmCall === false) {
-        // See Azure/oav#983 for additional information as to why this special case is present.
-        // RPs working with the RPaaS team were having dificulty with additionalProperties validation due to the fact
-        // that when we turned it on, a LOT of real, live requests were being rejected due to invalid additionalProperties settings.
-        //
-        // We need oav to have the capability to skip this if we are invoking an arm call, but when we roll any new versions of OAV
-        // out to azure/azure-rest-api-specs, we need the errors actually pop there! When enough of the RPs have resolved this problem,
-        // we can re-enable loud failures in the validation image.
-        //
-        // Model and Semantic validation both run with isArmCall set to TRUE, so by setting FALSE a user will activate this special skip logic.
-        if (issue.schemaPath.includes("additionalProperties")) {
-          skipIssue = true;
-          if (logging) {
-            logging(
-              `AdditionalProperties validation failed:${JSON.stringify(issue, undefined, 2)}`,
-              LiveValidatorLoggingLevels.error,
-              LiveValidatorLoggingTypes.trace,
-              "Oav.OperationValidator.schemaValidateIssueToLiveValidationIssue",
-              undefined,
-              operationContext.validationRequest
-            );
-          }
-          return "";
-        }
       } else if (
         issue.code === "INVALID_FORMAT" &&
         isArmCall === false &&
         issue.message.includes("Object didn't pass validation for format arm-id")
       ) {
+        // This special case is present because enforcing ArmID format, when enabled for livevalidation, is a breaking change
+        // Once all of the "invalid armid format" errors have been addressed by various service teams, this suppression will be removed.
+        //
+        // Until then, failed armid format validation will only log the request.
         skipIssue = true;
         if (logging) {
           logging(
