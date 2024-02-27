@@ -2,7 +2,7 @@
 
 ## 02/27/2024 3.3.4
 
-- Remove suppression of `additionalProperties` errors.
+- #1027 Remove suppression of `additionalProperties` errors when `isArmCall === true`. (ARM liveValidation scenarios)
 
 ## 02/12/2024 3.3.3
 
