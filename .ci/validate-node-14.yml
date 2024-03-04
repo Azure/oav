@@ -1,0 +1,35 @@
+pool:
+  vmImage: "Ubuntu 20.04"
+
+trigger:
+  - develop
+
+pr:
+  branches:
+    include:
+      - "*"
+
+steps:
+  - task: NodeTool@0
+    displayName: "Install Node 14"
+    inputs:
+      versionSpec: "14.x"
+
+  - task: Npm@1
+    displayName: "npm ci"
+    inputs:
+      command: ci
+      verbose: false
+
+  - script: "npm install -g @ts-common/publish"
+    displayName: "npm install -g @ts-common/publish globally"
+
+  - script: "npm pack"
+    displayName: "npm pack"
+
+  - script: "npm install -g oav-*.tgz"
+    displayName: "npm install package globally"
+
+  - template: validate-node.template.yml
+    parameters:
+      workingDir: $(Pipeline.Workspace)/.npm/lib/node_modules
