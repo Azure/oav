@@ -329,22 +329,6 @@ export const schemaValidateIssueToLiveValidationIssue = (
           }
           return "";
         }
-      } else if (
-        issue.code === "INVALID_FORMAT" &&
-        isArmCall === false &&
-        issue.message.includes("Object didn't pass validation for format arm-id")
-      ) {
-        skipIssue = true;
-        if (logging) {
-          logging(
-            `armId format validation failed: ${JSON.stringify(issue, undefined, 2)}`,
-            LiveValidatorLoggingLevels.error,
-            LiveValidatorLoggingTypes.trace,
-            "Oav.OperationValidator.schemaValidateIssueToLiveValidationIssue",
-            undefined,
-            operationContext.validationRequest
-          );
-        }
       }
 
       const isMissingRequiredProperty = issue.code === "OBJECT_MISSING_REQUIRED_PROPERTY";
