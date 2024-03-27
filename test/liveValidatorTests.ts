@@ -1073,7 +1073,7 @@ describe("Live Validator", () => {
       assert.strictEqual(result.requestValidationResult.isSuccessful, true);
     });
 
-    it(`should only log error invalid format on arm-id if isArmCall is set to false`, async () => {
+    it(`should throw error invalid format on arm-id even if isArmCall is set to false`, async () => {
       const options = {
         directory: `${__dirname}/modelValidation/swaggers/`,
         isPathCaseSensitive: false,
@@ -1090,7 +1090,7 @@ describe("Live Validator", () => {
       await liveValidator.initialize();
       const payload = require(`${__dirname}/liveValidation/payloads/invalid_armid_format.json`);
       const result = await liveValidator.validateLiveRequestResponse(payload);
-      assert.strictEqual(result.responseValidationResult.errors.some((err) => err.code === "INVALID_FORMAT"), false)
+      assert.strictEqual(result.responseValidationResult.errors.some((err) => err.code === "INVALID_FORMAT"), true)
     });
   });
 });
