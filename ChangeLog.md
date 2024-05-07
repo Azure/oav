@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 05/7/2024 3.3.5
+
+- Bump Node engine version requirement for security vulnerability.
+
 ## 03/27/2024 3.3.4
 
 - Re-enable the arm-id validation in all cases, even when `isArmCall` is `false`. The special handling for this error will be done in RPaaS's codebase.
