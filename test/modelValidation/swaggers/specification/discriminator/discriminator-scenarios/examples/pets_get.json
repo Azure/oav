@@ -1,0 +1,15 @@
+{
+  "title": "Get a pet by ID",
+  "operationId": "",
+  "parameters": {
+    "petId": "wqjfgoycletaqlciobkvy"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "name": "HRAvailabilitySet",
+        "animal": "cat"
+      }
+    }
+  }
+}

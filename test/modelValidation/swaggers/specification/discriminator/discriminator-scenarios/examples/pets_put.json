@@ -1,0 +1,22 @@
+{
+  "title": "Pets_Create",
+  "operationId": "Pets_Create",
+  "parameters": {
+    "subscriptionId": "00000000-0000-0000-0000-000000000000",
+    "resourceGroupName": "rgPet",
+    "petId": "xzbno",
+    "api-version": "2023-08-01-preview",
+    "cluster": {
+      "name": "HRAvailabilitySet",
+      "animal": "cat"
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "name": "HRAvailabilitySet",
+        "animal": "cat"
+      }
+    }
+  }
+}

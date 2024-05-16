@@ -1,0 +1,266 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2023-08-01-preview",
+    "title": "ASHCI",
+    "description": "ASHCI management service"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "security": [
+    {
+      "azure_auth": [
+        "user_impersonation"
+      ]
+    }
+  ],
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "flow": "implicit",
+      "description": "Azure Active Directory OAuth2 Flow",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      }
+    }
+  },
+  "paths": {
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Private.ASHCI/pets/{petId}": {
+      "get": {
+        "summary": "Get a pet by ID",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the pet to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "": {
+            "$ref": "./examples/pets_get.json"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Pets"
+        ],
+        "operationId": "Pets_Create",
+        "description": "Create an HCI cluster.",
+        "parameters": [
+          {
+            "$ref": "../../../../../apiScenario/fixtures/specification/common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../apiScenario/fixtures/specification/common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID of the pet to update"
+          },
+          {
+            "$ref": "../../../../../apiScenario/fixtures/specification/common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "name": "cluster",
+            "in": "body",
+            "description": "Details of the HCI cluster.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          },
+          "default": {
+            "description": "Error response describing why the operation failed.",
+            "schema": {
+              "$ref": "../../../../../apiScenario/fixtures/specification/common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "PetsPut": {
+            "$ref": "./examples/pets_put.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Pet": {
+      "type": "object",
+      "discriminator": "animal",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "animal": {
+          "type": "string",
+          "enum": [
+            "cat",
+            "dog"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "animal"
+      ]
+    },
+    "Dog": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Pet"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "breed": {
+              "type": "string",
+              "enum": [
+                "labrador",
+                "poodle",
+                "bulldog"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "small",
+                "medium",
+                "large"
+              ]
+            },
+            "age": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "breed",
+            "size"
+          ]
+        }
+      ],
+      "x-ms-discriminator-value": "dog"
+    },
+    "Cat": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Pet"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "color": {
+              "type": "string",
+              "enum": [
+                "black",
+                "white",
+                "brown"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "small",
+                "big"
+              ]
+            }
+          },
+          "required": [
+            "color",
+            "size"
+          ]
+        }
+      ],
+      "x-ms-discriminator-value": "cat"
+    },
+    "Labrador": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Dog"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "bark": {
+              "type": "string",
+              "enum": [
+                "loud",
+                "quiet"
+              ]
+            },
+            "eat": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "bark",
+            "eat"
+          ]
+        }
+      ],
+      "x-ms-discriminator-value": "labrador"
+    },
+    "Poodle": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Dog"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "bark": {
+              "type": "string",
+              "enum": [
+                "quiet"
+              ]
+            },
+            "drink": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "bark",
+            "drink"
+          ]
+        }
+      ],
+      "x-ms-discriminator-value": "poodle"
+    }
+  },
+  "responses": {
+    "NotFound": {
+      "description": "Resource not found"
+    }
+  }
+}
