@@ -1,6 +1,10 @@
 # Change Log - oav
 
-## 05/7/2024 3.3.5
+## Unreleased 3.3.6
+
+- Add unit tests and address updates to `discriminator` logic.
+
+## 05/07/2024 3.3.5
 
 - Bump Node engine version requirement for security vulnerability.
 
