@@ -1,4 +1,4 @@
-import * as oav from "../index";
+import * as oav from "../../index";
 //import * as fs from "fs"
 //import * as path from "path"
 

@@ -41,7 +41,7 @@ steps:
   displayName: Clone the Git Repo
 
 - bash: |
-    python $(Build.SourcesDirectory)/.ci/scripts/run_oav_regression.py --oav oav --target $(RestSpecsRepo) --output $(OutputFolder) --type "${{ parameters.Type }}"
+    python $(Build.SourcesDirectory)/eng/scripts/run_oav_regression.py --oav oav --target $(RestSpecsRepo) --output $(OutputFolder) --type "${{ parameters.Type }}"
   displayName: Run the Regression Script
   timeoutInMinutes: 350
 
