@@ -2,120 +2,103 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
-      - stage: Build
+      - stage: Build_And_Test
+        displayName: Build and Test
+
         variables:
-          - name: Artifacts
-            value: $(Pipeline.Workspace)/artifacts
           - template: /eng/pipelines/templates/variables/image.yml
 
         jobs:
           - job: Build
 
-
+            pool:
+              name: $(LINUXPOOL)
+              image: $(LINUXVMIMAGE) 
+              os: linux
 
             steps:
-            - checkout: self
-              submodules: true
-            - task: Npm@1
-              displayName: "npm ci"
-              inputs:
-                command: ci
-                verbose: false
+              - checkout: self
+                submodules: true
 
-            - task: Npm@1
-              displayName: "npm run build"
-              inputs:
-                command: custom
-                verbose: false
-                customCommand: run build
+              - task: NodeTool@0
+                inputs:
+                  versionSpec: "20.x"
+                displayName: "Use Node 20"
 
-            - task: Npm@1
-              displayName: "npm test"
-              inputs:
-                command: custom
-                verbose: false
-                customCommand: test
+              - task: Npm@1
+                displayName: "npm ci"
+                inputs:
+                  command: ci
+                  verbose: false
 
-            - task: PublishTestResults@2
-              inputs:
-                testResultsFiles: "**/test-results.xml"
-                testRunTitle: "Test results for JavaScript"
+              - task: Npm@1
+                displayName: "npm run build"
+                inputs:
+                  command: custom
+                  verbose: false
+                  customCommand: run build
 
-            - task: PublishCodeCoverageResults@1
-              inputs:
-                codeCoverageTool: Cobertura
-                summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
-                reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
+              - task: Npm@1
+                displayName: "npm test"
+                inputs:
+                  command: custom
+                  verbose: false
+                  customCommand: test
 
-            - task: Npm@1
-              displayName: "npm pack"
-              inputs:
-                command: custom
-                verbose: false
-                customCommand: pack
+              - task: PublishTestResults@2
+                inputs:
+                  testResultsFiles: "**/test-results.xml"
+                  testRunTitle: "Test results for JavaScript"
 
-            - task: CopyFiles@2
-              displayName: "Copy Files to: drop"
-              inputs:
-                Contents: "*.tgz"
-                TargetFolder: drop
+              - task: PublishCodeCoverageResults@1
+                inputs:
+                  codeCoverageTool: Cobertura
+                  summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
+                  reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
 
-            - task: PublishBuildArtifacts@1
-              inputs:
-                pathtoPublish: $(Build.SourcesDirectory)/drop
+                - task: Npm@1
+                  displayName: "npm pack"
+                  inputs:
+                    command: custom
+                    verbose: false
+                    customCommand: pack
 
-          - job: Test
-            steps:
-            - checkout: self
-              submodules: true
+                - task: CopyFiles@2
+                  displayName: "Copy Files to: drop"
+                  inputs:
+                    Contents: "*.tgz"
+                    TargetFolder: $(Build.ArtifactStagingDirectory)
 
-            - task: Npm@1
-              displayName: "npm ci"
-              inputs:
-                command: ci
-                verbose: false
-
-            - task: Npm@1
-              displayName: "npm run build"
-              inputs:
-                command: custom
-                verbose: false
-                customCommand: run build
-
-            - task: Npm@1
-              displayName: "npm test"
-              inputs:
-                command: custom
-                verbose: false
-                customCommand: test
-
-            - task: PublishTestResults@2
-              inputs:
-                testResultsFiles: "**/test-results.xml"
-                testRunTitle: "Test results for JavaScript"
-
-            - task: PublishCodeCoverageResults@1
-              inputs:
-                codeCoverageTool: Cobertura
-                summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
-                reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
-
-            - task: Npm@1
-              displayName: "npm pack"
-              inputs:
-                command: custom
-                verbose: false
-                customCommand: pack
-
-            - task: CopyFiles@2
-              displayName: "Copy Files to: drop"
-              inputs:
-                Contents: "*.tgz"
-                TargetFolder: drop
-
-            - task: PublishBuildArtifacts@1
-              inputs:
-                pathtoPublish: $(Build.SourcesDirectory)/drop
+                template: /eng/templates/steps/publish-1es-artifact.yml
+                parameters:
+                  ArtifactName: 'oav'
+                  ArtifactPath: '$(Build.ArtifactStagingDirectory)'
 
       # only include if running on `internal` build, otherwise never include
-      - ${{ if }}
+      - ${{ if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
+          - stage: Publish
+            displayName: Publish
+            dependsOn: Build_And_Test
+
+            variables:
+              - template: /eng/pipelines/templates/variables/image.yml
+
+            jobs:
+              - job: Publish
+
+                pool:
+                  name: $(LINUXPOOL)
+                  image: $(LINUXVMIMAGE) 
+                  os: linux
+
+                steps:
+                  - checkout: self
+                    submodules: true
+
+                  - download: current
+                    artifact: oav
+                    timeoutInMinutes: 5
+
+                  - pwsh: |
+                      Get-ChildItem $(Build.ArtifactStagingDirectory) -Recurse | % { Write-Host $_.FullName }
+
