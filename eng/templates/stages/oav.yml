@@ -69,8 +69,8 @@ extends:
                   Contents: "*.tgz"
                   TargetFolder: $(Build.ArtifactStagingDirectory)
 
-               - template: /eng/templates/steps/publish-1es-artifact.yml
-                 parameters:
+              - template: /eng/templates/steps/publish-1es-artifact.yml
+                parameters:
                   ArtifactName: 'oav'
                   ArtifactPath: '$(Build.ArtifactStagingDirectory)'
 
