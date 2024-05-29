@@ -6,7 +6,7 @@ extends:
         displayName: Build and Test
 
         variables:
-          - template: /eng/pipelines/templates/variables/image.yml
+          - template: /eng/templates/variables/image.yml
 
         jobs:
           - job: Build
@@ -81,7 +81,7 @@ extends:
             dependsOn: Build_And_Test
 
             variables:
-              - template: /eng/pipelines/templates/variables/image.yml
+              - template: /eng/templates/variables/image.yml
 
             jobs:
               - job: Publish
