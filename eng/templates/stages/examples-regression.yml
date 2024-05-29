@@ -1,0 +1,33 @@
+# this pipeline produces no artifacts, and therefore should be classified as non-production if run as a standalone build.
+stages:
+  - ${{ if or(eq(variables['System.TeamProject'], 'internal'), eq(variables['System.TeamProject'], 'public')) }}:
+    - stage: Run_Sample_Regression
+      displayName: Run Sample Regression
+      jobs:
+        - job: SampleRegression
+          pool:
+            name: $(LINUXPOOL)
+            image: $(LINUXVMIMAGE) 
+            os: linux
+          steps:
+            - checkout: self
+              submodules: true
+            - template: /eng/templates/steps/simple-regression-steps.yml
+              parameters:
+                NpmEnvironment: 'slow-test-samples'
+
+  - ${{ else }}:
+    - stage: Run_Example_Regression
+      displayName: Run Example Regression
+      jobs:
+        - job: ExampleRegression
+          pool:
+            name: $(LINUXPOOL)
+            image: $(LINUXVMIMAGE) 
+            os: linux
+          steps:
+            - checkout: self
+              submodules: true
+            - template: /eng/templates/steps/simple-regression-steps.yml
+              parameters:
+                NpmEnvironment: 'slow-test'

@@ -22,7 +22,7 @@ jobs:
     timeoutInMinutes: 360
     displayName: Run ${{ parameters.BeforeVersion }} Specs
     steps:
-      - template: ./regression-steps.yml
+      - template: ../steps/deep-regression-steps.yml
         parameters:
           TargetVersion: ${{ parameters.BeforeVersion }}
           Type: "validate-spec"
@@ -36,7 +36,7 @@ jobs:
     timeoutInMinutes: 360
     displayName: Run ${{ parameters.BeforeVersion }} Examples
     steps:
-      - template: ./regression-steps.yml
+      - template: ../steps/deep-regression-steps.yml
         parameters:
           TargetVersion: ${{ parameters.BeforeVersion }}
           Type: "validate-example"
@@ -50,7 +50,7 @@ jobs:
     timeoutInMinutes: 360
     displayName: Run ${{ parameters.AfterVersion }} Specs
     steps:
-      - template: ./regression-steps.yml
+      - template: ../steps/deep-regression-steps.yml
         parameters:
           TargetVersion: ${{ parameters.AfterVersion }}
           Type: "validate-spec"
@@ -64,7 +64,7 @@ jobs:
     timeoutInMinutes: 360
     displayName: Run ${{ parameters.AfterVersion }} Examples
     steps:
-      - template: ./regression-steps.yml
+      - template: ../steps/deep-regression-steps.yml
         parameters:
           TargetVersion: ${{ parameters.AfterVersion }}
           Type: "validate-example"
