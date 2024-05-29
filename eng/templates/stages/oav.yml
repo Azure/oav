@@ -1,5 +1,5 @@
 extends:
-  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  template: /eng/templates/stages/1es-redirect.yml
   parameters:
     stages:
       - stage: Build_And_Test
