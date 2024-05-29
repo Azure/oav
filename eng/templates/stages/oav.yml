@@ -56,21 +56,21 @@ extends:
                   summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
                   reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
 
-                - task: Npm@1
-                  displayName: "npm pack"
-                  inputs:
-                    command: custom
-                    verbose: false
-                    customCommand: pack
+              - task: Npm@1
+                displayName: "npm pack"
+                inputs:
+                  command: custom
+                  verbose: false
+                  customCommand: pack
 
-                - task: CopyFiles@2
-                  displayName: "Copy Files to: drop"
-                  inputs:
-                    Contents: "*.tgz"
-                    TargetFolder: $(Build.ArtifactStagingDirectory)
+              - task: CopyFiles@2
+                displayName: "Copy Files to: drop"
+                inputs:
+                  Contents: "*.tgz"
+                  TargetFolder: $(Build.ArtifactStagingDirectory)
 
-                template: /eng/templates/steps/publish-1es-artifact.yml
-                parameters:
+               - template: /eng/templates/steps/publish-1es-artifact.yml
+                 parameters:
                   ArtifactName: 'oav'
                   ArtifactPath: '$(Build.ArtifactStagingDirectory)'
 
