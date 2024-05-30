@@ -40,5 +40,5 @@ steps:
 
   - template: /eng/templates/steps/publish-1es-artifact.yml
     parameters:
-      ArtifactName: "snapshot-patch"
+      ArtifactName: "snapshot-patch-${{ parameters.NpmEnvironment }}"
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
