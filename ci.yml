@@ -4,9 +4,6 @@ trigger:
     - develop
     - hotfix/*
     - release/*
-  paths:
-    include:
-    - /
 
 pr:
   branches:
@@ -15,9 +12,6 @@ pr:
     - feature/*
     - hotfix/*
     - release/*
-  paths:
-    include:
-    - /
 
 extends:
   template: /eng/templates/stages/oav.yml
