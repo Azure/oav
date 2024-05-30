@@ -5,19 +5,18 @@
 
 import * as validate from "../lib/validate";
 
-import { repoPath, clonePR } from "./utilities.helpers";
+import { clonePR } from "./utilities.helpers";
 
 const prNumber: number = 27067;
 const prRepo: string = "azure/azure-rest-api-specs";
-const specPath = `${repoPath}/specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/blob.json`;
+const specRelPath = `specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/blob.json`;
 
 jest.setTimeout(1000000); // Set the timeout in milliseconds
 
 describe("Semantic Validation", () => {
   it("Debug an individual spec failing semantic validation.", async () => {
-    clonePR(`https://github.com/${prRepo}.git`, prNumber);
-
-    const result = await validate.validateSpec(specPath, undefined);
+    const repoPath = clonePR(`https://github.com/${prRepo}.git`, prNumber);
+    const result = await validate.validateSpec(`${repoPath}/${specRelPath}`, undefined);
     console.log(result);
   });
 });

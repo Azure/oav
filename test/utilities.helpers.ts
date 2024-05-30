@@ -10,9 +10,10 @@ const testPath = __dirname.replace("\\", "/");
 export const repoPath: string = path.join(testPath, "..", ".autopull");
 
 // Function to clone a specific PR's code from the Git repo
-export function clonePR(url: string, prNumber: number): void {
+export function clonePR(url: string, prNumber: number): string {
   const prBranch = `pull/${prNumber}/head`;
-  const execOptions = { cwd: repoPath };
+  const finalRepoPath = path.join(repoPath, prNumber.toString());
+  const execOptions = { cwd: finalRepoPath };
   const outputFile: string = path.join(execOptions.cwd, "stamp.txt");
   const existingData = getPRData(outputFile);
 
@@ -21,10 +22,10 @@ export function clonePR(url: string, prNumber: number): void {
       `Previously downloaded spec repo does not match targeted prNumber ${prNumber} or repo ${url}`
     );
 
-    if (fs.existsSync(repoPath)) {
-      fs.removeSync(repoPath);
+    if (fs.existsSync(finalRepoPath)) {
+      fs.removeSync(finalRepoPath);
     }
-    fs.mkdirSync(repoPath);
+    fs.mkdirSync(finalRepoPath);
 
     try {
       if (prNumber !== 0) {
@@ -44,6 +45,8 @@ export function clonePR(url: string, prNumber: number): void {
       `Previously downloaded spec repo matches the expected PR Number ${prNumber} and repo ${url}. Skipping re-clone.`
     );
   }
+
+  return finalRepoPath;
 }
 
 function writePRData(targetFile: string, data: PRData): void {
