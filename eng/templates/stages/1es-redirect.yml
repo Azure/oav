@@ -39,6 +39,10 @@ extends:
     sdl:
       git:
         longpaths: true
+      sourceRepositoriesToScan:
+        include:
+        - repository: self
+        runInSingleJob: true
       sourceAnalysisPool:
         name: azsdk-pool-mms-win-2022-general
         image: azsdk-pool-mms-win-2022-1espt
