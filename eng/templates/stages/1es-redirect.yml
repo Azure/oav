@@ -39,6 +39,7 @@ extends:
     sdl:
       git:
         longpaths: true
+        submodules: false
       sourceRepositoriesToScan:
         include:
         - repository: self
