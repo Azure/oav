@@ -95,11 +95,6 @@ extends:
                 image: $(LINUXVMIMAGE) 
                 os: linux
 
-              pool:
-                image: azsdk-pool-mms-ubuntu-2004-1espt
-                name: azsdk-pool-mms-ubuntu-2004-general
-                os: linux
-
               strategy:
                 runOnce:
                   deploy:
