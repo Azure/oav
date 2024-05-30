@@ -1,6 +1,6 @@
 # this pipeline produces no artifacts, and therefore should be classified as non-production if run as a standalone build.
 stages:
-  - ${{ if or(eq(variables['System.TeamProject'], 'internal'), eq(variables['System.TeamProject'], 'public')) }}:
+  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
     - stage: Run_Sample_Regression
       dependsOn: []
       displayName: Run Sample Regression
