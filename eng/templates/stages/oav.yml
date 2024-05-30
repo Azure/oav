@@ -78,29 +78,29 @@ extends:
 
       # only include if running on `internal` build with manual queue, otherwise never include
       - ${{ if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
-          - stage: Publish
-            displayName: Publish
-            dependsOn: Build_And_Test
+        - stage: Publish
+          displayName: Publish
+          dependsOn: Build_And_Test
 
-            variables:
-              - template: /eng/templates/variables/image.yml
+          variables:
+            - template: /eng/templates/variables/image.yml
 
-            jobs:
-              - job: Publish
+          jobs:
+            - job: Publish
 
-                pool:
-                  name: $(LINUXPOOL)
-                  image: $(LINUXVMIMAGE) 
-                  os: linux
+              pool:
+                name: $(LINUXPOOL)
+                image: $(LINUXVMIMAGE) 
+                os: linux
 
-                steps:
-                  - checkout: self
-                    submodules: true
+              steps:
+                - checkout: self
+                  submodules: true
 
-                  - download: current
-                    artifact: oav
-                    timeoutInMinutes: 5
+                - download: current
+                  artifact: oav
+                  timeoutInMinutes: 5
 
-                  - pwsh: |
-                      Get-ChildItem $(Build.ArtifactStagingDirectory) -Recurse | % { Write-Host $_.FullName }
+                - pwsh: |
+                    Get-ChildItem $(Build.ArtifactStagingDirectory) -Recurse | % { Write-Host $_.FullName }
 
