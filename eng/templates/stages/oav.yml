@@ -88,21 +88,29 @@ extends:
           # todo: add an environment for approval prior to release
           # todo: grab the ESRP config from azure-sdk-for-js as external repository
           jobs:
-            - job: Publish
-
+            - deployment: Publish
+              environment: 'package-publish'
               pool:
                 name: $(LINUXPOOL)
                 image: $(LINUXVMIMAGE) 
                 os: linux
 
-              steps:
-                - checkout: self
-                  submodules: true
+              pool:
+                image: azsdk-pool-mms-ubuntu-2004-1espt
+                name: azsdk-pool-mms-ubuntu-2004-general
+                os: linux
 
-                - download: current
-                  artifact: oav
-                  timeoutInMinutes: 5
+              strategy:
+                runOnce:
+                  deploy:
+                    steps:
+                    - checkout: self
+                      submodules: true
 
-                - pwsh: |
-                    Get-ChildItem $(Build.ArtifactStagingDirectory) -Recurse | % { Write-Host $_.FullName }
+                    - download: current
+                      artifact: oav
+                      timeoutInMinutes: 5
+
+                    - pwsh: |
+                        Get-ChildItem $(Build.ArtifactStagingDirectory) -Recurse | % { Write-Host $_.FullName }
 

@@ -17,7 +17,7 @@ stages:
               submodules: true
             - template: /eng/templates/steps/simple-regression-steps.yml
               parameters:
-                NpmEnvironment: 'slow-test-samples'
+                NpmEnvironment: 'slow-test-sample'
 
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Run_Example_Regression
