@@ -1,5 +1,3 @@
-# TODO: refactor the hilariously common jobs
-
 parameters:
   - name: BeforeVersion
     type: string
@@ -8,9 +6,13 @@ parameters:
     type: string
     default: 'LOCAL' #specialcase value that will install the local version of oav
 
+variables:
+  - template: /eng/templates/variables/image.yml
+
 pool:
-  name: azsdk-pool-mms-ubuntu-2004-general
-  vmImage: MMSUbuntu20.04
+  name: $(LINUXPOOL)
+  image: $(LINUXVMIMAGE)
+  os: linux
 
 jobs:
   - job: RegressionASpecs
