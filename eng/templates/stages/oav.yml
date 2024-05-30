@@ -114,7 +114,7 @@ extends:
 
                     - task: EsrpRelease@7
                       inputs:
-                        displayName: 'Publish ${{parameters.Artifact.name}} to ESRP'
+                        displayName: 'Publish oav to ESRP'
                         ConnectedServiceName: 'Azure SDK Engineering System'
                         ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
                         KeyVaultName: 'AzureSDKEngKeyVault'
