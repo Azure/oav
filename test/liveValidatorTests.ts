@@ -1078,9 +1078,7 @@ describe("Live Validator", () => {
         directory: `${__dirname}/modelValidation/swaggers/`,
         isPathCaseSensitive: false,
         useRelativeSourceLocationUrl: true,
-        swaggerPathsPattern: [
-          "specification/formatValidation/format.json",
-        ],
+        swaggerPathsPattern: ["specification/formatValidation/format.json"],
         git: {
           shouldClone: false,
         },
@@ -1090,7 +1088,10 @@ describe("Live Validator", () => {
       await liveValidator.initialize();
       const payload = require(`${__dirname}/liveValidation/payloads/invalid_armid_format.json`);
       const result = await liveValidator.validateLiveRequestResponse(payload);
-      assert.strictEqual(result.responseValidationResult.errors.some((err) => err.code === "INVALID_FORMAT"), true)
+      assert.strictEqual(
+        result.responseValidationResult.errors.some((err) => err.code === "INVALID_FORMAT"),
+        true
+      );
     });
   });
 });

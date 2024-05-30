@@ -85,6 +85,8 @@ extends:
           variables:
             - template: /eng/templates/variables/image.yml
 
+          # todo: add an environment for approval prior to release
+          # todo: grab the ESRP config from azure-sdk-for-js as external repository
           jobs:
             - job: Publish
 

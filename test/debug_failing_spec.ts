@@ -16,8 +16,8 @@ jest.setTimeout(1000000); // Set the timeout in milliseconds
 
 describe("Semantic Validation", () => {
   it("Debug an individual spec failing semantic validation.", async () => {
-    clonePR(`https://github.com/${prRepo}.git`, prNumber)
-    
+    clonePR(`https://github.com/${prRepo}.git`, prNumber);
+
     const result = await validate.validateSpec(specPath, undefined);
 
     assert(

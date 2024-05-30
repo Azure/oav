@@ -16,7 +16,7 @@ jest.setTimeout(1000000); // Set the timeout in milliseconds
 
 describe("Model Validation", () => {
   it("Debug an individual spec failing model validation.", async () => {
-    clonePR(`https://github.com/${prRepo}.git`, prNumber)
+    clonePR(`https://github.com/${prRepo}.git`, prNumber);
 
     const result = await validate.validateExamples(specPath, undefined);
 

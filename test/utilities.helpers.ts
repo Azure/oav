@@ -1,6 +1,6 @@
-import { execSync } from 'child_process';
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import { execSync } from "child_process";
+import * as path from "path";
+import * as fs from "fs-extra";
 
 interface PRData {
   number: number;
@@ -16,8 +16,10 @@ export function clonePR(url: string, prNumber: number): void {
   const outputFile: string = path.join(execOptions.cwd, "stamp.txt");
   const existingData = getPRData(outputFile);
 
-  if (existingData.number != prNumber || existingData.repo !== url ) {
-    console.log(`Previously downloaded spec repo does not match targeted prNumber ${prNumber} or repo ${url}`);
+  if (existingData.number != prNumber || existingData.repo !== url) {
+    console.log(
+      `Previously downloaded spec repo does not match targeted prNumber ${prNumber} or repo ${url}`
+    );
 
     if (fs.existsSync(repoPath)) {
       fs.removeSync(repoPath);
@@ -29,18 +31,18 @@ export function clonePR(url: string, prNumber: number): void {
         execSync(`git clone ${url} --no-checkout --filter=tree:0 .`, execOptions);
         execSync(`git fetch origin ${prBranch}:b${prNumber}`, execOptions);
         execSync(`git checkout b${prNumber}`, execOptions);
-      }
-      else {
+      } else {
         execSync(`git clone ${url} --depth 1 .`, execOptions);
       }
-      writePRData(outputFile, { repo: url, number: prNumber })
+      writePRData(outputFile, { repo: url, number: prNumber });
       console.log(`Sucessfully cloned pr ${prNumber}`);
     } catch (error) {
       console.error(`Error cloning PR: ${(<any>error).message}`);
     }
-  }
-  else {
-    console.log(`Previously downloaded spec repo matches the expected PR Number ${prNumber} and repo ${url}. Skipping re-clone.`);
+  } else {
+    console.log(
+      `Previously downloaded spec repo matches the expected PR Number ${prNumber} and repo ${url}. Skipping re-clone.`
+    );
   }
 }
 
@@ -50,11 +52,10 @@ function writePRData(targetFile: string, data: PRData): void {
 }
 
 function getPRData(targetFile: string): PRData {
-  if (fs.existsSync(targetFile)){
-    const jsonData = fs.readFileSync(targetFile, 'utf-8');
+  if (fs.existsSync(targetFile)) {
+    const jsonData = fs.readFileSync(targetFile, "utf-8");
     return <PRData>JSON.parse(jsonData);
-  }
-  else {
-    return { number: -1, repo: '' }
+  } else {
+    return { number: -1, repo: "" };
   }
 }
