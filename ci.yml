@@ -1,13 +1,23 @@
-pool:
-  vmImage: "Ubuntu 20.04"
-
-variables:
-  Codeql.Enabled: true
-
 trigger:
-  - master
-  - release
-  - develop
+  branches:
+    include:
+    - develop
+    - hotfix/*
+    - release/*
+  paths:
+    include:
+    - /
+
+pr:
+  branches:
+    include:
+    - develop
+    - feature/*
+    - hotfix/*
+    - release/*
+  paths:
+    include:
+    - /
 
 extends:
   template: /eng/templates/stages/oav.yml
