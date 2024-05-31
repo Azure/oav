@@ -58,5 +58,5 @@
     "lib": ["es2020.string"],
     "resolveJsonModule": true
   },
-  "exclude": ["**/azure-rest-api-specs/**/*", "dist"]
+  "exclude": ["**/azure-rest-api-specs/**/*", "dist", "node_modules"],
 }
