@@ -21,7 +21,7 @@ stages:
 
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Run_Example_Regression
-      displayName: Run Example Regression
+      displayName: Run Full Regression
       variables:
         - template: /eng/templates/variables/image.yml
       dependsOn: []

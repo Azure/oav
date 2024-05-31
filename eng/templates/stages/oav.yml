@@ -105,7 +105,7 @@ extends:
                   deploy:
                     steps:
                     - checkout: self
-                      submodules: true
+                      submodules: false
 
                     - download: current
                       artifact: oav
