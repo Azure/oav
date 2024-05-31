@@ -46,13 +46,11 @@ extends:
                   customCommand: test
 
               - task: PublishTestResults@2
-                condition: succeededOrFailed()
                 inputs:
                   testResultsFiles: "**/test-results.xml"
                   testRunTitle: "Test results for JavaScript"
 
               - task: PublishCodeCoverageResults@1
-                condition: succeededOrFailed()
                 inputs:
                   codeCoverageTool: Cobertura
                   summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
@@ -60,7 +58,6 @@ extends:
 
               - task: Npm@1
                 displayName: "npm pack"
-                condition: succeededOrFailed()
                 inputs:
                   command: custom
                   verbose: false
@@ -68,7 +65,6 @@ extends:
 
               - task: CopyFiles@2
                 displayName: "Copy Files to: drop"
-                condition: succeededOrFailed()
                 inputs:
                   Contents: "*.tgz"
                   TargetFolder: $(Build.ArtifactStagingDirectory)
@@ -77,7 +73,6 @@ extends:
                 parameters:
                   ArtifactName: 'oav'
                   ArtifactPath: '$(Build.ArtifactStagingDirectory)'
-                  CustomCondition: succeededOrFailed()
 
       - template: /eng/templates/stages/examples-regression.yml
 
