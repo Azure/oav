@@ -25,7 +25,7 @@ export function clonePR(url: string, prNumber: number): string {
     if (fs.existsSync(finalRepoPath)) {
       fs.removeSync(finalRepoPath);
     }
-    fs.mkdirSync(finalRepoPath);
+    fs.mkdirSync(finalRepoPath, { recursive: true });
 
     try {
       if (prNumber !== 0) {
