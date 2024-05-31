@@ -43,6 +43,7 @@ extends:
       sourceRepositoriesToScan:
         include:
         - repository: self
+          submodule: false
         runInSingleJob: true
       sourceAnalysisPool:
         name: azsdk-pool-mms-win-2022-general
