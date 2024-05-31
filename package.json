@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -36,7 +36,7 @@
     "mkdirp": "^1.0.4",
     "moment": "^2.29.3",
     "mustache": "^4.2.0",
-    "newman": "^5.3.2",
+    "newman": "^6.0.0",
     "path-to-regexp": "^6.2.1",
     "postman-collection": "^4.1.7",
     "reflect-metadata": "^0.1.13",

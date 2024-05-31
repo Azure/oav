@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 05/30/2024 3.3.6
+
+- Bump newman dependency `^5.3.2` -> `^6.0.0`
+
 ## 05/7/2024 3.3.5
 
 - Bump Node engine version requirement for security vulnerability.
