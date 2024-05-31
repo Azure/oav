@@ -119,7 +119,15 @@ extends:
 
                     - pwsh: |
                         Write-Host "Will deploy with tag of $(Tag)"
-                        gci $(Build.ArtifactStagingDirectory)/oav -Recurse | % { Write-Host $_.FullName }
+
+                        Write-Host "$(Build.ArtifactStagingDirectory)"
+                        gci "$(Build.ArtifactStagingDirectory)" -Recurse -Force | % { Write-Host $_.FullName }
+
+                        Write-Host "$(Build.SourcesDirectory)"
+                        gci "$(Build.SourcesDirectory)" -Recurse -Force | % { Write-Host $_.FullName }
+
+                        Write-Host "$(Pipeline.Workspace)"
+                        gci "$(Pipeline.Workspace)" -Recurse -Force | % { Write-Host $_.FullName }
                       displayName: Dump outputs
 
                     # - task: EsrpRelease@7
