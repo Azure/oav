@@ -56,9 +56,6 @@ extends:
         compiled:
           enabled: false
           justificationForDisabling: "CodeQL times our pipelines out by running for 2+ hours before being force canceled."
-      credscan:
-        suppressionsFile: '$(Build.SourcesDirectory)/eng/credScanSuppressions.json'
-        toolVersion: '2.3.12.23'
       psscriptanalyzer:
         compiled: true
         break: true
