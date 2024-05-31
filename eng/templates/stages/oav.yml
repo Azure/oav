@@ -120,14 +120,8 @@ extends:
                     - pwsh: |
                         Write-Host "Will deploy with tag of $(Tag)"
 
-                        Write-Host "$(Build.ArtifactStagingDirectory)"
-                        gci "$(Build.ArtifactStagingDirectory)" -Recurse -Force | % { Write-Host $_.FullName }
-
-                        Write-Host "$(Build.SourcesDirectory)"
-                        gci "$(Build.SourcesDirectory)" -Recurse -Force | % { Write-Host $_.FullName }
-
-                        Write-Host "$(Pipeline.Workspace)"
-                        gci "$(Pipeline.Workspace)" -Recurse -Force | % { Write-Host $_.FullName }
+                        Write-Host "We see the following artifact directory: $(Pipeline.Workspace)"
+                        Get-ChildItem "$(Pipeline.Workspace)/oav" -Recurse -Force | % { Write-Host $_.FullName }
                       displayName: Dump outputs
 
                     # - task: EsrpRelease@7
@@ -140,7 +134,7 @@ extends:
                     #     SignCertName: 'azure-sdk-esrp-release-sign-certificate'
                     #     Intent: 'PackageDistribution'
                     #     ContentType: 'npm'
-                    #     FolderLocation: $(Build.ArtifactStagingDirectory)/oav
+                    #     FolderLocation: $(Pipeline.Workspace)/oav
                     #     Owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
                     #     Approvers: 'azuresdk@microsoft.com'
                     #     ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
