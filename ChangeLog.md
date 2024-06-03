@@ -1,8 +1,12 @@
 # Change Log - oav
 
-## 06/01/2024 3.3.6
+## 06/03/2024 3.3.7
 
 - Bump `newman` dependency to `~6.0.0`.
+
+## 05/31/2024 3.3.6
+
+- Support all current LTS Node versions (>=18.0.0)
 
 ## 05/7/2024 3.3.5
 
