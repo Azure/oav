@@ -1,0 +1,108 @@
+parameters:
+  - name: BeforeVersion
+    type: string
+    default: ''
+  - name: AfterVersion
+    type: string
+    default: 'LOCAL' #specialcase value that will install the local version of oav
+
+variables:
+  - template: /eng/templates/variables/image.yml
+
+pool:
+  name: $(LINUXPOOL)
+  image: $(LINUXVMIMAGE)
+  os: linux
+
+jobs:
+  - job: RegressionASpecs
+    variables:
+      - name: OutputFolder
+        value: $(Build.ArtifactStagingDirectory)/${{ parameters.BeforeVersion }}
+      - name: RestSpecsRepo
+        value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
+    timeoutInMinutes: 360
+    displayName: Run ${{ parameters.BeforeVersion }} Specs
+    steps:
+      - template: ../steps/deep-regression-steps.yml
+        parameters:
+          TargetVersion: ${{ parameters.BeforeVersion }}
+          Type: "validate-spec"
+
+  - job: RegressionAExamples
+    variables:
+      - name: OutputFolder
+        value: $(Build.ArtifactStagingDirectory)/${{ parameters.BeforeVersion }}
+      - name: RestSpecsRepo
+        value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
+    timeoutInMinutes: 360
+    displayName: Run ${{ parameters.BeforeVersion }} Examples
+    steps:
+      - template: ../steps/deep-regression-steps.yml
+        parameters:
+          TargetVersion: ${{ parameters.BeforeVersion }}
+          Type: "validate-example"
+
+  - job: RegressionBSpecs
+    variables:
+      - name: OutputFolder
+        value: $(Build.ArtifactStagingDirectory)/${{ parameters.AfterVersion }}
+      - name: RestSpecsRepo
+        value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
+    timeoutInMinutes: 360
+    displayName: Run ${{ parameters.AfterVersion }} Specs
+    steps:
+      - template: ../steps/deep-regression-steps.yml
+        parameters:
+          TargetVersion: ${{ parameters.AfterVersion }}
+          Type: "validate-spec"
+
+  - job: RegressionBExamples
+    variables:
+      - name: OutputFolder
+        value: $(Build.ArtifactStagingDirectory)/${{ parameters.AfterVersion }}
+      - name: RestSpecsRepo
+        value: $(Build.ArtifactStagingDirectory)/azure-rest-api-specs
+    timeoutInMinutes: 360
+    displayName: Run ${{ parameters.AfterVersion }} Examples
+    steps:
+      - template: ../steps/deep-regression-steps.yml
+        parameters:
+          TargetVersion: ${{ parameters.AfterVersion }}
+          Type: "validate-example"
+
+  - job: Summarize
+    timeoutInMinutes: 180
+    dependsOn: 
+      - RegressionASpecs
+      - RegressionBSpecs
+      - RegressionAExamples
+      - RegressionBExamples
+    displayName: Run Diff
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: "${{ parameters.BeforeVersion }}-validate-spec"
+        targetPath: $(Build.ArtifactStagingDirectory)/before
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: "${{ parameters.BeforeVersion }}-validate-example"
+        targetPath: $(Build.ArtifactStagingDirectory)/before
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: "${{ parameters.AfterVersion }}-validate-spec"
+        targetPath: $(Build.ArtifactStagingDirectory)/after
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: "${{ parameters.AfterVersion }}-validate-example"
+        targetPath: $(Build.ArtifactStagingDirectory)/after
+    - bash: |
+        echo "CACHE BEFORE"
+        cat $(Build.ArtifactStagingDirectory)/before/.spec_cache && rm $(Build.ArtifactStagingDirectory)/before/.spec_cache
+
+        echo "CACHE AFTER"
+        cat $(Build.ArtifactStagingDirectory)/after/.spec_cache && rm $(Build.ArtifactStagingDirectory)/after/.spec_cache
+      displayName: Dump Spec Caches
+    - bash: |
+        diff -qr $(Build.ArtifactStagingDirectory)/before $(Build.ArtifactStagingDirectory)/after
+      displayName: Diff outputs

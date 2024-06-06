@@ -1,0 +1,44 @@
+parameters:
+  - name: NpmEnvironment
+    type: string
+    default: "slow-test"
+
+steps:
+  - task: Npm@1
+    displayName: "npm ci"
+    inputs:
+      command: ci
+      verbose: false
+
+  - task: Npm@1
+    displayName: "npm run ${{ parameters.NpmEnvironment }}"
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: run ${{ parameters.NpmEnvironment }}
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: "**/test-results.xml"
+      testRunTitle: "Test results for JavaScript"
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
+      reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
+
+  - script: |
+      echo "If this step fails, go to the published artifacts apply the patch provided to your local git repo using `git apply <file>`"
+      git status && git diff-index --quiet HEAD --
+    displayName: Fail test if snapshots have been updated
+    condition: always()
+
+  - script: git diff > $(Build.ArtifactStagingDirectory)/snapshot.patch
+    displayName: Publish jest update snapshot patch
+    condition: always()
+
+  - template: /eng/templates/steps/publish-1es-artifact.yml
+    parameters:
+      ArtifactName: "snapshot-patch-${{ parameters.NpmEnvironment }}"
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)'

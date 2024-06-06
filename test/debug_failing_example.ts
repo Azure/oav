@@ -3,26 +3,21 @@
 
 /* tslint:disable:no-console max-line-length*/
 
-import assert from "assert";
 import * as validate from "../lib/validate";
 
-import { repoPath, clonePR } from "./utilities.helpers";
+import { clonePR } from "./utilities.helpers";
 
 const prNumber: number = 0;
 const prRepo: string = "azure/azure-rest-api-specs";
-const specPath = `${repoPath}/specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/blob.json`;
+const specRelPath = `specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/blob.json`;
 
 jest.setTimeout(1000000); // Set the timeout in milliseconds
 
 describe("Model Validation", () => {
   it("Debug an individual spec failing model validation.", async () => {
-    clonePR(`https://github.com/${prRepo}.git`, prNumber)
+    const repoPath = clonePR(`https://github.com/${prRepo}.git`, prNumber);
 
-    const result = await validate.validateExamples(specPath, undefined);
-
-    assert(
-      result.length == 0,
-      `swagger "${specPath}" contains unexpected model validation errors.`
-    );
+    const result = await validate.validateExamples(`${repoPath}/${specRelPath}`, undefined);
+    console.log(result);
   });
 });
