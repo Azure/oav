@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 06/11/2024 3.3.7
+
+- Released during an npmjs.org outage. Version not showing up, but shows as successful release. Patch bump to re-attempt releasing the same version.
+
 ## 06/03/2024 3.3.6
 
 - Support all current LTS Node versions (>=18.0.0)
