@@ -10,6 +10,8 @@ However, just because a suppression mechanism is supported, does not mean that M
 
 ## Using your autorest `readme.md` to suppress
 
+<explain suppression section and directive yml>
+
 ### Specific file, Generic Error suppression
 
 ### Specific file suppression 
