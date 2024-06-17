@@ -1069,8 +1069,11 @@ describe("Live Validator", () => {
       await liveValidator.initialize();
       const payload = require(`${__dirname}/liveValidation/payloads/additionalProperties_invalid_mapType.json`);
       const result = await liveValidator.validateLiveRequestResponse(payload);
-      assert.strictEqual(result.responseValidationResult.isSuccessful, false);
-      assert.strictEqual(result.requestValidationResult.isSuccessful, false);
+
+      assert.strictEqual(result.responseValidationResult.errors.length, 1);
+      assert.strictEqual(result.responseValidationResult.errors[0].code, "INVALID_TYPE")
+      assert.strictEqual(result.responseValidationResult.isSuccessful, true);
+      assert.strictEqual(result.requestValidationResult.isSuccessful, true);
     });
 
     it(`should throw error invalid format on arm-id even if isArmCall is set to false`, async () => {
