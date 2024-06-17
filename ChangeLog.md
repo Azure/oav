@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 06/17/2024 3.3.8
+
+- Remove suppression of `additionalProperties` errors when `isArmCall === true`. (ARM liveValidation scenarios)
+
 ## 06/11/2024 3.3.7
 
 - Released during an npmjs.org outage. Version not showing up, but shows as successful release. Patch bump to re-attempt releasing the same version.
