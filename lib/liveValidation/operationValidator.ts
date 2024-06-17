@@ -283,9 +283,9 @@ export const schemaValidateIssueToLiveValidationIssue = (
   operation: Operation,
   ctx: SchemaValidateContext,
   output: LiveValidationIssue[],
-  operationContext: OperationContext,
-  isArmCall?: boolean,
-  logging?: LoggingFn
+  _operationContext: OperationContext,
+  _isArmCall?: boolean,
+  _logging?: LoggingFn
 ) => {
   for (const i of input) {
     const issue = i as Writable<LiveValidationIssue>;
