@@ -1072,7 +1072,7 @@ describe("Live Validator", () => {
 
       assert.strictEqual(result.responseValidationResult.errors.length, 1);
       assert.strictEqual(result.responseValidationResult.errors[0].code, "INVALID_TYPE")
-      assert.strictEqual(result.responseValidationResult.isSuccessful, true);
+      assert.strictEqual(result.responseValidationResult.isSuccessful, false);
       assert.strictEqual(result.requestValidationResult.isSuccessful, true);
     });
 
