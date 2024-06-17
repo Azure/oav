@@ -305,30 +305,6 @@ export const schemaValidateIssueToLiveValidationIssue = (
           skipIssue = true;
           return "";
         }
-      } else if (issue.code === "INVALID_TYPE" && isArmCall === false) {
-        // See Azure/oav#983 for additional information as to why this special case is present.
-        // RPs working with the RPaaS team were having dificulty with additionalProperties validation due to the fact
-        // that when we turned it on, a LOT of real, live requests were being rejected due to invalid additionalProperties settings.
-        //
-        // We need oav to have the capability to skip this if we are invoking an arm call, but when we roll any new versions of OAV
-        // out to azure/azure-rest-api-specs, we need the errors actually pop there! When enough of the RPs have resolved this problem,
-        // we can re-enable loud failures in the validation image.
-        //
-        // Model and Semantic validation both run with isArmCall set to TRUE, so by setting FALSE a user will activate this special skip logic.
-        if (issue.schemaPath.includes("additionalProperties")) {
-          skipIssue = true;
-          if (logging) {
-            logging(
-              `AdditionalProperties validation failed:${JSON.stringify(issue, undefined, 2)}`,
-              LiveValidatorLoggingLevels.error,
-              LiveValidatorLoggingTypes.trace,
-              "Oav.OperationValidator.schemaValidateIssueToLiveValidationIssue",
-              undefined,
-              operationContext.validationRequest
-            );
-          }
-          return "";
-        }
       }
 
       const isMissingRequiredProperty = issue.code === "OBJECT_MISSING_REQUIRED_PROPERTY";
