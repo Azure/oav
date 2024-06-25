@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 06/25/2024 3.3.9-beta.1
+
+- Support extension references.
+
 ## 06/17/2024 3.3.8
 
 - Remove suppression of `additionalProperties` errors when `isArmCall === true`. (ARM liveValidation scenarios)
