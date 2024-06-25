@@ -45,7 +45,7 @@ export class AjvSchemaValidator implements SchemaValidator {
       // tslint:disable-next-line: no-submodule-imports
       meta: require("ajv/lib/refs/json-schema-draft-04.json"),
       schemaId: "auto",
-      extendRefs: "fail",
+      extendRefs: true,
       format: "full",
       missingRefs: true,
       addUsedSchema: false,
