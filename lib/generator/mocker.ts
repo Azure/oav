@@ -33,6 +33,10 @@ export default class Mocker {
       return uuid.v4().toUpperCase();
     }
 
+    if (paramName === "password" || paramName === "pwd" || paramName === "adminPassword") {
+      return "SecretPlaceHolder";
+    }
+
     if (paramSpec.format === "date") {
       return new Date().toISOString().split("T")[0];
     }
