@@ -34,7 +34,7 @@ export default class Mocker {
     }
 
     if (paramName === "password" || paramName === "pwd" || paramName === "adminPassword") {
-      return "SecretPlaceHolder";
+      return "<a-password-goes-here>";
     }
 
     if (paramSpec.format === "date") {

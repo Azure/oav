@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 07/12/2024 3.4.0
+
+- During example generation, fields `password`, `adminPassword`, and `pwd` are all generated with a single value of "<a-password-goes-here>" instead of random characters.
+
 ## 06/17/2024 3.3.8
 
 - Remove suppression of `additionalProperties` errors when `isArmCall === true`. (ARM liveValidation scenarios)
