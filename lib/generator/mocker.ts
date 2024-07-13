@@ -29,8 +29,14 @@ export default class Mocker {
   }
 
   private generateString(paramSpec: any, paramName: string) {
+    const pwdParams = ["password", "pwd", "adminPassword"];
+
     if (paramSpec.name === "subscriptionId") {
       return uuid.v4().toUpperCase();
+    }
+
+    if (pwdParams.includes(paramName)) {
+      return "<a-password-goes-here>";
     }
 
     if (paramSpec.format === "date") {
