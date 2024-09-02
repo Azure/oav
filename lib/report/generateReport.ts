@@ -3,6 +3,7 @@ import * as path from "path";
 import * as Mustache from "mustache";
 import {
   OperationCoverageInfo,
+  OperationMeta,
   TrafficValidationIssue,
   TrafficValidationOptions,
 } from "../swaggerValidator/trafficValidator";
@@ -52,9 +53,18 @@ export interface ErrorDefinition {
   link?: string;
 }
 
+export interface ValidationPassOperationsFormatInner extends OperationMeta {
+  readonly key: string;
+}
+
+export interface ValidationPassOperationsFormat {
+  readonly operationIdList: ValidationPassOperationsFormatInner[];
+}
+
 export interface OperationCoverageInfoForRendering extends OperationCoverageInfo {
   specLinkLabel?: string;
   validationPassOperations?: number;
+  validationPassOperationList: ValidationPassOperationsFormat[];
   generalErrorsInnerList: TrafficValidationIssueForRenderingInner[];
 }
 
@@ -201,18 +211,77 @@ export class CoverageView {
           runtimeExceptions: element.runtimeExceptions,
         });
       });
+
+      const generalErrorsInnerOrigin = this.validationResultsForRendering.filter((x) => {
+        return x.errors && x.errors.length > 0;
+      });
+
       this.coverageResults.forEach((element) => {
         const specLink = this.overrideLinkInReport
           ? `${this.specLinkPrefix}/${element.spec?.substring(
               element.spec?.indexOf("specification")
             )}`
           : `${element.spec}`;
+
+        let errorOperationIds = generalErrorsInnerOrigin.map(
+          (item) => item.operationInfo?.operationId
+        );
+        let passOperations: ValidationPassOperationsFormatInner[] = element.coveredOperationsList
+          .filter((item) => errorOperationIds.indexOf(item.operationId) === -1)
+          .map((item) => {
+            return {
+              key: item.operationId.split("_")[0],
+              operationId: item.operationId,
+            };
+          });
+
+        const passOperationsInnerList: ValidationPassOperationsFormatInner[][] = Object.values(
+          passOperations.reduce(
+            (res: { [key: string]: ValidationPassOperationsFormatInner[] }, item) => {
+              /* eslint-disable no-unused-expressions */
+              res[item.key] ? res[item.key].push(item) : (res[item.key] = [item]);
+              /* eslint-enable no-unused-expressions */
+              return res;
+            },
+            {}
+          )
+        );
+
+        const passOperationsListFormat: ValidationPassOperationsFormat[] = [];
+        passOperationsInnerList.forEach((element) => {
+          passOperationsListFormat.push({
+            operationIdList: element,
+          });
+        });
+
+        /**
+         * Sort untested operationId by bubble sort
+         * Controlling the results of localeCompare can set the sorting method
+         * X.localeCompare(Y) > 0 descending sort
+         * X.localeCompare(Y) < 0 ascending sort
+         */
+        for (let i = 0; i < passOperationsListFormat.length - 1; i++) {
+          for (let j = 0; j < passOperationsListFormat.length - 1 - i; j++) {
+            if (
+              passOperationsListFormat[j].operationIdList[0].key.localeCompare(
+                passOperationsListFormat[j + 1].operationIdList[0].key
+              ) > 0
+            ) {
+              var temp = passOperationsListFormat[j];
+              passOperationsListFormat[j] = passOperationsListFormat[j + 1];
+              passOperationsListFormat[j + 1] = temp;
+            }
+          }
+        }
+
         this.coverageResultsForRendering.push({
           spec: specLink,
           specLinkLabel: element.spec?.substring(element.spec?.lastIndexOf("/") + 1),
           apiVersion: element.apiVersion,
           coveredOperations: element.coveredOperations,
+          coveredOperationsList: element.coveredOperationsList,
           validationPassOperations: element.coveredOperations - element.validationFailOperations,
+          validationPassOperationList: passOperationsListFormat,
           validationFailOperations: element.validationFailOperations,
           unCoveredOperations: element.unCoveredOperations,
           unCoveredOperationsList: element.unCoveredOperationsList,
@@ -235,9 +304,6 @@ export class CoverageView {
         } as any;
       });
 
-      const generalErrorsInnerOrigin = this.validationResultsForRendering.filter((x) => {
-        return x.errors && x.errors.length > 0;
-      });
       const generalErrorsInnerFormat: TrafficValidationIssueForRendering[][] = Object.values(
         generalErrorsInnerOrigin.reduce(
           (res: { [key: string]: TrafficValidationIssueForRendering[] }, item) => {

@@ -53,6 +53,7 @@ export interface OperationCoverageInfo {
   readonly spec: string;
   readonly apiVersion: string;
   readonly coveredOperations: number;
+  readonly coveredOperationsList: OperationMeta[];
   readonly validationFailOperations: number;
   readonly unCoveredOperations: number;
   readonly unCoveredOperationsList: OperationMeta[];
@@ -290,11 +291,13 @@ export class TrafficValidator {
     let coveredOperations: number;
     let coverageRate: number;
     let validationFailOperations: number;
+    let coveredOperationsList: OperationMeta[];
     let unCoveredOperationsList: unCoveredOperationsFormatInner[];
     this.operationSpecMapper.forEach((value: string[], key: string) => {
       // identify the spec has been match traffic file
       let isMatch: boolean = true;
       const unCoveredOperationsListFormat: unCoveredOperationsFormat[] = [];
+      coveredOperationsList = [];
       unCoveredOperationsList = [];
       if (this.trafficOperation.get(key) === undefined) {
         coveredOperations = 0;
@@ -308,6 +311,7 @@ export class TrafficValidator {
         this.coverageData.set(key, coverageRate);
         const unValidatedOperations = [...value];
         validatedOperations!.forEach((element) => {
+          coveredOperationsList.push({ operationId: element });
           unValidatedOperations.splice(unValidatedOperations.indexOf(element), 1);
         });
         unValidatedOperations.forEach((element) => {
@@ -356,6 +360,18 @@ export class TrafficValidator {
         return 0;
       });
 
+      const sortedCoveredOperationsList = coveredOperationsList.sort(function (op1, op2) {
+        const opId1 = op1.operationId;
+        const opId2 = op2.operationId;
+        if (opId1 < opId2) {
+          return -1;
+        }
+        if (opId1 > opId2) {
+          return 1;
+        }
+        return 0;
+      });
+
       /**
        * Sort untested operationId by bubble sort
        * Controlling the results of localeCompare can set the sorting method
@@ -385,6 +401,7 @@ export class TrafficValidator {
           unCoveredOperations: value.length - coveredOperations,
           totalOperations: value.length,
           validationFailOperations: validationFailOperations,
+          coveredOperationsList: sortedCoveredOperationsList,
           unCoveredOperationsList: sortedUnCoveredOperationsList,
           unCoveredOperationsListGen: unCoveredOperationsListFormat,
         });

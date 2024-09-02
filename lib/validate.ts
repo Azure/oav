@@ -235,6 +235,18 @@ export async function validateTraffic(
             operationIds: item.unCoveredOperationsList.map((opeartion) => opeartion.operationId),
           };
         }),
+        passedOperationsList: validator.operationCoverageResult.map((item) => {
+          return {
+            spec: item.spec,
+            operationIds: item.coveredOperationsList
+              .map((opeartion) => opeartion.operationId)
+              .filter((id) => {
+                return !trafficValidationResult.some(
+                  (error) => error.operationInfo?.operationId === id
+                );
+              }),
+          };
+        }),
         failedOperations: validator.operationCoverageResult
           .map((item) => item.validationFailOperations)
           .reduce((a, b) => a + b, 0),
