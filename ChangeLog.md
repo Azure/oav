@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 09/12/2024 3.5.0
+
+- Add names of `Passed Operations` in the HTML and JSON reports. 
+
 ## 07/12/2024 3.4.0
 
 - During example generation, fields `password`, `adminPassword`, and `pwd` are all generated with a single value of "<a-password-goes-here>" instead of random characters.
