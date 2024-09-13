@@ -376,6 +376,9 @@ class PostmanCollectionRunner {
         apiVersion: getApiVersionFromFilePath(specPath),
         unCoveredOperations: result.uncoveredOperationIds.length,
         coveredOperations: result.totalOperationNumber - result.uncoveredOperationIds.length,
+        coveredOperationsList: result.coveredOperationIds.map((id) => {
+          return { operationId: id };
+        }),
         validationFailOperations: new Set(
           trafficValidationResult
             .filter((it) => key.indexOf(it.specFilePath!) !== -1 && it.errors!.length > 0)

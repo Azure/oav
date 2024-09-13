@@ -7,6 +7,14 @@ Object {
       "apiVersion": "2019-02-02",
       "coverageRate": 0.14285714285714285,
       "coveredOperations": 2,
+      "coveredOperationsList": Array [
+        Object {
+          "operationId": "Table_Delete",
+        },
+        Object {
+          "operationId": "Table_Query",
+        },
+      ],
       "totalOperations": 14,
       "unCoveredOperations": 12,
       "unCoveredOperationsList": Array [

@@ -10,6 +10,7 @@ export interface OperationCoverageResult {
   coveredOperationNumber: number;
   totalOperationNumber: number;
   coverage: number;
+  coveredOperationIds: string[];
   uncoveredOperationIds: string[];
 }
 
@@ -22,6 +23,7 @@ export class CoverageCalculator {
       coveredOperationNumber: 0,
       totalOperationNumber: 0,
       coverage: 0,
+      coveredOperationIds: [],
       uncoveredOperationIds: [],
     };
 
@@ -55,6 +57,7 @@ export class CoverageCalculator {
       allOperationIds.size === 0 ? 0 : coverageOperationIds.size / allOperationIds.size;
     ret.coveredOperationNumber = coverageOperationIds.size;
     ret.totalOperationNumber = allOperationIds.size;
+    ret.coveredOperationIds = [...coverageOperationIds];
     const difference = [...allOperationIds].filter((x) => !coverageOperationIds.has(x));
     ret.uncoveredOperationIds = difference;
     return ret;
@@ -70,6 +73,7 @@ export class CoverageCalculator {
         coveredOperationNumber: 0,
         totalOperationNumber: 0,
         coverage: 0,
+        coveredOperationIds: [],
         uncoveredOperationIds: [],
       };
 
@@ -102,6 +106,7 @@ export class CoverageCalculator {
         allOperationIds.size === 0 ? 0 : coverageOperationIds.size / allOperationIds.size;
       result.coveredOperationNumber = coverageOperationIds.size;
       result.totalOperationNumber = allOperationIds.size;
+      result.coveredOperationIds = [...coverageOperationIds];
       const difference = [...allOperationIds].filter((x) => !coverageOperationIds.has(x));
       result.uncoveredOperationIds = difference;
 
