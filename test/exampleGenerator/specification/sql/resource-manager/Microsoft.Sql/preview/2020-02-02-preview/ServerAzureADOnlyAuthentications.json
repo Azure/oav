@@ -205,6 +205,9 @@
           },
           "ServerAzureADOnlyAuthentications_Delete_MaximumSet_Gen": {
             "$ref": "./examples/ServerAzureADOnlyAuthentications_Delete_MaximumSet_Gen.json"
+          },
+          "ServerAzureADOnlyAuthentications_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/ServerAzureADOnlyAuthentications_Delete_MinimumSet_Gen.json"
           }
         }
       }

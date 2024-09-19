@@ -3,7 +3,7 @@
   "operationId": "EventSubscriptions_ListGlobalBySubscriptionForTopicType",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
-    "topicTypeName": "pltmduarhkrkjdeuynlmhvbl",
+    "topicTypeName": "ggfphqlhsdniviffngezlrhzvzemue",
     "api-version": "2020-06-01"
   },
   "responses": {

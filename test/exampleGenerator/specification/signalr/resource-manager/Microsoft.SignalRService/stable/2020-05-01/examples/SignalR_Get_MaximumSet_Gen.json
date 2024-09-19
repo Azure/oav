@@ -15,7 +15,7 @@
           "tier": "Standard",
           "capacity": 1,
           "size": "S1",
-          "family": "xrjapbzlssnkxckifs"
+          "family": "faykrxkdp"
         },
         "properties": {
           "hostNamePrefix": "mysignalrservice",
@@ -89,7 +89,7 @@
                 },
                 "privateLinkServiceConnectionState": {
                   "status": "Approved",
-                  "description": "gnvgvukrqwyhetmqnu",
+                  "description": "vezmyhfhsov",
                   "actionsRequired": "None"
                 }
               },

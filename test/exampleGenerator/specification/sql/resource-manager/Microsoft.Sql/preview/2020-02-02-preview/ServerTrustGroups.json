@@ -196,6 +196,9 @@
           },
           "ServerTrustGroups_Delete_MaximumSet_Gen": {
             "$ref": "./examples/ServerTrustGroups_Delete_MaximumSet_Gen.json"
+          },
+          "ServerTrustGroups_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/ServerTrustGroups_Delete_MinimumSet_Gen.json"
           }
         }
       }

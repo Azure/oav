@@ -4,9 +4,9 @@
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "parentType": "xlzuhqcswdnwnctwlbirbmjxtcund",
-    "parentName": "w",
-    "privateLinkResourceName": "hyiewmzzzbwxizgebiobovq",
+    "parentType": "sdgrssbogpyhnxpaiahbipxujphj",
+    "parentName": "nsprjkvdskcyuheocowimk",
+    "privateLinkResourceName": "sor",
     "api-version": "2020-06-01"
   },
   "responses": {

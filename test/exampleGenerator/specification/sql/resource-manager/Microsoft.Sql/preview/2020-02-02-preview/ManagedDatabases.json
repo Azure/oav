@@ -235,6 +235,9 @@
           },
           "ManagedDatabases_Delete_MaximumSet_Gen": {
             "$ref": "./examples/ManagedDatabases_Delete_MaximumSet_Gen.json"
+          },
+          "ManagedDatabases_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/ManagedDatabases_Delete_MinimumSet_Gen.json"
           }
         }
       },
@@ -294,6 +297,9 @@
           },
           "ManagedDatabases_Update_MaximumSet_Gen": {
             "$ref": "./examples/ManagedDatabases_Update_MaximumSet_Gen.json"
+          },
+          "ManagedDatabases_Update_MinimumSet_Gen": {
+            "$ref": "./examples/ManagedDatabases_Update_MinimumSet_Gen.json"
           }
         }
       }
@@ -349,6 +355,9 @@
           },
           "ManagedDatabases_CompleteRestore_MaximumSet_Gen": {
             "$ref": "./examples/ManagedDatabases_CompleteRestore_MaximumSet_Gen.json"
+          },
+          "ManagedDatabases_CompleteRestore_MinimumSet_Gen": {
+            "$ref": "./examples/ManagedDatabases_CompleteRestore_MinimumSet_Gen.json"
           }
         }
       }

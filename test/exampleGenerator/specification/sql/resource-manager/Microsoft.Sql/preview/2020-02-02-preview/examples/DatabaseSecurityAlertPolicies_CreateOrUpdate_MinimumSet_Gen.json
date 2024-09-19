@@ -3,8 +3,8 @@
   "operationId": "DatabaseSecurityAlertPolicies_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgDatabaseSecurityAlertPolicies",
-    "serverName": "yjblfnpbzpcjtyroqb",
-    "databaseName": "gwkzkltmbnirwym",
+    "serverName": "pnhtdugbdrrtbqsfqbmhyzzx",
+    "databaseName": "tffkqvxbeudsklahotxjggfvmljvt",
     "securityAlertPolicyName": "default",
     "parameters": {},
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
