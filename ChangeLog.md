@@ -2,7 +2,8 @@
 
 ## 09/12/2024 3.5.0
 
-- Add names of `Passed Operations` in the HTML and JSON reports. 
+- Add names of `Passed Operations` in the HTML and JSON reports.
+- Bump `jsonpath-plus` dependency to `^10.0.0`
 
 ## 07/12/2024 3.4.0
 
