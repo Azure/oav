@@ -2,7 +2,7 @@
 
 ## 10/15/2024 3.5.1
 
-- Include min/max in example titles
+- During example generation, include min/max in default titles.
 
 ## 09/12/2024 3.5.0
 
