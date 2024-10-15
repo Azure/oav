@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 10/15/2024 3.5.1
+
+- Include min/max in example titles
+
 ## 09/12/2024 3.5.0
 
 - Add names of `Passed Operations` in the HTML and JSON reports.

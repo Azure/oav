@@ -170,7 +170,7 @@ export default class Generator {
     let example;
     console.log(`start generated example for ${operationId}, rule:${rule.ruleName}`);
     if (!this.shouldMock) {
-      example = this.getExampleFromPayload(operationId, specItem);
+      example = this.getExampleFromPayload(operationId, specItem, rule);
       if (!example) {
         return [];
       }
@@ -186,7 +186,7 @@ export default class Generator {
             ? specItem.content.summary
             : specItem.content.description
             ? specItem.content.description
-            : operationId,
+            : `${operationId}_${rule.exampleNamePostfix}`,
         operationId: operationId,
         parameters: {},
         responses: this.extractResponse(specItem, {}),
@@ -366,7 +366,7 @@ export default class Generator {
     return example;
   }
 
-  private getExampleFromPayload(operationId: string, specItem: any) {
+  private getExampleFromPayload(operationId: string, specItem: any, rule: ExampleRule) {
     if (this.payloadDir) {
       const subPaths = path.dirname(this.specFilePath).split(/\\|\//).slice(-3).join("/");
       const payloadDir = path.join(this.payloadDir, subPaths);
@@ -387,7 +387,7 @@ export default class Generator {
           ? specItem.content.summary
           : specItem.content.description
           ? specItem.content.description
-          : operationId,
+          : `${operationId}_${rule.exampleNamePostfix}`,
         operationId: operationId,
         parameters: this.extractRequest(specItem, payload),
         responses: this.extractResponse(specItem, payload),
