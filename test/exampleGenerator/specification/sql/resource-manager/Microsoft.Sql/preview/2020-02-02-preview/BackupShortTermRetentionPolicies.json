@@ -217,6 +217,9 @@
           },
           "BackupShortTermRetentionPolicies_Update_MaximumSet_Gen": {
             "$ref": "./examples/BackupShortTermRetentionPolicies_Update_MaximumSet_Gen.json"
+          },
+          "BackupShortTermRetentionPolicies_Update_MinimumSet_Gen": {
+            "$ref": "./examples/BackupShortTermRetentionPolicies_Update_MinimumSet_Gen.json"
           }
         }
       }

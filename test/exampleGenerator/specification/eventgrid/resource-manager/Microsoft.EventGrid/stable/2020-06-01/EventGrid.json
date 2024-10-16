@@ -191,6 +191,9 @@
           },
           "Domains_Delete_MaximumSet_Gen": {
             "$ref": "./examples/Domains_Delete_MaximumSet_Gen.json"
+          },
+          "Domains_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/Domains_Delete_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -692,6 +695,9 @@
           },
           "DomainTopics_Delete_MaximumSet_Gen": {
             "$ref": "./examples/DomainTopics_Delete_MaximumSet_Gen.json"
+          },
+          "DomainTopics_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/DomainTopics_Delete_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -972,6 +978,9 @@
           },
           "EventSubscriptions_Delete_MaximumSet_Gen": {
             "$ref": "./examples/EventSubscriptions_Delete_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_Delete_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -2084,6 +2093,9 @@
           },
           "Topics_Delete_MaximumSet_Gen": {
             "$ref": "./examples/Topics_Delete_MaximumSet_Gen.json"
+          },
+          "Topics_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/Topics_Delete_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -2635,6 +2647,9 @@
           },
           "PrivateEndpointConnections_Delete_MaximumSet_Gen": {
             "$ref": "./examples/PrivateEndpointConnections_Delete_MaximumSet_Gen.json"
+          },
+          "PrivateEndpointConnections_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/PrivateEndpointConnections_Delete_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true

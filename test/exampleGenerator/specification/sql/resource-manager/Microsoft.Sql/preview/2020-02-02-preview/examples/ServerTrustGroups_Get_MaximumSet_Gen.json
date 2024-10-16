@@ -3,8 +3,8 @@
   "operationId": "ServerTrustGroups_Get",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "nnvrfbekkatmurivcnywriyp",
-    "serverTrustGroupName": "rvzicwfzjfiwcjtsjqn",
+    "locationName": "luvffacegm",
+    "serverTrustGroupName": "bwwbseshpmheyculfkoelnsjizujr",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },

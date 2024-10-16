@@ -3,7 +3,7 @@
   "operationId": "ServerTrustGroups_ListByLocation",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "bjbdooznschhjl",
+    "locationName": "qddvpywftzsvfnlxkqmdgpmnuxw",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },
@@ -48,7 +48,7 @@
             "type": "Microsoft.Sql/locations/serverTrustGroups"
           }
         ],
-        "nextLink": "oy"
+        "nextLink": "arglqfyhxio"
       }
     }
   }

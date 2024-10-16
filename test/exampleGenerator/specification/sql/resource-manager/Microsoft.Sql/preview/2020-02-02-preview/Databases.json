@@ -250,6 +250,9 @@
           },
           "Databases_Delete_MaximumSet_Gen": {
             "$ref": "./examples/Databases_Delete_MaximumSet_Gen.json"
+          },
+          "Databases_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/Databases_Delete_MinimumSet_Gen.json"
           }
         }
       },
@@ -309,6 +312,9 @@
           },
           "Databases_Update_MaximumSet_Gen": {
             "$ref": "./examples/Databases_Update_MaximumSet_Gen.json"
+          },
+          "Databases_Update_MinimumSet_Gen": {
+            "$ref": "./examples/Databases_Update_MinimumSet_Gen.json"
           }
         }
       }
@@ -417,6 +423,9 @@
           },
           "Databases_Pause_MaximumSet_Gen": {
             "$ref": "./examples/Databases_Pause_MaximumSet_Gen.json"
+          },
+          "Databases_Pause_MinimumSet_Gen": {
+            "$ref": "./examples/Databases_Pause_MinimumSet_Gen.json"
           }
         }
       }
@@ -470,6 +479,9 @@
           },
           "Databases_Resume_MaximumSet_Gen": {
             "$ref": "./examples/Databases_Resume_MaximumSet_Gen.json"
+          },
+          "Databases_Resume_MinimumSet_Gen": {
+            "$ref": "./examples/Databases_Resume_MinimumSet_Gen.json"
           }
         }
       }
@@ -535,6 +547,9 @@
           },
           "Databases_Failover_MaximumSet_Gen": {
             "$ref": "./examples/Databases_Failover_MaximumSet_Gen.json"
+          },
+          "Databases_Failover_MinimumSet_Gen": {
+            "$ref": "./examples/Databases_Failover_MinimumSet_Gen.json"
           }
         }
       }
@@ -585,6 +600,9 @@
           },
           "Databases_UpgradeDataWarehouse_MaximumSet_Gen": {
             "$ref": "./examples/Databases_UpgradeDataWarehouse_MaximumSet_Gen.json"
+          },
+          "Databases_UpgradeDataWarehouse_MinimumSet_Gen": {
+            "$ref": "./examples/Databases_UpgradeDataWarehouse_MinimumSet_Gen.json"
           }
         }
       }
@@ -704,6 +722,9 @@
           },
           "Databases_Import_MaximumSet_Gen": {
             "$ref": "./examples/Databases_Import_MaximumSet_Gen.json"
+          },
+          "Databases_Import_MinimumSet_Gen": {
+            "$ref": "./examples/Databases_Import_MinimumSet_Gen.json"
           }
         }
       }
@@ -762,6 +783,9 @@
           },
           "Databases_ImportDatabase_MaximumSet_Gen": {
             "$ref": "./examples/Databases_ImportDatabase_MaximumSet_Gen.json"
+          },
+          "Databases_ImportDatabase_MinimumSet_Gen": {
+            "$ref": "./examples/Databases_ImportDatabase_MinimumSet_Gen.json"
           }
         }
       }
@@ -823,6 +847,9 @@
           },
           "Databases_Export_MaximumSet_Gen": {
             "$ref": "./examples/Databases_Export_MaximumSet_Gen.json"
+          },
+          "Databases_Export_MinimumSet_Gen": {
+            "$ref": "./examples/Databases_Export_MinimumSet_Gen.json"
           }
         }
       }

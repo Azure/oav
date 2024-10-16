@@ -3,8 +3,8 @@
   "operationId": "DatabaseSecurityAlertPolicies_ListByDatabase",
   "parameters": {
     "resourceGroupName": "rgDatabaseSecurityAlertPolicies",
-    "serverName": "yvbczobfayqj",
-    "databaseName": "wlpkibz",
+    "serverName": "fvxfybjdmxkgwrmpyxmv",
+    "databaseName": "nwuvxhcvbeosjzadmjweqzlfzh",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },

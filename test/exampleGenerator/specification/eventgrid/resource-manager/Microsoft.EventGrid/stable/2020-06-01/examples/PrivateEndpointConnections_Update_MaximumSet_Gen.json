@@ -5,14 +5,14 @@
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
     "parentType": "topics",
-    "parentName": "alnsl",
-    "privateEndpointConnectionName": "idokfagppikezzkfcchcgnj",
+    "parentName": "ilnaywwbzweaqnocb",
+    "privateEndpointConnectionName": "kylfvmnibhcqylarxbsfrli",
     "privateEndpointConnection": {
       "properties": {
         "privateLinkServiceConnectionState": {
           "status": "Approved",
           "actionsRequired": "None",
-          "description": "krmtyubaquasbn"
+          "description": "xjsipagnxwhysoncgwfxhu"
         },
         "privateEndpoint": {
           "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"
@@ -32,7 +32,7 @@
           "privateLinkServiceConnectionState": {
             "status": "Approved",
             "actionsRequired": "None",
-            "description": "krmtyubaquasbn"
+            "description": "xjsipagnxwhysoncgwfxhu"
           },
           "privateEndpoint": {
             "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"
@@ -56,7 +56,7 @@
           "privateLinkServiceConnectionState": {
             "status": "Approved",
             "actionsRequired": "None",
-            "description": "krmtyubaquasbn"
+            "description": "xjsipagnxwhysoncgwfxhu"
           },
           "privateEndpoint": {
             "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"

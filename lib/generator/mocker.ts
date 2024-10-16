@@ -1,4 +1,5 @@
 import * as uuid from "uuid";
+import RandExp from "randexp";
 import { log } from "../util/logging";
 
 function randomString(length: number): string {
@@ -55,6 +56,22 @@ export default class Mocker {
       return `${Buffer.from(paramName + "1").toString("base64")}`;
     }
 
+    if (paramSpec.format == "arm-id") {
+      const subscriptionId = uuid.v4().toUpperCase();
+      if (
+        paramSpec["x-ms-arm-id-details"] &&
+        paramSpec["x-ms-arm-id-details"]["allowedResources"].Count > 0
+      ) {
+        return (
+          `/subscriptions/${subscriptionId}/resourceGroups/myRg/providers` +
+          paramSpec["x-ms-arm-id-details"]["allowedResources"][0].type +
+          "/myResource"
+        );
+      }
+
+      return `/subscriptions/${subscriptionId}/resourceGroups/myRg/providers/resourceProviderNamespace/myResourceType/myResource`;
+    }
+
     if ("enum" in paramSpec) {
       if (paramSpec.enum.lengh > 0) {
         console.error(`${paramName}'s enum can not be empty`);
@@ -67,7 +84,7 @@ export default class Mocker {
     let mockedValue = randomString(length);
 
     if ("pattern" in paramSpec) {
-      return `Replace this value with a string matching RegExp ${paramSpec.pattern}`;
+      return new RandExp(paramSpec.pattern).gen();
     }
 
     if (paramSpec.format === "uri") {

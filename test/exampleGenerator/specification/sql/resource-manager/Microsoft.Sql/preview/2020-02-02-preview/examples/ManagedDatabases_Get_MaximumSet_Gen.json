@@ -16,14 +16,14 @@
           "collation": "SQL_Latin1_General_CP1_CI_AS",
           "status": "Online",
           "creationDate": "2017-08-04T15:00:17.73Z",
-          "earliestRestorePoint": "2024-01-29T21:42:02.024Z",
+          "earliestRestorePoint": "2024-09-19T22:45:49.958Z",
           "defaultSecondaryLocation": "North Europe",
           "catalogCollation": "DATABASE_DEFAULT",
-          "failoverGroupId": "rjrmzuujqsfbhdxajnjf"
+          "failoverGroupId": "uwfbrdjfatkfjbxitsylksnmel"
         },
         "tags": {
-          "key4328": "hvqotbq",
-          "key2964": "zrpudzyvendxw"
+          "key6452": "temntvvjew",
+          "key332": "qfacx"
         },
         "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Sql/managedInstances/testcl/databases/testdb1",
         "name": "testdb1",

@@ -205,6 +205,9 @@
           },
           "ManagedInstanceAzureADOnlyAuthentications_Delete_MaximumSet_Gen": {
             "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_Delete_MaximumSet_Gen.json"
+          },
+          "ManagedInstanceAzureADOnlyAuthentications_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_Delete_MinimumSet_Gen.json"
           }
         }
       }

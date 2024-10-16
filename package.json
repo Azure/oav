@@ -41,6 +41,7 @@
     "newman": "^6.0.0",
     "path-to-regexp": "^6.2.1",
     "postman-collection": "^4.1.7",
+    "randexp": "^0.5.3",
     "reflect-metadata": "^0.1.13",
     "toposort": "^2.0.2",
     "uuid": "^3.4.0",

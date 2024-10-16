@@ -3,8 +3,8 @@
   "operationId": "EventSubscriptions_ListRegionalBySubscriptionForTopicType",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
-    "location": "bcd",
-    "topicTypeName": "orwegfbldcqnjbydsmxncyac",
+    "location": "oskiyzwqfutcgqndgaq",
+    "topicTypeName": "bkjzaidhjbjztntvzapmzqvczd",
     "api-version": "2020-06-01"
   },
   "responses": {
