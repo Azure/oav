@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 10/23/2024 3.6.0
+
+- Update `operationInfo` from `liveValidation` to include `resourceId` of the matched operation.
+
 ## 10/15/2024 3.5.1
 
 - During example generation, include min/max in default titles.

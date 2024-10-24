@@ -667,6 +667,7 @@ export class LiveValidator {
         info.operationMatch = result.operationMatch;
       }
       info.operationId = info.operationMatch.operation.operationId!;
+      info.resourceId = info.operationMatch.operation._path._pathTemplate;
       return { info };
     } catch (error) {
       return { info, error };

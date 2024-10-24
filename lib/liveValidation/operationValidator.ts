@@ -48,6 +48,7 @@ export interface ValidationRequest {
 export interface OperationContext {
   operationId: string;
   apiVersion: string;
+  resourceId?: string;
   operationMatch?: OperationMatch;
   validationRequest?: ValidationRequest;
   position?: FilePosition | undefined;
