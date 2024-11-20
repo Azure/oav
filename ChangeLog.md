@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## Unreleased 3.5.2
+
+- Dependency update
+
 ## 10/15/2024 3.5.1
 
 - During example generation, include min/max in default titles.
