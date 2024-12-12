@@ -1144,6 +1144,27 @@ describe("Live validator snapshot validation", () => {
     expect(validationResult).toMatchSnapshot();
   });
 
+  test(`should return a resourceId for a failed payload`, async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
+      swaggerPathsPattern: [
+        "specification/apimanagement/resource-manager/Microsoft.ApiManagement/**/*.json",
+      ],
+      git: {
+        shouldClone: false,
+      },
+    };
+    const liveValidator = new LiveValidator(options);
+    await liveValidator.initialize();
+    const payload = require(`${__dirname}/liveValidation/payloads/invalid_input_array_return.json`);
+    const validationResult = await validator.validateLiveRequestResponse(payload);
+
+    expect(validationResult.responseValidationResult.errors.length > 0)
+
+  });
+
   test(`should return expected error for multiple operation found`, async () => {
     const options = {
       directory: `${__dirname}/liveValidation/swaggers/`,
