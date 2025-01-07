@@ -1144,27 +1144,6 @@ describe("Live validator snapshot validation", () => {
     expect(validationResult).toMatchSnapshot();
   });
 
-  test(`should return a resourceId for a failed payload`, async () => {
-    const options = {
-      directory: `${__dirname}/liveValidation/swaggers/`,
-      isPathCaseSensitive: false,
-      useRelativeSourceLocationUrl: true,
-      swaggerPathsPattern: [
-        "specification/apimanagement/resource-manager/Microsoft.ApiManagement/**/*.json",
-      ],
-      git: {
-        shouldClone: false,
-      },
-    };
-    const liveValidator = new LiveValidator(options);
-    await liveValidator.initialize();
-    const payload = require(`${__dirname}/liveValidation/payloads/invalid_input_array_return.json`);
-    const validationResult = await validator.validateLiveRequestResponse(payload);
-
-    expect(validationResult.responseValidationResult.errors.length > 0)
-
-  });
-
   test(`should return expected error for multiple operation found`, async () => {
     const options = {
       directory: `${__dirname}/liveValidation/swaggers/`,
@@ -1294,7 +1273,8 @@ describe("Live validator snapshot validation", () => {
   test(`should return all errors for no options`, async () => {
     const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`);
     const result = await validator.validateLiveRequestResponse(payload);
-    expect(result.responseValidationResult.errors.length === 3);
+    expect(result.responseValidationResult.errors.length === 4).toBe(true);
+    expect(result.responseValidationResult.errors[3].resourceIds![0] !== undefined).toBe(true);
     expect(result.responseValidationResult.errors.some((err) => err.code === "INVALID_TYPE"));
     expect(result.responseValidationResult.errors.some((err) => err.code === "INVALID_FORMAT"));
     expect(
