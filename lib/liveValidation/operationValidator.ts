@@ -321,7 +321,7 @@ const findResourceId = (bodyPayload: any, jsonPath: string): string | undefined 
   }
 
   // notice we only ever check for parent id. This means that we will never accidentally grab the value of an id
-  // that has been added erroneously to the payload
+  // that has been added erroneously to the payload. (for instance if payload is to an id field that SHOULD NOT be set.)
   for (let i = stack.length - 1; i >= 0; i--) {
   const parent = stack[i];
     if (parent && typeof parent === "object" && "id" in parent) {
