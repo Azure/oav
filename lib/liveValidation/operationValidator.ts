@@ -291,9 +291,9 @@ const validateContentType = (
 const findResourceId = (bodyPayload: any, jsonPath: string): string | undefined => {
   // schemaValidateIssueToLiveValidationIssue will provide a valid jsonPath to this function
   const keys = jsonPath
-  .replace(/^\$\./, "") // Remove the leading "$."
-  .split(/\.|\[(\d+)\]/) // Split by dots or array brackets
-  .filter((key) => key !== undefined && key !== "");
+    .replace(/^\$\./, "") // Remove the leading "$."
+    .split(/\.|\[(\d+)\]/) // Split by dots or array brackets
+    .filter((key) => key !== undefined && key !== "");
 
   let current: any = bodyPayload;
   const stack: any[] = [];
@@ -323,14 +323,14 @@ const findResourceId = (bodyPayload: any, jsonPath: string): string | undefined 
   // notice we only ever check for parent id. This means that we will never accidentally grab the value of an id
   // that has been added erroneously to the payload. (for instance if payload is to an id field that SHOULD NOT be set.)
   for (let i = stack.length - 1; i >= 0; i--) {
-  const parent = stack[i];
+    const parent = stack[i];
     if (parent && typeof parent === "object" && "id" in parent) {
       return parent.id;
     }
   }
 
   return undefined; // No `id` field found
-}
+};
 
 export const schemaValidateIssueToLiveValidationIssue = (
   input: SchemaValidateIssue[],
