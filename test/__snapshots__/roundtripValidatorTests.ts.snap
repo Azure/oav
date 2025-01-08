@@ -216,6 +216,7 @@ Object {
         "pathsInPayload": Array [
           "",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/x-ms-azure-resource",
         "severity": 0,
         "source": Object {
