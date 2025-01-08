@@ -565,6 +565,7 @@ Object {
         "pathsInPayload": Array [
           "/pet/lifetime",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/discriminatorMap",
         "severity": 0,
         "source": Object {
@@ -614,6 +615,7 @@ Object {
         "pathsInPayload": Array [
           "/name",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/properties/name/readOnly",
         "severity": 0,
         "source": Object {
@@ -639,6 +641,7 @@ Object {
         "pathsInPayload": Array [
           "/readOnlyProperty",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/properties/readOnlyProperty/x-ms-mutability",
         "severity": 0,
         "source": Object {
@@ -724,6 +727,9 @@ Object {
         "pathsInPayload": Array [
           "/properties/groups/0/type",
         ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
         "schemaPath": "#/properties/type/enum",
         "severity": 0,
         "source": Object {
@@ -769,6 +775,7 @@ Object {
         "pathsInPayload": Array [
           "/properties/state",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/properties/state/enum",
         "severity": 0,
         "source": Object {
@@ -807,6 +814,9 @@ Object {
         ],
         "pathsInPayload": Array [
           "/properties/groups/0/type",
+        ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/type/enum",
         "severity": 0,
@@ -879,6 +889,7 @@ Object {
         "pathsInPayload": Array [
           "/body",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/required",
         "severity": 0,
         "source": Object {
@@ -927,6 +938,7 @@ Object {
         "pathsInPayload": Array [
           "/headers/featureaflag",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/properties/headers/properties/featureaflag/type",
         "severity": 0,
         "source": Object {
@@ -974,6 +986,9 @@ Object {
         ],
         "pathsInPayload": Array [
           "/properties/hostnameConfigurations",
+        ],
+        "resourceIds": Array [
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/hostnameConfigurations/type",
         "severity": 0,
@@ -1024,6 +1039,9 @@ Object {
         "pathsInPayload": Array [
           "/properties/description",
         ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
         "schemaPath": "#/properties/description/maxLength",
         "severity": 0,
         "source": Object {
@@ -1063,6 +1081,7 @@ Object {
         "pathsInPayload": Array [
           "/body",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/required",
         "severity": 0,
         "source": Object {
@@ -1121,6 +1140,10 @@ Object {
           "/properties/groups/0/id",
           "/properties/groups/1/id",
         ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaaaaaaaa",
+        ],
         "schemaPath": "#/additionalProperties",
         "severity": 0,
         "source": Object {
@@ -1169,6 +1192,7 @@ Object {
         "pathsInPayload": Array [
           "/properties/groups/0/displayName",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/required",
         "severity": 0,
         "source": Object {
@@ -1218,6 +1242,7 @@ Object {
         "pathsInPayload": Array [
           "/testMaxMinProperties",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/properties/testMaxMinProperties/maxProperties",
         "severity": 0,
         "source": Object {
@@ -1267,6 +1292,7 @@ Object {
         "pathsInPayload": Array [
           "/testMaxMinProperties",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/properties/testMaxMinProperties/minProperties",
         "severity": 0,
         "source": Object {
@@ -1316,6 +1342,7 @@ Object {
         "pathsInPayload": Array [
           "/properties/password",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/properties/password/x-ms-secret",
         "severity": 0,
         "source": Object {
@@ -1365,6 +1392,7 @@ Object {
         "pathsInPayload": Array [
           "/properties/propertyUsage",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/properties/propertyUsage/x-ms-mutability",
         "severity": 0,
         "source": Object {
