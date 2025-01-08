@@ -3,6 +3,7 @@
 ## 10/23/2024 3.6.0
 
 - Update `operationInfo` from `liveValidation` to include `resourceId` of the matched operation.
+- Bump `jsonpath-plus` dependency to `^10.2.0`.
 
 ## 10/15/2024 3.5.1
 
