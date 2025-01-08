@@ -405,6 +405,7 @@ Object {
         "pathsInPayload": Array [
           "/properties/options/0/restriction/primaryVerificationKey/keyValue",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/discriminatorMap",
         "severity": 0,
         "source": Object {
@@ -440,6 +441,9 @@ Object {
         "pathsInPayload": Array [
           "/properties/policyId",
         ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
         "schemaPath": "#/properties/policyId/format",
         "severity": 0,
         "source": Object {
@@ -465,6 +469,9 @@ Object {
         "pathsInPayload": Array [
           "/properties/options/0/policyOptionId",
         ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
         "schemaPath": "#/properties/policyOptionId/format",
         "severity": 0,
         "source": Object {
@@ -489,6 +496,7 @@ Object {
         "pathsInPayload": Array [
           "/properties/options/0/restriction/audience",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/discriminatorMap",
         "severity": 0,
         "source": Object {
@@ -513,6 +521,9 @@ Object {
         ],
         "pathsInPayload": Array [
           "/properties/options/0/restriction/primaryVerificationKey/keyValue",
+        ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/discriminatorMap",
         "severity": 0,
