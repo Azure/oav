@@ -145,6 +145,7 @@ Object {
           "pathsInPayload": Array [
             "/headers/dataserviceversion",
           ],
+          "resourceIds": Array [],
           "schemaPath": "#/properties/headers/required",
           "severity": 0,
           "source": Object {

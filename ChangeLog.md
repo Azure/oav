@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 10/23/2024 3.6.0
+
+- Update `LiveValidationIssue` to include `resourceIds`, an array of the located resourceIds associated with the erroneous jsonPaths.
+- Bump `jsonpath-plus` dependency to `^10.2.0`.
+
 ## 10/15/2024 3.5.1
 
 - During example generation, include min/max in default titles.

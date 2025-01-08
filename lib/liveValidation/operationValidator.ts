@@ -129,7 +129,8 @@ export const validateSwaggerLiveRequest = async (
     result,
     operationContext,
     isArmCall,
-    logging
+    logging,
+    body
   );
 
   return result;
@@ -211,7 +212,8 @@ export const validateSwaggerLiveResponse = async (
     result,
     operationContext,
     isArmCall,
-    logging
+    logging,
+    body
   );
 
   return result;
@@ -278,6 +280,58 @@ const validateContentType = (
   }
 };
 
+/**
+ * Finds the resource ID for a given JSON path. Example inputs:
+ *   - $.properties.lastname
+ *   - $.properties.groups[0].variable
+ * @param bodyPayload The full payload object.
+ * @param jsonPath The JSON path referring to the problematic property.
+ * @returns The resource ID, or undefined if not found.
+ */
+const findResourceId = (bodyPayload: any, jsonPath: string): string | undefined => {
+  // schemaValidateIssueToLiveValidationIssue will provide a valid jsonPath to this function
+  const keys = jsonPath
+    .replace(/^\$\./, "") // Remove the leading "$."
+    .split(/\.|\[(\d+)\]/) // Split by dots or array brackets
+    .filter((key) => key !== undefined && key !== "");
+
+  let current: any = bodyPayload;
+  const stack: any[] = [];
+
+  for (const key of keys) {
+    if (current && typeof current === "object") {
+      stack.push(current);
+
+      if (Array.isArray(current)) {
+        // Handle array indices
+        const index = parseInt(key, 10);
+        if (!isNaN(index) && index < current.length) {
+          current = current[index];
+        } else {
+          return undefined;
+        }
+      } else if (key in current) {
+        current = current[key];
+      } else {
+        return undefined;
+      }
+    } else {
+      return undefined;
+    }
+  }
+
+  // notice we only ever check for parent id. This means that we will never accidentally grab the value of an id
+  // that has been added erroneously to the payload. (for instance if payload is to an id field that SHOULD NOT be set.)
+  for (let i = stack.length - 1; i >= 0; i--) {
+    const parent = stack[i];
+    if (parent && typeof parent === "object" && "id" in parent) {
+      return parent.id;
+    }
+  }
+
+  return undefined; // No `id` field found
+};
+
 export const schemaValidateIssueToLiveValidationIssue = (
   input: SchemaValidateIssue[],
   operation: Operation,
@@ -285,11 +339,12 @@ export const schemaValidateIssueToLiveValidationIssue = (
   output: LiveValidationIssue[],
   _operationContext: OperationContext,
   _isArmCall?: boolean,
-  _logging?: LoggingFn
+  _logging?: LoggingFn,
+  _bodyPayload?: any
 ) => {
   for (const i of input) {
     const issue = i as Writable<LiveValidationIssue>;
-
+    issue.resourceIds = [];
     issue.documentationUrl = "";
 
     const source = issue.source as Writable<SourceLocation>;
@@ -313,7 +368,16 @@ export const schemaValidateIssueToLiveValidationIssue = (
       if (isBodyIssue && (path.length > 5 || !isMissingRequiredProperty)) {
         path = "$" + path.substr(5);
         issue.jsonPathsInPayload[idx] = path;
-        return jsonPathToPointer(path);
+        const resolvedJsonPath = jsonPathToPointer(path);
+
+        if (ctx.isResponse && isBodyIssue) {
+          const resourceId = findResourceId(_bodyPayload, path);
+          if (resourceId) {
+            issue.resourceIds!.push(resourceId);
+          }
+        }
+
+        return resolvedJsonPath;
       }
 
       if (isMissingRequiredProperty) {
@@ -340,7 +404,15 @@ export const schemaValidateIssueToLiveValidationIssue = (
         issue.message = meta.message;
       }
 
-      return jsonPathToPointer(path);
+      const resolvedJsonPath = jsonPathToPointer(path);
+
+      if (ctx.isResponse && isBodyIssue) {
+        const resourceId = findResourceId(_bodyPayload, path);
+        if (resourceId) {
+          issue.resourceIds!.push(resourceId);
+        }
+      }
+      return resolvedJsonPath;
     });
 
     if (!skipIssue) {

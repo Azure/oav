@@ -82,6 +82,7 @@ export interface RequestResponseLiveValidationResult {
 export type LiveValidationIssue = {
   code: ApiValidationErrorCode;
   pathsInPayload: string[];
+  resourceIds?: string[];
   documentationUrl?: string;
 } & Omit<SchemaValidateIssue, "code">;
 
