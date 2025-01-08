@@ -238,6 +238,7 @@ Object {
         "pathsInPayload": Array [
           "/properties/email",
         ],
+        "resourceIds": Array [],
         "schemaPath": "#/required",
         "severity": 0,
         "source": Object {
@@ -273,6 +274,9 @@ Object {
         "pathsInPayload": Array [
           "/properties/lastName",
         ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
         "schemaPath": "#/properties/lastName/type",
         "severity": 0,
         "source": Object {
@@ -298,6 +302,9 @@ Object {
         "pathsInPayload": Array [
           "/properties/registrationDate",
         ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
         "schemaPath": "#/properties/registrationDate/format",
         "severity": 0,
         "source": Object {
@@ -321,6 +328,9 @@ Object {
         ],
         "pathsInPayload": Array [
           "/properties/groups/0/id",
+        ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/additionalProperties",
         "severity": 0,
@@ -351,6 +361,9 @@ Object {
         ],
         "pathsInPayload": Array [
           "/properties/state",
+        ],
+        "resourceIds": Array [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/state/enum",
         "severity": 0,
