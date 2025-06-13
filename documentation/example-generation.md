@@ -5,7 +5,7 @@ An example is a JSON file representing the payload of a rest API call, which inc
 ## Pre-requisite
 
 - `oav` installed. Reference the [base readme](../README.md) for a guide on how to install `oav`.
-- An operation example is based on the operation defined in a swagger specification. So, a valid swagger is the **pre-requisite** content. 
+- An operation example is based on the operation defined in a swagger specification. So, a valid swagger is the **pre-requisite** content.
 
 ## Generation Workflow
 
@@ -49,23 +49,23 @@ Options:
 
 ### Output
 
-The generated examples will be dropped at the `examples` sub folder of the folder of swagger file. 
+The generated examples will be dropped at the `examples` sub folder of the folder of swagger file.
 It will generate two types of examples, first type example called `{operationId}_MinimumSet_Gen.json` includes all required properties only and the other type example called `{operationId}_MaximumSet_Gen.json` includes full set of properties.
 
 ### Option 1
 
-1. Users only provide the swagger file (or both readme file and tag) as input. 
-2. Example generator mock values base on the swagger definition. 
+1. Users only provide the swagger file (or both readme file and tag) as input.
+2. Example generator mock values base on the swagger definition.
 3. Update swagger adding `x-ms-examples` to reference the generated examples.
 4. Validate examples against swagger.
 
 ```bash
 # Note that the Azure/azure-rest-api-specs repo is cloned down prior to invocation
 
-# Example of the command to run against one swagger file: 
+# Example of the command to run against one swagger file:
 oav generate-examples path/to/rest/repo/azure-rest-api-specs/specification/storage/resource-manager/Microsoft.SignalRService/stable/2020-05-01/signalr.json
 
-# Example of the command to run against readme file and tag: 
+# Example of the command to run against readme file and tag:
 oav generate-examples --tag=package-2019-06 --config=path/to/rest/repo/azure-rest-api-specs/specification/storage/resource-manager/readme.md
 ```
 
@@ -78,7 +78,7 @@ oav generate-examples --tag=package-2019-06 --config=path/to/rest/repo/azure-res
 5. Validate examples against swagger.
 
 ```bash
-# Example of the command to run against one swagger file and provided payloads: 
+# Example of the command to run against one swagger file and provided payloads:
 oav generate-examples path/to/rest/repo/azure-rest-api-specs/specification/storage/resource-manager/Microsoft.SignalRService/stable/2020-05-01/signalr.json --payloadDir=C:/payloads
 ```
 
@@ -96,7 +96,7 @@ For example,
     └── 202.json
 ```
 
-Payload file should be a valid json file and contains `liveRequest` and `liveResponse`. 
+Payload file should be a valid json file and contains `liveRequest` and `liveResponse`.
 For example,
 ```json
 {
@@ -115,8 +115,6 @@ For example,
     }
 }
 ```
-
-You can create the payload files by yourself or it can leverage ARM traffic directly, please contact vscswagger@microsoft.com to fetch the traffic payloads.
 
 ## Support and questions
 
