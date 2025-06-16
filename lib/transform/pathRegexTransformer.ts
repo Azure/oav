@@ -12,6 +12,16 @@ export type RegExpWithKeys = RegExp & {
   _hostTemplate?: boolean;
   _hasMultiPathParam?: boolean;
 };
+
+/**
+ * Escapes literal colons in a path string for path-to-regexp v6 compatibility.
+ * Only colons not followed by a valid parameter name are escaped.
+ */
+function escapeLiteralColons(path: string): string {
+  // Escape all colons not followed by a digit (which are parameter indices)
+  return path.replace(/:(?![0-9])/g, "\\:");
+}
+
 const buildPathRegex = (
   hostTemplate: string,
   basePathPrefix: string,
@@ -74,7 +84,11 @@ const buildPathRegex = (
   const processedPath = hostTemplate + basePathPrefix + path;
 
   const keys: Key[] = [];
-  const regexp = pathToRegexp(processedPath, keys, { sensitive: false });
+
+  // in security patched versions of path-to-regexp (read > 6.2.1), colons must refer to valid parameter names
+  // so now we have to escape literal colons that are in the path
+  const escapedPath = escapeLiteralColons(processedPath);
+  const regexp = pathToRegexp(escapedPath, keys, { sensitive: false });
 
   // restore parameter name
   const _keys: string[] = [];
