@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 06/16/2025 3.6.1
+
+- Fix #1069 by properly escaping bare `:`s during processing of paths in specs.
+  - In `path-to-regex`, [parameters](https://github.com/pillarjs/path-to-regexp?tab=readme-ov-file#parameters) are a concept used to match arbitrary strings of a specific part of a path being converted to regex. These are referred to by the format `:<name or index>:`. By upgrading to 6.2.1, path elements that contain a `:` are now treated as an unmatched parameter indicator. This is the origin of the error `Must have text between two parameters` that is being surfaced for paths that have `:` within them. This patch ensures that these input `:` are properly escaped, resulting in `path-to-regexp` not crashing on strings that look like `"/test-runs/{testRunId}:stop"`.
+
 ## 10/23/2024 3.6.0
 
 - Update `LiveValidationIssue` to include `resourceIds`, an array of the located resourceIds associated with the erroneous jsonPaths.
