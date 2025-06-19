@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 6/19/2025 3.6.2
+
+- Set override for `braces@3.0.3` and update package lock to reflect
+
 ## 06/16/2025 3.6.1
 
 - Fix #1069 by properly escaping bare `:`s during processing of paths in specs.

@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "3.6.1",
+  "version": "3.6.2",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -47,6 +47,9 @@
     "winston": "^3.3.4",
     "yargs": "^15.4.1",
     "z-schema": "^5.0.3"
+  },
+  "overrides": {
+    "braces": "3.0.3"
   },
   "devDependencies": {
     "@types/commonmark": "^0.27.3",
