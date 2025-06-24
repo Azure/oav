@@ -18,8 +18,11 @@ export type RegExpWithKeys = RegExp & {
  * Only colons not followed by a valid parameter name are escaped.
  */
 function escapeLiteralColons(path: string): string {
-  // Escape all bare colons except placeholders like :"0"
-  return path.replace(/:(?!\"[0-9]+\")/g, "\\:");
+  // Escape all bare colons except placeholders like :"0" and when they start a named-parameter
+
+  // Quoted-index params: "0"
+  // Regex params: :name(...)
+  return path.replace(/:(?!(?:"\d+"|\w+\())/g, "\\:");
 }
 
 const buildPathRegex = (
@@ -88,21 +91,18 @@ const buildPathRegex = (
   params.forEach((v, i) => {
     if (path.startsWith(`/{${v}}`) && pathParams.get(v)) {
       // We allow first param in path as multi path param
-      path = path.replace("{" + v + "}", "(.*)");
+      // unfortunately, path-to-regexp doesn't support unnamed wildcard parameters anymore as of 8.0.0
+      // so we have to replace the first parameter with a named index wildcard
+      // this _should_ maintain compatibility with the existing OAV code while satisfying the new path-to-regexp requirements
+      path = path.replace("{" + v + "}", `:"${i}"(.*)`);
       hasMultiPathParam = true;
     } else {
       hostTemplate = hostTemplate.replace("{" + v + "}", ":" + i);
-      // Only append (\d+) if the next character after the replacement is NOT '('
-      // const paramPattern = new RegExp(`\\{${v}\\}`);
-      // const match = path.match(paramPattern);
-      // if (match) {
-      //   const idx = match.index! + match[0].length;
-      //   if (path[idx] !== "(") {
-      //     path = path.replace("{" + v + "}", `:${i}(\\d+)`);
-      //   } else {
-      //     path = path.replace("{" + v + "}", `:${i}`);
-      //   }
-      // }
+      // we now surround the parameter with quotes to allow us to not accidentally "bleed" into other characters
+      // for example, if we have {param-name}x{param-name2}, they will be replaced with :0x:1
+      // and we don't want to match the 'x' character, so we surround the parameter
+      // with quotes, so it becomes :"0"x:"1" and path-to-regexp won't get confused with the 'x' (or any other identifier character)
+      // that might break generating the regex.
       path = path.replace("{" + v + "}", `:"${i}"`);
     }
   });
@@ -123,10 +123,22 @@ const buildPathRegex = (
   // } catch (ex) {
   //   throw ex;
   // }
-  const result = pathToRegexp(escapedPath, { sensitive: false });
-  const regexp: RegExp = result.regexp;
-  const keys: Key[] = result.keys;
+  let result: {
+    regexp: RegExp;
+    keys: Key[];
+  };
+  let keys: Key[];
+  let regexp: RegExp;
+  try {
+    result = pathToRegexp(escapedPath, { sensitive: false });
+    regexp = result.regexp;
+    keys = result.keys;
 
+    console.log(`Path regex: ${regexp} for escapedPath: ${escapedPath}`);
+    console.log(`Path keys: ${JSON.stringify(keys)}`);
+  } catch (ex) {
+    throw new Error(`Failed to compile path regex for path '${processedPath}': ${ex}`);
+  }
   // restore parameter name
   const _keys: string[] = [];
   keys.forEach((v, i) => {
