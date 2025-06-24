@@ -106,6 +106,23 @@
       "windows": {
         "program": "${workspaceFolder}/node_modules/jest/bin/jest"
       }
-    }
+    },
+    {
+      "name": "Debug a jest test in trafficValidatorTests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+      "args": [
+        "--runInBand",
+        "--config",
+        "${workspaceFolder}/jest.config.js",
+        "test/trafficValidatorTests.ts",
+        "--testNamePattern",
+        "should initialize data-plane swagger without errors"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+     }
   ]
 }

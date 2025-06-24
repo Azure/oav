@@ -18,11 +18,7 @@ export type RegExpWithKeys = RegExp & {
  * Only colons not followed by a valid parameter name are escaped.
  */
 function escapeLiteralColons(path: string): string {
-  // Escape all bare colons except placeholders like :"0" and when they start a named-parameter
-
-  // Quoted-index params: "0"
-  // Regex params: :name(...)
-  return path.replace(/:(?!(?:"\d+"|\w+\())/g, "\\:");
+  return path.replace(/:(?!(?:\d+|"\d+"))/g, "\\:");
 }
 
 const buildPathRegex = (
@@ -31,6 +27,9 @@ const buildPathRegex = (
   path: string,
   pathParams: Map<string, PathParameter>
 ): RegExpWithKeys => {
+  const clonedPath = path.toString();
+  const clonedTemplate = hostTemplate.toString();
+
   hostTemplate = hostTemplate.replace("https://", "");
   hostTemplate = hostTemplate.replace("http://", "");
 
@@ -94,7 +93,9 @@ const buildPathRegex = (
       // unfortunately, path-to-regexp doesn't support unnamed wildcard parameters anymore as of 8.0.0
       // so we have to replace the first parameter with a named index wildcard
       // this _should_ maintain compatibility with the existing OAV code while satisfying the new path-to-regexp requirements
-      path = path.replace("{" + v + "}", `:"${i}"(.*)`);
+      // we CANNOT have inline definitions follow a quoted parameter.
+      // so we might have to change the way we surround in quotes. For this specific instance, we have direct control over the parameter name.
+      path = path.replace("{" + v + "}", `:${i}(.*)`);
       hasMultiPathParam = true;
     } else {
       hostTemplate = hostTemplate.replace("{" + v + "}", ":" + i);
@@ -134,7 +135,10 @@ const buildPathRegex = (
     regexp = result.regexp;
     keys = result.keys;
 
-    console.log(`Path regex: ${regexp} for escapedPath: ${escapedPath}`);
+    console.log(`Original path and host template: ${clonedTemplate} + ${clonedPath}`);
+    console.log(
+      `Path regex: ${regexp} for escapedPath: ${escapedPath} from processedPath: ${processedPath}`
+    );
     console.log(`Path keys: ${JSON.stringify(keys)}`);
   } catch (ex) {
     throw new Error(`Failed to compile path regex for path '${processedPath}': ${ex}`);

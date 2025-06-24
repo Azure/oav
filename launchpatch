@@ -1,0 +1,50 @@
+diff --git a/.vscode/launch.json b/.vscode/launch.json
+index 6374008c..40c2f980 100644
+--- a/.vscode/launch.json
++++ b/.vscode/launch.json
+@@ -38,6 +38,21 @@
+       "cwd": "${workspaceRoot}",
+       "env": {}
+     },
++    {
++      "type": "node",
++      "request": "launch",
++      "name": "Debug npm run cli (validate-spec)",
++      "runtimeExecutable": "npm",
++      "runtimeArgs": [
++      "run",
++      "cli",
++      "--",
++      "validate-spec",
++      "/home/semick/repo/azure-rest-api-specs-pr/specification/orbital/data-plane/Microsoft.PlanetaryComputer/preview/2025-09-30-preview/openapi.json"
++      ],
++      "cwd": "${workspaceRoot}",
++      "console": "integratedTerminal"
++    },
+     {
+       "type": "node",
+       "request": "launch",
+@@ -89,6 +104,23 @@
+       "request": "attach",
+       "name": "Attach to Process",
+       "processId": "${command:PickProcess}"
++    },
++    {
++      "name": "Debug Jest — trafficValidatorTests: coverage",
++      "type": "node",
++      "request": "launch",
++      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
++      "args": [
++        "--runInBand",
++        "--config",
++        "${workspaceFolder}/jest.config.js",
++        "test/trafficValidatorTests.ts",
++        "--testNamePattern",
++        "should get coverage after validation"
++      ],
++      "cwd": "${workspaceFolder}",
++      "console": "integratedTerminal",
++      "internalConsoleOptions": "neverOpen"
+     }
+   ]
+ }
