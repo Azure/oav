@@ -73,7 +73,7 @@ const buildPathRegex = (
    * Additionally, when replacing parameters with indices, we need to ensure that we don't accidentally match too much.
    * For example, if we have a parameter in the original path like '{param-name}x{param-name2}', we need to ensure that the
    * parameter matching DOESN'T consume the 'x' character. To achieve this, we append '(\\d+)' to the end of the parameter replacement.
-   * By doing this, we are telling path-to-regexp to only match digits after the parameter name, ensuring that the 'x' character remains intact.
+   * By doing this, we are telling path-to-regexp to only match digits for the parameter name, ensuring that the 'x' character remains intact.
    * This is _safe_ because we are replacing _all_ parameters with their indices, so we don't have to support anything NOT named with a digit.
    **/
 
