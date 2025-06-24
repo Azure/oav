@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 06/23/2025 3.6.3
+
+- Resolve #1073 by explicitly making the replaced integer representations of params ONLY match integers.
+
 ## 6/19/2025 3.6.2
 
 - Set override for `braces@3.0.3` and update package lock to reflect
