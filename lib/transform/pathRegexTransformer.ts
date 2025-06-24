@@ -88,13 +88,7 @@ const buildPathRegex = (
   // in security patched versions of path-to-regexp (read > 6.2.1), colons must refer to valid parameter names
   // so now we have to escape literal colons that are in the path
   const escapedPath = escapeLiteralColons(processedPath);
-  let regexp: RegExp;
-  try {
-    regexp = pathToRegexp(escapedPath, keys, { sensitive: false });
-  }
-  catch(e) {
-    throw e;
-  }
+  const regexp = pathToRegexp(escapedPath, keys, { sensitive: false });
 
   // restore parameter name
   const _keys: string[] = [];
