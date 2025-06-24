@@ -18,8 +18,8 @@ export type RegExpWithKeys = RegExp & {
  * Only colons not followed by a valid parameter name are escaped.
  */
 function escapeLiteralColons(path: string): string {
-  // Escape all colons not followed by a digit (which are parameter indices)
-  return path.replace(/:(?![0-9])/g, "\\:");
+  // Escape all bare colons except placeholders like :"0"
+  return path.replace(/:(?!\"[0-9]+\")/g, "\\:");
 }
 
 const buildPathRegex = (
@@ -75,6 +75,13 @@ const buildPathRegex = (
    * parameter matching DOESN'T consume the 'x' character. To achieve this, we append '(\\d+)' to the end of the parameter replacement.
    * By doing this, we are telling path-to-regexp to only match digits for the parameter name, ensuring that the 'x' character remains intact.
    * This is _safe_ because we are replacing _all_ parameters with their indices, so we don't have to support anything NOT named with a digit.
+   *
+   * Later in the evening 2025-06-23. My replacement approach doesn't work as expected. This is due to the fact that
+   * OAV supports users passing their own custom patterns right alongside the parameter name. Something like
+   * `{param-name}(\\d+)`. This means that we cannot simply replace the parameter name with `:0(\\d+)` because
+   * it would break the custom pattern. My original attempts at using quoted parameters would ALSO work, but I couldn't make
+   * that work with path-to-regexp v6.2.1+ which is the version we use in OAV. I have updated to use v8.X, which DOES support
+   * quoted parameters, and that is looking promising. Committing this to see if everything works as expected.
    **/
 
   let hasMultiPathParam = false;
@@ -85,18 +92,40 @@ const buildPathRegex = (
       hasMultiPathParam = true;
     } else {
       hostTemplate = hostTemplate.replace("{" + v + "}", ":" + i);
-      path = path.replace("{" + v + "}", `:${i}(\\d+)`);
+      // Only append (\d+) if the next character after the replacement is NOT '('
+      // const paramPattern = new RegExp(`\\{${v}\\}`);
+      // const match = path.match(paramPattern);
+      // if (match) {
+      //   const idx = match.index! + match[0].length;
+      //   if (path[idx] !== "(") {
+      //     path = path.replace("{" + v + "}", `:${i}(\\d+)`);
+      //   } else {
+      //     path = path.replace("{" + v + "}", `:${i}`);
+      //   }
+      // }
+      path = path.replace("{" + v + "}", `:"${i}"`);
     }
   });
 
   const processedPath = hostTemplate + basePathPrefix + path;
 
-  const keys: Key[] = [];
-
   // in security patched versions of path-to-regexp (read > 6.2.1), colons must refer to valid parameter names
   // so now we have to escape literal colons that are in the path
   const escapedPath = escapeLiteralColons(processedPath);
-  const regexp = pathToRegexp(escapedPath, keys, { sensitive: false });
+
+  // compile the path-to-regexp using new v8 API (returns {regexp, keys})
+  // let regexp: RegExp;
+  // let keys: Key[];
+  // try {
+  //   const result = pathToRegexp(escapedPath, { sensitive: false });
+  //   regexp = result.regexp;
+  //   keys = result.keys;
+  // } catch (ex) {
+  //   throw ex;
+  // }
+  const result = pathToRegexp(escapedPath, { sensitive: false });
+  const regexp: RegExp = result.regexp;
+  const keys: Key[] = result.keys;
 
   // restore parameter name
   const _keys: string[] = [];
@@ -105,6 +134,9 @@ const buildPathRegex = (
       _keys[i + 1] = params[v.name as any];
     }
   });
+
+  // console.log(`Built regex ${regexp}`);
+  // console.log(`With keys ${_keys}`);
 
   const regexpWithKeys: RegExpWithKeys = regexp as RegExpWithKeys;
   regexpWithKeys._keys = _keys;
