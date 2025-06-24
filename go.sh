@@ -1,7 +1,7 @@
 # this file maintains the latest status of the tests
+npm run test -- test/trafficValidatorTests.ts # Tests:       2 failed, 2 passed, 4 total
 npm run test -- test/liveValidatorTests.ts # Snapshots:   4 failed, 24 passed, 28 total Tests:       5 failed, 84 passed, 89 total
 npm run test -- test/roundtripValidatorTests.ts # Snapshots:   4 failed, 5 passed, 9 total Tests:       5 failed, 30 passed, 35 total
-npm run test -- test/trafficValidatorTests.ts # Tests:       2 failed, 2 passed, 4 total
 npm run test -- test/semanticValidatorTests.ts # works
 npm run test -- test/exampleGeneratorTests.ts # works
 npm run test -- test/apiScenario/apiScenarioLoaderTest.ts # works
