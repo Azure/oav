@@ -125,7 +125,7 @@
     "tsc": "tsc",
     "lint": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts",
     "lint-fix": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts --fix",
-    "test": "npm run tsc && jest --ci --reporters=default --reporters=jest-junit",
+    "test": "npm run tsc && jest --ci",
     "fast-test": "jest --ci --reporters=default --reporters=jest-junit --config ./jest.config.js ",
     "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest -u --runInBand --ci --reporters=default --reporters=jest-junit --config ./regression/jest.regression.config.js ",
     "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest -u --runInBand --ci --reporters=default --reporters=jest-junit --config ./regression/jest.regression-sample.config.js ",

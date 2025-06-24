@@ -89,6 +89,23 @@
       "request": "attach",
       "name": "Attach to Process",
       "processId": "${command:PickProcess}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug: Jest semanticValidatorTests single test",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "--runTestsByPath",
+        "test/liveValidatorTests.ts",
+        "-t",
+        "should report error in response when response code isn't correct in case of long running operation"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      }
     }
   ]
 }
