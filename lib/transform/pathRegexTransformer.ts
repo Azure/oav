@@ -67,6 +67,14 @@ const buildPathRegex = (
    * and will restore the name in the result object regexp later.
    * It caused by a design issue in pathToRegexp library that the parameter names must use "word characters" ([A-Za-z0-9_]).
    * for more details,see https://github.com/pillarjs/path-to-regexp
+   *
+   * 2025-06-23 scbedd
+   *
+   * Additionally, when replacing parameters with indices, we need to ensure that we don't accidentally match too much.
+   * For example, if we have a parameter in the original path like '{param-name}x{param-name2}', we need to ensure that the
+   * parameter matching DOESN'T consume the 'x' character. To achieve this, we append '(\\d+)' to the end of the parameter replacement.
+   * By doing this, we are telling path-to-regexp to only match digits after the parameter name, ensuring that the 'x' character remains intact.
+   * This is _safe_ because we are replacing _all_ parameters with their indices, so we don't have to support anything NOT named with a digit.
    **/
 
   let hasMultiPathParam = false;
