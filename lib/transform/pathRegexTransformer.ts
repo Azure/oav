@@ -92,8 +92,9 @@ const buildPathRegex = (
     if (path.startsWith(`/{${v}}`) && pathParams.get(v)) {
       // We allow first param in path as multi path param
       // unfortunately, path-to-regexp doesn't support unnamed wildcard parameters anymore as of 8.0.0
-      // so we have to replace the first parameter with a named wildcare parameter. hopefully this doesn't break anything
-      path = path.replace("{" + v + "}", "*wildcard");
+      // so we have to replace the first parameter with a named index wildcard
+      // this _should_ maintain compatibility with the existing OAV code while satisfying the new path-to-regexp requirements
+      path = path.replace("{" + v + "}", `:"${i}"(.*)`);
       hasMultiPathParam = true;
     } else {
       hostTemplate = hostTemplate.replace("{" + v + "}", ":" + i);
@@ -132,8 +133,9 @@ const buildPathRegex = (
     result = pathToRegexp(escapedPath, { sensitive: false });
     regexp = result.regexp;
     keys = result.keys;
-    console.log("Built path regex:", regexp);
-    console.log("With keys:", keys);
+
+    console.log(`Path regex: ${regexp} for escapedPath: ${escapedPath}`);
+    console.log(`Path keys: ${JSON.stringify(keys)}`);
   } catch (ex) {
     throw new Error(`Failed to compile path regex for path '${processedPath}': ${ex}`);
   }
