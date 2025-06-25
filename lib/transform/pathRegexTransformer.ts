@@ -22,7 +22,7 @@ function escapeLiteralColons(path: string): string {
   return path.replace(/:(?![0-9])/g, "\\:");
 }
 
-const buildPathRegex = (
+export const buildPathRegex = (
   hostTemplate: string,
   basePathPrefix: string,
   path: string,
