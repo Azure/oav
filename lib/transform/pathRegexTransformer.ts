@@ -22,12 +22,17 @@ function escapeLiteralColons(path: string): string {
   return path.replace(/:(?![0-9])/g, "\\:");
 }
 
-const buildPathRegex = (
+export const buildPathRegex = (
   hostTemplate: string,
   basePathPrefix: string,
   path: string,
   pathParams: Map<string, PathParameter>
 ): RegExpWithKeys => {
+  const inputPath = path.toString();
+  const inputHostTemplate = hostTemplate.toString();
+  const inputBasePathPrefix = basePathPrefix.toString();
+  const pathParamsKeys = pathParams;
+
   hostTemplate = hostTemplate.replace("https://", "");
   hostTemplate = hostTemplate.replace("http://", "");
 
@@ -90,6 +95,20 @@ const buildPathRegex = (
   const escapedPath = escapeLiteralColons(processedPath);
   const regexp = pathToRegexp(escapedPath, keys, { sensitive: false });
 
+  // insert output for a structure that can be used to create a unit test later
+  // we should have a structure like this:
+  // {
+  //   regexp:
+  //   output_regexp: <from regexp>:
+  //   escapedPath: escapedPath,
+  //   processedPath: processedPath,
+  //   input_path: inputPath
+  //   input_host_template: inputHostTemplate
+  //   input_base_path_prefix: inputBasePathPrefix
+  //   input_host_params: inputHostParams
+  // }
+  //
+
   // restore parameter name
   const _keys: string[] = [];
   keys.forEach((v, i) => {
@@ -106,6 +125,17 @@ const buildPathRegex = (
   if (hasMultiPathParam) {
     regexpWithKeys._hasMultiPathParam = true;
   }
+
+  // output snippet for unit test copy-paste
+  console.log(`{
+    output_regexp: ${regexp},
+    escapedPath: "${escapedPath}",
+    processedPath: "${processedPath}",
+    input_path: "${inputPath}",
+    input_host_template: "${inputHostTemplate}",
+    input_base_path_prefix: "${inputBasePathPrefix}",
+    input_host_params: ${JSON.stringify(Array.from(pathParamsKeys.keys()))}
+  }`);
 
   return regexpWithKeys;
 };
