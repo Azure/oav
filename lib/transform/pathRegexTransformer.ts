@@ -22,6 +22,10 @@ function escapeLiteralColons(path: string): string {
   return path.replace(/:(?![0-9])/g, "\\:");
 }
 
+function replaceParam(path: string, name: string, index: number) {
+  return path.replace("{" + name + "}", ":" + index);
+}
+
 const buildPathRegex = (
   hostTemplate: string,
   basePathPrefix: string,
@@ -76,8 +80,8 @@ const buildPathRegex = (
       path = path.replace("{" + v + "}", "(.*)");
       hasMultiPathParam = true;
     } else {
-      hostTemplate = hostTemplate.replace("{" + v + "}", ":" + i);
-      path = path.replace("{" + v + "}", ":" + i);
+      hostTemplate = replaceParam(hostTemplate, v, i);
+      path = replaceParam(path, v, i);
     }
   });
 
