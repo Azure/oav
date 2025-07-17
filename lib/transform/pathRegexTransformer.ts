@@ -1,8 +1,8 @@
-import { parse as urlParse } from "url";
 import { Key, pathToRegexp } from "path-to-regexp";
+import { parse as urlParse } from "url";
+import { OperationMatch } from "../liveValidation/operationSearcher";
 import { lowerHttpMethods, Parameter, PathParameter, Schema } from "../swagger/swaggerTypes";
 import { xmsParameterizedHost } from "../util/constants";
-import { OperationMatch } from "../liveValidation/operationSearcher";
 import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer";
 import { SpecTransformer, TransformerType } from "./transformer";
 import { traverseSwagger } from "./traverseSwagger";
@@ -26,7 +26,7 @@ function replaceParam(path: string, name: string, index: number) {
   const paramWithBraces = "{" + name + "}";
 
   const start = path.indexOf(paramWithBraces);
-  const end = start + paramWithBraces.length;
+  const end = start + paramWithBraces.length - 1;
   const next = end + 1;
   if (next < path.length) {
     const nextChar = path[next];
@@ -48,7 +48,9 @@ function replaceParam(path: string, name: string, index: number) {
     }
   }
 
-  return path.replace(paramWithBraces, ":" + index);
+  path = path.replace(paramWithBraces, ":" + index);
+  console.log(`path: ${path}`);
+  return path;
 }
 
 const buildPathRegex = (
