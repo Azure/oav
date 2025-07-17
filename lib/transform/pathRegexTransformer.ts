@@ -1,8 +1,8 @@
-import { parse as urlParse } from "url";
 import { Key, pathToRegexp } from "path-to-regexp";
+import { parse as urlParse } from "url";
+import { OperationMatch } from "../liveValidation/operationSearcher";
 import { lowerHttpMethods, Parameter, PathParameter, Schema } from "../swagger/swaggerTypes";
 import { xmsParameterizedHost } from "../util/constants";
-import { OperationMatch } from "../liveValidation/operationSearcher";
 import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer";
 import { SpecTransformer, TransformerType } from "./transformer";
 import { traverseSwagger } from "./traverseSwagger";
@@ -23,7 +23,33 @@ function escapeLiteralColons(path: string): string {
 }
 
 function replaceParam(path: string, name: string, index: number) {
-  return path.replace("{" + name + "}", ":" + index);
+  const paramWithBraces = "{" + name + "}";
+
+  const start = path.indexOf(paramWithBraces);
+  const end = start + paramWithBraces.length;
+  const next = end + 1;
+  if (next < path.length) {
+    const nextChar = path[next];
+
+    // In path-to-regexp@6.3.0, if the char following a param is a word char, it must be added
+    // to a custom regex for the param.
+    //
+    // This only applies to a small number of paths with segments like "{width}x{height}".
+    // Without this fix, the paths would fail with error:
+    // "TypeError: Must have text between two parameters".
+    //
+    // If a param has a custom regex (eg "{foo}([^a]+)"), nextChar will be "(", so this is a no-op.
+    if (/^\w$/.test(nextChar)) {
+      // Chars excluded by default, if a param has no custom regex
+      const defaultExclusions = "\\/#\\?";
+      path = path.replace(
+        paramWithBraces,
+        paramWithBraces + `([^${defaultExclusions}${nextChar}]+)`
+      );
+    }
+  }
+
+  return path.replace(paramWithBraces, ":" + index);
 }
 
 const buildPathRegex = (
