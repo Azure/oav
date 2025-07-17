@@ -37,7 +37,7 @@ function replaceParam(path: string, name: string, index: number) {
     // This only applies to a small number of paths with segments like "{width}x{height}".
     // Without this fix, the paths would fail with: "TypeError: Must have text between two parameters".
     //
-    // If a param has a custom regex (eg "{foo}([^a]+)"), nextChar will be "(", so this is a no-op.
+    // If a param has a custom regex (e.g. "{foo}([^a]+)"), nextChar will be "(", so this is a no-op.
     if (/^\w$/.test(nextChar)) {
       // Chars excluded by default, if a param has no custom regex
       const defaultExclusions = "\\/#\\?";
