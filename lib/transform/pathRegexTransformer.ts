@@ -48,9 +48,7 @@ function replaceParam(path: string, name: string, index: number) {
     }
   }
 
-  path = path.replace(paramWithBraces, ":" + index);
-  console.log(`path: ${path}`);
-  return path;
+  return path.replace(paramWithBraces, ":" + index);
 }
 
 const buildPathRegex = (
