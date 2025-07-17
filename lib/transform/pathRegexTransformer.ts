@@ -22,6 +22,35 @@ function escapeLiteralColons(path: string): string {
   return path.replace(/:(?![0-9])/g, "\\:");
 }
 
+function replaceParam(path: string, name: string, index: number) {
+  const paramWithBraces = "{" + name + "}";
+
+  const start = path.indexOf(paramWithBraces);
+  const end = start + paramWithBraces.length - 1;
+  const next = end + 1;
+  if (next < path.length) {
+    const nextChar = path[next];
+
+    // In path-to-regexp@6.3.0, if the char following a param is a word char, it must be added
+    // to a custom regex for the param.
+    //
+    // This only applies to a small number of paths with segments like "{width}x{height}".
+    // Without this fix, the paths would fail with: "TypeError: Must have text between two parameters".
+    //
+    // If a param has a custom regex (e.g. "{foo}([^a]+)"), nextChar will be "(", so this is a no-op.
+    if (/^\w$/.test(nextChar)) {
+      // Chars excluded by default, if a param has no custom regex
+      const defaultExclusions = "\\/#\\?";
+      path = path.replace(
+        paramWithBraces,
+        paramWithBraces + `([^${defaultExclusions}${nextChar}]+)`
+      );
+    }
+  }
+
+  return path.replace(paramWithBraces, ":" + index);
+}
+
 const buildPathRegex = (
   hostTemplate: string,
   basePathPrefix: string,
@@ -76,8 +105,8 @@ const buildPathRegex = (
       path = path.replace("{" + v + "}", "(.*)");
       hasMultiPathParam = true;
     } else {
-      hostTemplate = hostTemplate.replace("{" + v + "}", ":" + i);
-      path = path.replace("{" + v + "}", ":" + i);
+      hostTemplate = replaceParam(hostTemplate, v, i);
+      path = replaceParam(path, v, i);
     }
   });
 
