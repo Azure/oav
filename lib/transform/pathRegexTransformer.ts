@@ -1,8 +1,8 @@
-import { Key, pathToRegexp } from "path-to-regexp";
 import { parse as urlParse } from "url";
-import { OperationMatch } from "../liveValidation/operationSearcher";
+import { Key, pathToRegexp } from "path-to-regexp";
 import { lowerHttpMethods, Parameter, PathParameter, Schema } from "../swagger/swaggerTypes";
 import { xmsParameterizedHost } from "../util/constants";
+import { OperationMatch } from "../liveValidation/operationSearcher";
 import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer";
 import { SpecTransformer, TransformerType } from "./transformer";
 import { traverseSwagger } from "./traverseSwagger";
