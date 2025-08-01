@@ -250,6 +250,11 @@ describe("Semantic validation", () => {
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === true);
     });
+    it("should pass when operation has multiple formData parameters and consumes has application/x-www-form-urlencoded", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/validateOperation/MULTIPLE_BODY_PARAMETERS/applicationWwwFormUrlencoded.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === true);
+    });
     // INVALID_PARAMETER_COMBINATION
     it("should fail when operation has a body parameter and a formData parameter", async () => {
       const specPath = `${testPath}/semanticValidation/specification/validateOperation/INVALID_PARAMETER_COMBINATION.json`;
