@@ -524,7 +524,10 @@ export class SwaggerSemanticValidator {
                   meta.code === "MULTIPLE_BODY_PARAMETERS" &&
                   param.in === "formData" &&
                   consumes !== undefined &&
-                  consumes.includes("multipart/form-data")
+                  // Both content types must be supported
+                  // https://swagger.io/docs/specification/v2_0/describing-parameters/#form-parameters
+                  (consumes.includes("multipart/form-data") ||
+                    consumes.includes("application/x-www-form-urlencoded"))
                 )
               ) {
                 this.addErrorsFromErrorCode(errors, url, meta, operation);
