@@ -12,7 +12,7 @@
           "multipart/mixed"
         ],
         "produces": [
-          "application/json"
+          "multipart/mixed"
         ],
         "parameters": [
           {
