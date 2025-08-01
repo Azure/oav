@@ -1,0 +1,37 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Title",
+    "version": "1.0"
+  },
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "test",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "first_name",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "last_name",
+            "in": "formData",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Example response"
+          }
+        }
+      }
+    }
+  }
+}
