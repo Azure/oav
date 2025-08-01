@@ -1,0 +1,39 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Title",
+    "version": "1.0"
+  },
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "test",
+        "consumes": [
+          "multipart/mixed"
+        ],
+        "produces": [
+          "multipart/mixed"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "formData",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Example response"
+          }
+        }
+      }
+    }
+  }
+}
