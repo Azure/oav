@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 08/01/2025 3.6.4
+
+- MULTIPLE_BODY_PARAMETERS allows additional content types "multipart/mixed" and "application/x-www-form-urlencoded".
+
 ## 07/17/2025 3.6.3
 
 - Follow up on 3.6.1 dealing with edge-cases broken by security fixes in `path-to-regexp@6.3.0`. `oav` now properly handles identifier characters immediately following a parameter - EG `{param1}x{param2}`.
