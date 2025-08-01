@@ -524,9 +524,12 @@ export class SwaggerSemanticValidator {
                   meta.code === "MULTIPLE_BODY_PARAMETERS" &&
                   param.in === "formData" &&
                   consumes !== undefined &&
-                  // Both content types must be supported
+                  // Must support both "multipart/form-data" and "application/x-www-form-urlencoded" per spec:
                   // https://swagger.io/docs/specification/v2_0/describing-parameters/#form-parameters
+                  //
+                  // Must support "multipart/mixed" for storage/data-plane/Microsoft.BlobStorage
                   (consumes.includes("multipart/form-data") ||
+                    consumes.includes("multipart/mixed") ||
                     consumes.includes("application/x-www-form-urlencoded"))
                 )
               ) {
