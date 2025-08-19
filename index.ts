@@ -46,7 +46,6 @@ export {
   ValidationRequest,
 } from "./lib/liveValidation/operationValidator";
 
-export { ApiScenarioLoader } from "./lib/apiScenario/apiScenarioLoader";
 export {
   ScenarioDefinition,
   Scenario,
@@ -54,8 +53,6 @@ export {
   StepArmTemplate,
   StepRestCall,
 } from "./lib/apiScenario/apiScenarioTypes";
-export { VariableEnv } from "./lib/apiScenario/variableEnv";
-export { ApiScenarioRunner, ApiScenarioRunnerClient } from "./lib/apiScenario/apiScenarioRunner";
 
 export { FileLoaderOption, FileLoader } from "./lib/swagger/fileLoader";
 
