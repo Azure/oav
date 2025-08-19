@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 08/19/2025 4.0.0
+
+- Remove `ApiScenario` support. This is no longer supported, and is a drag via dependency chain.
+  - As a result of removal of this scenario, was able to entirely eliminate two dependencies: `postman-collection` and `newman`.
+
 ## 08/01/2025 3.6.4
 
 - MULTIPLE_BODY_PARAMETERS allows additional content types "multipart/mixed" and "application/x-www-form-urlencoded".
