@@ -27,36 +27,26 @@ npm install -g oav@latest
 $ oav -h    Commands:
   analyze-dependency                        analyze swagger resource type
                                             dependency.
-  analyze-report <newman-report-path>       analyze report. default format:
-                                            newman json report
   example-quality <spec-path>               Performs example quality validation
                                             of x-ms-examples and examples
                                             present in the spec.
   extract-xmsexamples <spec-path>           Extracts the x-ms-examples for a
   <recordings>                              given swagger from the .NET session
                                             recordings and saves them in a file.
-  generate-collection                       Generate postman collection file
-                                            from API scenario.
   generate-examples [spec-path]             Generate swagger examples from real
                                             payload records.
-  generate-report [raw-report-path]         Generate report from postman report.
-  generate-api-scenario                     Generate swagger examples from real
-                                            payload records.
-  generate-static-api-scenario              Generate API-scenario from swagger.
-  run-api-scenario <api-scenario>           newman runner run API scenario
-                                            file.                 [aliases: run]
   validate-example <spec-path>              Performs validation of x-ms-examples
                                             and examples present in the spec.
   validate-spec <spec-path>                 Performs semantic validation of the
                                             spec.
   validate-traffic <traffic-path>           Validate traffic payload against the
   <spec-path>                               spec.
-  traffic-convert <input-dir>               Showcase what it would look like to 
-  <output-dir>                              transform a directory full of 
-                                            [azure-sdk/test-proxy](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy) 
-                                            recordings files into traffic payloads 
+  traffic-convert <input-dir>               Showcase what it would look like to
+  <output-dir>                              transform a directory full of
+                                            [azure-sdk/test-proxy](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy)
+                                            recordings files into traffic payloads
                                             consumable by traffic validation command in oav
-  
+
 
 Options:
   --version          Show version number                               [boolean]
@@ -77,8 +67,8 @@ Options:
   Semantic validation enforces correctness on the swagger specific elements. Such as paths and operations. Ensure the element definition meet the [OpenApi 2.0 specification](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md).
 - Model validation
   Model validation enforces correctness between example and swagger. It checks whether definitions for request parameters and responses, match an expected input/output payload of the service.
-  
-     Examples of issues detected: 
+
+     Examples of issues detected:
      - Required properties not sent in requests or responses
      - Defined types not matching the value provided in the payload
      - Constraints on properties not met
