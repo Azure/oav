@@ -97,6 +97,7 @@ extends:
 
               templateContext:
                 type: releaseJob
+                isProduction: true
 
               strategy:
                 runOnce:
