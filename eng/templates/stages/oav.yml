@@ -98,15 +98,14 @@ extends:
               templateContext:
                 type: releaseJob
                 isProduction: true
+                inputs:
+                - input: pipelineArtifact
+                  artifactName: oav
 
               strategy:
                 runOnce:
                   deploy:
                     steps:
-                    - download: current
-                      artifact: oav
-                      timeoutInMinutes: 5
-
                     - pwsh: |
                         Write-Host "Will deploy with tag of $(Tag)"
                         Get-ChildItem "$(Pipeline.Workspace)/oav" -Recurse -Force `
