@@ -19,7 +19,7 @@
     "@azure/openapi-markdown": "^0.9.4",
     "@ts-common/commonmark-to-markdown": "^2.0.2",
     "ajv": "^6.12.6",
-    "commonmark": "^0.29.3",
+    "commonmark": "^0.31.2",
     "deepdash": "^5.3.2",
     "difflib": "^0.2.4",
     "fast-json-stable-stringify": "^2.1.0",
