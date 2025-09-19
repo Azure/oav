@@ -2,7 +2,7 @@
 
 ## 09/19/2025 4.0.1
 
-- Bump dependency `uuid` from `^3.4.0` to `^11.1.0`
+- Bump dependency `uuid` from `^3.4.0` to `^8.3.2`
 
 ## 08/19/2025 4.0.0
 
