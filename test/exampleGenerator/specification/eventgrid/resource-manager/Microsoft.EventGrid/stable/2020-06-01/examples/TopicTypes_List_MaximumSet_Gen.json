@@ -14,11 +14,11 @@
               "provider": "Microsoft.Eventhub",
               "provisioningState": "Succeeded",
               "resourceRegionType": "RegionalResource",
-              "description": "xlxisseidfltqyqivbiqz",
+              "description": "fjqirhucprtjntnmi",
               "supportedLocations": [
-                "alvnnbzdvcecgbyyuonfwmjuymcxb"
+                "wpklbilklhfcuppuswmryfckdygw"
               ],
-              "sourceResourceFormat": "pxq"
+              "sourceResourceFormat": "xkwseqzhsdu"
             },
             "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Eventhub.Namespaces",
             "name": "Microsoft.Eventhub.Namespaces",
@@ -30,11 +30,11 @@
               "provider": "Microsoft.Storage",
               "provisioningState": "Succeeded",
               "resourceRegionType": "RegionalResource",
-              "description": "scvlyeut",
+              "description": "cyravwitoyaamn",
               "supportedLocations": [
-                "inrdaxdrnkp"
+                "nnvzxhjcaiqwfmvurwyc"
               ],
-              "sourceResourceFormat": "sooppifnmqzren"
+              "sourceResourceFormat": "cxjomqvgrj"
             },
             "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Storage.StorageAccounts",
             "name": "Microsoft.Storage.StorageAccounts",

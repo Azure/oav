@@ -3,8 +3,8 @@
   "operationId": "DatabaseSecurityAlertPolicies_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgDatabaseSecurityAlertPolicies",
-    "serverName": "fmkelemvnglaojiv",
-    "databaseName": "bzggmdoibcfw",
+    "serverName": "z",
+    "databaseName": "uvif",
     "securityAlertPolicyName": "default",
     "parameters": {
       "properties": {
