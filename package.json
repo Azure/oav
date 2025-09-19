@@ -41,7 +41,7 @@
     "path-to-regexp": "^6.2.1",
     "reflect-metadata": "^0.1.13",
     "toposort": "^2.0.2",
-    "uuid": "^3.4.0",
+    "uuid": "^11.1.0",
     "winston": "^3.3.4",
     "yargs": "^15.4.1",
     "z-schema": "^5.0.3"
@@ -68,7 +68,6 @@
     "@types/node": "^10.12.18",
     "@types/swagger-parser": "^4.0.3",
     "@types/toposort": "^2.0.3",
-    "@types/uuid": "^3.4.4",
     "@types/yargs": "^11.1.2",
     "@typescript-eslint/eslint-plugin": "~5.27.1",
     "@typescript-eslint/parser": "~5.27.1",
