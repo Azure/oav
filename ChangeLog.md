@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 09/19/2025 4.0.1
+
+- Bump dependency `glob` from `^7.2.3` to `^9.3.5`
+
 ## 08/19/2025 4.0.0
 
 - Remove `ApiScenario` support. This is no longer supported, and is a drag via dependency chain.
