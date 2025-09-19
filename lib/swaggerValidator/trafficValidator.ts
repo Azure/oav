@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
 import { resolve as pathResolve } from "path";
-import { glob } from "glob";
 import { FilePosition } from "@azure-tools/openapi-tools-common";
 import {
   LiveValidationIssue,
@@ -18,6 +17,8 @@ import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import { getFilePositionFromJsonPath } from "../util/jsonUtils";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
 import { traverseSwagger } from "../transform/traverseSwagger";
+
+const glob = require("glob");
 
 export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
