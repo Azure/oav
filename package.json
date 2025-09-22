@@ -41,7 +41,7 @@
     "path-to-regexp": "^6.2.1",
     "reflect-metadata": "^0.1.13",
     "toposort": "^2.0.2",
-    "uuid": "^8.3.2",
+    "uuid": "^13.0.0",
     "winston": "^3.3.4",
     "yargs": "^18.0.0",
     "z-schema": "^5.0.3"
