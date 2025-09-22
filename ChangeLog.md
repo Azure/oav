@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 09/19/2025 4.0.1
+
+- Bump dependency `uuid` from `^3.4.0` to `^8.3.2`
+- Bump dependency `yargs` from `^15.4.1` to `^18.0.0`
+
 ## 08/19/2025 4.0.0
 
 - Remove `ApiScenario` support. This is no longer supported, and is a drag via dependency chain.
