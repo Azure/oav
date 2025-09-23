@@ -5,7 +5,12 @@ updates:
     schedule:
       interval: "daily"
     ignore:
+      # dependencies
+
       # Pinned to the most popular versions
       - dependency-name: "openapi-markdown"
       - dependency-name: "json-schema-traverse"
       - dependency-name: "reflect-metadata"
+
+      # locked to ^15.4.1, since newer majors include breaking changes that may impact us
+      - dependency-name: "yargs"
