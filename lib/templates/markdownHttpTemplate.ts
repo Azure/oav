@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+import { randomUUID } from "crypto";
 import { keys, toArray } from "@azure-tools/openapi-tools-common";
-import * as uuid from "uuid";
 
 import { HttpTemplate, Request, Response, Responses } from "./httpTemplate";
 
@@ -104,7 +104,7 @@ ${this.getRequestBody()}
     if (!responseType) {
       responseType = "Response";
     }
-    const responseGuid = uuid.v4();
+    const responseGuid = randomUUID();
     const responseTemplate = `
 ## ${responseType}
 
