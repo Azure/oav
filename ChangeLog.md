@@ -4,6 +4,7 @@
 
 - Bump dependency `uuid` from `^3.4.0` to `^8.3.2`
 - Remove unused dependencies
+  - moment
   - z-schema
 
 ## 08/19/2025 4.0.0
