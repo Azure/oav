@@ -8,7 +8,7 @@ updates:
       # dependencies
 
       # pinned to the most popular versions
-      - dependency-name: "openapi-markdown"
+      - dependency-name: "@azure/openapi-markdown"
       - dependency-name: "json-schema-traverse"
       - dependency-name: "reflect-metadata"
 
