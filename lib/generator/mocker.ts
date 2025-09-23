@@ -1,4 +1,4 @@
-import * as uuid from "uuid";
+import { randomUUID } from "crypto";
 import { log } from "../util/logging";
 
 function randomString(length: number): string {
@@ -32,7 +32,7 @@ export default class Mocker {
     const pwdParams = ["password", "pwd", "adminPassword"];
 
     if (paramSpec.name === "subscriptionId") {
-      return uuid.v4().toUpperCase();
+      return randomUUID().toUpperCase();
     }
 
     if (pwdParams.includes(paramName)) {
