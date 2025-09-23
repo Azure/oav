@@ -20,13 +20,13 @@
               "creationDate": "2017-08-04T15:00:17.73Z",
               "defaultSecondaryLocation": "North Europe",
               "status": "Online",
-              "earliestRestorePoint": "2025-09-23T20:27:52.502Z",
+              "earliestRestorePoint": "2024-01-29T21:42:02.023Z",
               "catalogCollation": "DATABASE_DEFAULT",
-              "failoverGroupId": "bifbkptzkhsn"
+              "failoverGroupId": "uwsjia"
             },
             "type": "Microsoft.Sql/managedInstances/databases",
             "tags": {
-              "key2621": "vzbfyfyvyrfwkqqyv"
+              "key2964": "zrpudzyvendxw"
             }
           },
           {
@@ -38,17 +38,17 @@
               "creationDate": "2017-08-04T15:00:17.73Z",
               "defaultSecondaryLocation": "North Europe",
               "status": "Online",
-              "earliestRestorePoint": "2025-09-23T20:27:52.503Z",
+              "earliestRestorePoint": "2024-01-29T21:42:02.023Z",
               "catalogCollation": "DATABASE_DEFAULT",
-              "failoverGroupId": "vrssxjjavpl"
+              "failoverGroupId": "lywhvtijoerbunyryeffdfst"
             },
             "type": "Microsoft.Sql/managedInstances/databases",
             "tags": {
-              "key3543": "twuanaaqzuier"
+              "key6479": "gecxcxrfcugzbmeqzvfj"
             }
           }
         ],
-        "nextLink": "gsjxtiswxdiplisxamepboofg"
+        "nextLink": "exgdf"
       }
     }
   }
