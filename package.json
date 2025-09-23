@@ -43,8 +43,7 @@
     "toposort": "^2.0.2",
     "uuid": "^8.3.2",
     "winston": "^3.3.4",
-    "yargs": "^15.4.1",
-    "z-schema": "^5.0.3"
+    "yargs": "^15.4.1"
   },
   "overrides": {
     "braces": "3.0.3"
