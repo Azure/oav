@@ -3,6 +3,7 @@
 ## 09/19/2025 4.0.1
 
 - Bump dependency `uuid` from `^3.4.0` to `^8.3.2`
+- Bump dependency `winston` from `^3.3.4` to `3.16.0`
 - Replace dependency `mkdirp` with built-in `mkdir()`
 - Remove unused dependencies
   - @azure/core-http
