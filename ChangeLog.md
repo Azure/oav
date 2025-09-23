@@ -4,6 +4,7 @@
 
 - Bump dependency `uuid` from `^3.4.0` to `^8.3.2`
 - Bump dependency `yargs` from `^15.4.1` to `^18.0.0`
+- Remove unused dependency `moment`
 
 ## 08/19/2025 4.0.0
 
@@ -118,18 +119,20 @@
     - `qs@6.5.3 -> 6.8.3`
 
 # 04/12/2023 3.2.8
+
 - Dependency updates
   - "@azure/core-http `^2.2.7` -> `^3.0.1`
   - Upgrading core-http allows us to bump the dependency on `xmljs2` to one without a CVE
 
 ## 02/24/2023 3.2.7
+
 - Fix roundtrip validation model with circular reference
 
 ## 02/23/2023 3.2.6
 
 - Improved the API scenario long running operation pooling mechanism.
-    - support for checking final-via-state
-    - update the mechanism of gettig the lro polling url.
+  - support for checking final-via-state
+  - update the mechanism of gettig the lro polling url.
 - Support generating the ARM rules for api scenario.
 
 ## 02/19/2023 3.2.6
