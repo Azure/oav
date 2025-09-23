@@ -2,6 +2,7 @@
 
 ## 09/19/2025 4.0.1
 
+- Bump dependency `@apidevtools/swagger-parser` from `10.0.3` to `^12.0.0`
 - Bump dependency `uuid` from `^3.4.0` to `^8.3.2`
 - Replace dependency `mkdirp` with built-in `mkdir()`
 - Remove unused dependencies
