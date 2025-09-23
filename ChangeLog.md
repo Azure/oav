@@ -7,6 +7,7 @@
   - @azure/core-http
   - @azure/core-util
   - @azure/logging
+  - human-duration
   - moment
   - z-schema
 
