@@ -7,11 +7,19 @@
   - @azure/core-http
   - @azure/core-util
   - @azure/logging
+  - commonmark-to-markdown
   - human-duration
   - json-merge-patch
   - junit-report-builder
   - moment
   - z-schema
+- Pin pre-release dependencies
+  - `@azure/openapi-markdown` to `0.9.4`
+  - `commonmark` to `0.31.2`
+  - `difflib` to `0.2.4`
+  - `json-pointer` to `0.6.2`
+  - `json-schema-traverse` to `0.4.1`
+  - `reflect-metadata` to `0.1.14`
 
 ## 08/19/2025 4.0.0
 
