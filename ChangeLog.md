@@ -8,6 +8,8 @@
   - @azure/core-util
   - @azure/logging
   - commonmark-to-markdown
+  - human-duration
+  - json-merge-patch
   - moment
   - z-schema
 
