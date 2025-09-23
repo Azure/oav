@@ -4,6 +4,8 @@
 
 - Bump dependency `uuid` from `^3.4.0` to `^8.3.2`
 - Bump dependency `yargs` from `^15.4.1` to `^18.0.0`
+- Remove unused dependencies
+  - z-schema
 
 ## 08/19/2025 4.0.0
 
