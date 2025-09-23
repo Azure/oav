@@ -4,3 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      # Pinned to the most popular versions
+      - dependency-name: "openapi-markdown"
+      - dependency-name: "json-schema-traverse"
+      - dependency-name: "reflect-metadata"
