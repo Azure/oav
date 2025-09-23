@@ -28,7 +28,7 @@
     "lodash": "^4.17.21",
     "md5-file": "^5.0.0",
     "mustache": "^4.2.0",
-    "path-to-regexp": "^6.2.1",
+    "path-to-regexp": "^8.3.0",
     "reflect-metadata": "0.1.14",
     "toposort": "^2.0.2",
     "winston": "3.16.0",
