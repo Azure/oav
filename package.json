@@ -33,7 +33,7 @@
     "reflect-metadata": "0.1.14",
     "toposort": "^2.0.2",
     "uuid": "^8.3.2",
-    "winston": "^3.3.4",
+    "winston": "3.16.0",
     "yargs": "^15.4.1"
   },
   "overrides": {
