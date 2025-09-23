@@ -7,8 +7,10 @@
   - @azure/core-http
   - @azure/core-util
   - @azure/logging
+  - commonmark-to-markdown
   - human-duration
   - json-merge-patch
+  - junit-report-builder
   - moment
   - z-schema
 - Pin pre-release dependencies
