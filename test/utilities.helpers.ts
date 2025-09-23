@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
+import * as fs from "fs";
 import * as path from "path";
-import * as fs from "fs-extra";
 
 interface PRData {
   number: number;
@@ -23,7 +23,7 @@ export function clonePR(url: string, prNumber: number): string {
     );
 
     if (fs.existsSync(finalRepoPath)) {
-      fs.removeSync(finalRepoPath);
+      fs.rmSync(finalRepoPath, { force: true, recursive: true });
     }
     fs.mkdirSync(finalRepoPath, { recursive: true });
 
