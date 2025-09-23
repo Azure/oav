@@ -4,6 +4,9 @@
 
 - Bump dependency `uuid` from `^3.4.0` to `^8.3.2`
 - Remove unused dependencies
+  - @azure/core-http
+  - @azure/core-util
+  - @azure/logging
   - moment
   - z-schema
 
