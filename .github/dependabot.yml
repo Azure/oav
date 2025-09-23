@@ -4,3 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      # dependencies
+
+      # locked to ^15.4.1, since newer majors include breaking changes that may impact us
+      - dependency-name: "yargs"
