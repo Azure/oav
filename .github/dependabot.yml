@@ -4,3 +4,13 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      # dependencies
+
+      # pinned to the most popular versions
+      - dependency-name: "@azure/openapi-markdown"
+      - dependency-name: "json-schema-traverse"
+      - dependency-name: "reflect-metadata"
+
+      # locked to ^15.4.1, since newer majors include breaking changes that may impact us
+      - dependency-name: "yargs"
