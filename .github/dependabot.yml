@@ -7,7 +7,7 @@ updates:
     ignore:
       # dependencies
 
-      # Pinned to the most popular versions
+      # pinned to the most popular versions
       - dependency-name: "openapi-markdown"
       - dependency-name: "json-schema-traverse"
       - dependency-name: "reflect-metadata"
