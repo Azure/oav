@@ -8,6 +8,7 @@
   - @azure/core-http
   - @azure/core-util
   - @azure/logging
+  - z-schema
 
 ## 08/19/2025 4.0.0
 
