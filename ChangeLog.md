@@ -4,6 +4,7 @@
 
 - Bump dependency `@apidevtools/swagger-parser` from `10.0.3` to `^12.0.0`
 - Bump dependency `winston` from `^3.3.4` to `3.16.0`
+- Replace dependency `fs-extra` with built-in `fs`
 - Replace dependency `mkdirp` with built-in `fs.mkdir()`
 - Replace dependency `uuid` with built-in `crypto.randomUUID()`
 - Remove unused dependencies
