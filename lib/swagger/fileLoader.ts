@@ -8,7 +8,7 @@ import {
 } from "@azure-tools/openapi-tools-common";
 import * as fs from "fs-extra";
 import { inject, injectable } from "inversify";
-import mkdirp from "mkdirp";
+import { mkdirp } from "mkdirp";
 import { TYPES } from "../inversifyUtils";
 import { checkAndResolveGithubUrl } from "../util/utils";
 import { Loader, setDefaultOpts } from "./loader";
