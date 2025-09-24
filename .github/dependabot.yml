@@ -29,9 +29,10 @@ updates:
       # locked to 4.14.182, for compat with our version of TypeScript
       - dependency-name: "@types/lodash"
 
-      # locked to "~5.27.1", for compat with other deps
+      # locked for compat with each other
       - dependency-name: "@typescript-eslint/eslint-plugin"
       - dependency-name: "@typescript-eslint/parser"
+      - dependency-name: "eslint"
 
       # locked to "^26" for compat with each other
       - dependency-name: "jest"
