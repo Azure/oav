@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { resolve as pathResolve } from "path";
-import { glob } from "glob";
+import * as glob from "glob";
 import { FilePosition } from "@azure-tools/openapi-tools-common";
 import {
   LiveValidationIssue,
