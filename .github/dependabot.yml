@@ -12,6 +12,9 @@ updates:
       - dependency-name: "json-schema-traverse"
       - dependency-name: "reflect-metadata"
 
+      # locked to "^6.3.0", since newer majors remove features we depend on
+      - dependency-name: "path-to-regexp"
+
       # locked to 3.16.0, since newer minors include an undocumented breaking change in typings that impacts us
       # https://github.com/winstonjs/winston/issues/2528
       - dependency-name: "winston"
