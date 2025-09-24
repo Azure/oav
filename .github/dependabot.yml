@@ -11,6 +11,9 @@ updates:
       - dependency-name: "@azure/openapi-markdown"
       - dependency-name: "json-schema-traverse"
 
+      # locked to "^5.1.1", since newer majors include breaking changes that impact us
+      - dependency-name: "inversify"
+
       # locked to "^6.3.0", since newer majors remove features we depend on
       - dependency-name: "path-to-regexp"
 
