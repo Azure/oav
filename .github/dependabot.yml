@@ -33,6 +33,8 @@ updates:
       - dependency-name: "@typescript-eslint/eslint-plugin"
       - dependency-name: "@typescript-eslint/parser"
       - dependency-name: "eslint"
+      - dependency-name: "eslint-config-prettier"
+      - dependency-name: "eslint-plugin-prettier"
 
       # locked to "^26" for compat with each other
       - dependency-name: "@types/jest"
