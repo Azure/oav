@@ -10,7 +10,7 @@ import { OperationSearcher } from "../lib/liveValidation/operationSearcher";
 import * as Constants from "../lib/util/constants";
 
 // eslint-disable-next-line no-var
-var glob = require("glob").glob as any;
+var glob = require("glob").glob;
 
 const numberOfSpecs = 20;
 jest.setTimeout(999999);

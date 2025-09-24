@@ -41,7 +41,7 @@ import {
   ValidationRequest,
 } from "./operationValidator";
 
-const glob = require("glob") as any;
+const glob = require("glob");
 
 export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   swaggerPaths: string[];
