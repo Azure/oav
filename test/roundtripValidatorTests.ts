@@ -4,7 +4,7 @@ import { DefaultConfig } from "../lib/util/constants";
 import { RequestResponsePair, LiveValidator } from "../lib/liveValidation/liveValidator";
 
 // eslint-disable-next-line no-var
-var glob = require("glob").glob;
+var glob = require("glob") as any;
 
 jest.setTimeout(999999);
 
@@ -14,7 +14,7 @@ describe("Live Validator", () => {
       console.log("OperationLoader should be completely initialized");
       const swaggerPattern =
         "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/runCommands.json";
-      const glob = require("glob");
+      const glob = require("glob") as any;
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
@@ -37,7 +37,7 @@ describe("Live Validator", () => {
     it("OperationLoader should be completely initialized", async () => {
       console.log("OperationLoader should be completely initialized");
       const swaggerPattern = "specification/**/*.json";
-      const glob = require("glob");
+      const glob = require("glob") as any;
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
@@ -59,7 +59,7 @@ describe("Live Validator", () => {
       console.log("readonly properties should not cause error");
       const swaggerPattern =
         "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
-      const glob = require("glob");
+      const glob = require("glob") as any;
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
@@ -89,7 +89,7 @@ describe("Live Validator", () => {
       console.log("Round trip validation fail");
       const swaggerPattern =
         "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
-      const glob = require("glob");
+      const glob = require("glob") as any;
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
@@ -132,7 +132,7 @@ describe("Live Validator", () => {
       console.log("Round trip validation fail");
       const swaggerPattern =
         "specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/*.json";
-      const glob = require("glob");
+      const glob = require("glob") as any;
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
@@ -170,7 +170,7 @@ describe("Live Validator", () => {
       console.log("Round trip validation fail");
       const swaggerPattern =
         "specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/*.json";
-      const glob = require("glob");
+      const glob = require("glob") as any;
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
