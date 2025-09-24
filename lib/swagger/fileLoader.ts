@@ -1,4 +1,5 @@
 import * as path from "path";
+import { appendFile, mkdir } from "fs/promises";
 import {
   asyncWriteFile,
   readFile as vfsReadFile,
@@ -6,9 +7,7 @@ import {
   pathResolve,
   urlParse,
 } from "@azure-tools/openapi-tools-common";
-import * as fs from "fs-extra";
 import { inject, injectable } from "inversify";
-import mkdirp from "mkdirp";
 import { TYPES } from "../inversifyUtils";
 import { checkAndResolveGithubUrl } from "../util/utils";
 import { Loader, setDefaultOpts } from "./loader";
@@ -93,13 +92,13 @@ export class FileLoader implements Loader<string> {
 
   public async writeFile(filePath: string, content: string) {
     filePath = this.resolvePath(filePath);
-    await mkdirp(path.dirname(filePath));
+    await mkdir(path.dirname(filePath), { recursive: true });
     return asyncWriteFile(filePath, content);
   }
 
   public async appendFile(filePath: string, content: string) {
     filePath = this.resolvePath(filePath);
-    await fs.appendFile(filePath, content);
+    await appendFile(filePath, content);
   }
 
   public preloadExtraFile(filePath: string, content: string) {

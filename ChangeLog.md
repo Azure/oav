@@ -2,7 +2,29 @@
 
 ## 09/19/2025 4.0.1
 
+- Bump dependency `@apidevtools/swagger-parser` from `10.0.3` to `^12.0.0`
 - Bump dependency `glob` from `^7.2.3` to `^9.3.5`
+- Bump dependency `winston` from `^3.3.4` to `3.16.0`
+- Replace dependency `fs-extra` with built-in `fs`
+- Replace dependency `mkdirp` with built-in `fs.mkdir()`
+- Replace dependency `uuid` with built-in `crypto.randomUUID()`
+- Remove unused dependencies
+  - @azure/core-http
+  - @azure/core-util
+  - @azure/logging
+  - commonmark-to-markdown
+  - human-duration
+  - json-merge-patch
+  - junit-report-builder
+  - moment
+  - z-schema
+- Pin pre-release dependencies
+  - `@azure/openapi-markdown` to `0.9.4`
+  - `commonmark` to `0.31.2`
+  - `difflib` to `0.2.4`
+  - `json-pointer` to `0.6.2`
+  - `json-schema-traverse` to `0.4.1`
+  - `reflect-metadata` to `0.1.14`
 
 ## 08/19/2025 4.0.0
 
@@ -117,18 +139,20 @@
     - `qs@6.5.3 -> 6.8.3`
 
 # 04/12/2023 3.2.8
+
 - Dependency updates
   - "@azure/core-http `^2.2.7` -> `^3.0.1`
   - Upgrading core-http allows us to bump the dependency on `xmljs2` to one without a CVE
 
 ## 02/24/2023 3.2.7
+
 - Fix roundtrip validation model with circular reference
 
 ## 02/23/2023 3.2.6
 
 - Improved the API scenario long running operation pooling mechanism.
-    - support for checking final-via-state
-    - update the mechanism of gettig the lro polling url.
+  - support for checking final-via-state
+  - update the mechanism of gettig the lro polling url.
 - Support generating the ARM rules for api scenario.
 
 ## 02/19/2023 3.2.6

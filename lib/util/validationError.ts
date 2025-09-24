@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-import { FilePosition, flatMap, fold, JsonRef, StringMap } from "@azure-tools/openapi-tools-common";
+import { FilePosition, flatMap, fold, StringMap } from "@azure-tools/openapi-tools-common";
 import { JSONPath } from "jsonpath-plus";
 import _ from "lodash";
-import { jsonSymbol, schemaSymbol } from "z-schema";
 import { Severity } from "./severity";
 
 /**
@@ -178,9 +177,6 @@ export interface NodeError<T extends NodeError<T>> {
   jsonUrl?: string;
 
   directives?: StringMap<unknown>;
-
-  readonly [jsonSymbol]?: JsonRef;
-  readonly [schemaSymbol]?: any;
 }
 
 export interface ValidationResult<T extends NodeError<T>> {

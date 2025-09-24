@@ -1,0 +1,35 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    ignore:
+      # dependencies
+
+      # pinned to the most popular versions
+      - dependency-name: "@azure/openapi-markdown"
+      - dependency-name: "json-schema-traverse"
+      - dependency-name: "reflect-metadata"
+
+      # locked to 3.16.0, since newer minors include an undocumented breaking change in typings that impacts us
+      # https://github.com/winstonjs/winston/issues/2528
+      - dependency-name: "winston"
+
+      # locked to ^15.4.1, since newer majors include breaking changes that may impact us
+      - dependency-name: "yargs"
+
+      # devDependencies
+
+      # locked to 4.14.182, for compat with our version of TypeScript
+      - dependency-name: "@types/lodash"
+
+      # locked to "~5.27.1", for compat with other deps
+      - dependency-name: "@typescript-eslint/eslint-plugin"
+      - dependency-name: "@typescript-eslint/parser"
+
+      # locked to 2.8.8, for compat with our version of TypeScript
+      - dependency-name: "prettier"
+
+      # locked to "^3.9.10", for compat with our TS code
+      - dependency-name: "typescript"
