@@ -23,7 +23,7 @@
   - `difflib` to `0.2.4`
   - `json-pointer` to `0.6.2`
   - `json-schema-traverse` to `0.4.1`
-  - `reflect-metadata` to `0.1.14`
+  - `reflect-metadata` to `0.2.2`
 
 ## 08/19/2025 4.0.0
 
