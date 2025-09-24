@@ -35,6 +35,7 @@ updates:
       - dependency-name: "eslint"
 
       # locked to "^26" for compat with each other
+      - dependency-name: "@types/jest"
       - dependency-name: "jest"
       - dependency-name: "ts-jest"
 
