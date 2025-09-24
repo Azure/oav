@@ -2,9 +2,9 @@ import assert from "assert";
 import * as fs from "fs";
 import * as path from "path";
 import ExampleGenerator from "../lib/generator/exampleGenerator";
-import { log } from "../lib/util/logging";
 import { ModelValidationError } from "../lib/util/modelValidationError";
 import { generateExamples } from "../lib/validate";
+import { log } from "../lib/util/logging";
 
 const payloadDir = `test/exampleGenerator/payloads`;
 const specRepoDir = `azure-rest-api-specs`;
