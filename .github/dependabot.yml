@@ -10,7 +10,15 @@ updates:
       # pinned to the most popular versions
       - dependency-name: "@azure/openapi-markdown"
       - dependency-name: "json-schema-traverse"
-      - dependency-name: "reflect-metadata"
+
+      # locked to "^6.12.6", for compat with our version of TypeScript
+      - dependency-name: "ajv"
+
+      # locked to "^5.1.1", since newer majors include breaking changes that impact us
+      - dependency-name: "inversify"
+
+      # locked to "^6.3.0", since newer majors remove features we depend on
+      - dependency-name: "path-to-regexp"
 
       # locked to 3.16.0, since newer minors include an undocumented breaking change in typings that impacts us
       # https://github.com/winstonjs/winston/issues/2528
@@ -24,9 +32,20 @@ updates:
       # locked to 4.14.182, for compat with our version of TypeScript
       - dependency-name: "@types/lodash"
 
-      # locked to "~5.27.1", for compat with other deps
+      # locked to "^15.6.1", for compat with our version of TypeScript
+      - dependency-name: "@types/node"
+
+      # locked for compat with each other
       - dependency-name: "@typescript-eslint/eslint-plugin"
       - dependency-name: "@typescript-eslint/parser"
+      - dependency-name: "eslint"
+      - dependency-name: "eslint-config-prettier"
+      - dependency-name: "eslint-plugin-prettier"
+
+      # locked to "^26" for compat with each other
+      - dependency-name: "@types/jest"
+      - dependency-name: "jest"
+      - dependency-name: "ts-jest"
 
       # locked to 2.8.8, for compat with our version of TypeScript
       - dependency-name: "prettier"
