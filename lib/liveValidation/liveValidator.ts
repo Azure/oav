@@ -712,12 +712,14 @@ export class LiveValidator {
         ignore: this.options.excludedSwaggerPathsPattern,
         nodir: true,
       });
+      console.log(`[liveValidator] jsonsPattern:${jsonsPattern} matchedPaths:${matchedPaths}`);
     } else {
       for (const pattern of jsonsPattern) {
         const res: string[] = glob.sync(pattern, {
           ignore: this.options.excludedSwaggerPathsPattern,
           nodir: true,
         });
+        console.log(`[liveValidator] pattern:${pattern} res:${res}`);
         for (const path of res) {
           if (!matchedPaths.includes(path)) {
             matchedPaths.push(path);

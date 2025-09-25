@@ -111,6 +111,7 @@ export class TrafficValidator {
       const matchedPaths = glob.sync(searchPattern, {
         nodir: true,
       });
+      console.log(`[trafficValidator] searchPattern:${searchPattern} matchedPaths:${matchedPaths}`);
       for (const filePath of matchedPaths) {
         this.trafficFiles.push(filePath);
       }
