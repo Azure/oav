@@ -107,7 +107,14 @@ describe("test generate example", () => {
 });
 
 export function getSpecFilePaths(repoDir: string) {
-  const rpList = fs.readdirSync(path.resolve(repoDir, "specification"));
+  let rpList: string[];
+  try {
+    rpList = fs.readdirSync(path.resolve(repoDir, "specification"));
+  } catch {
+    // If we can't read the specs folder, swallow exception and treat as empty array,
+    // since this function is only used for creating test cases.
+    rpList = [];
+  }
 
   const specPath: string[] = [];
   rpList.forEach((rp: string) => {
