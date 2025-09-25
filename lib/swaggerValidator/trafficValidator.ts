@@ -112,7 +112,7 @@ export class TrafficValidator {
         .sync(searchPattern, {
           nodir: true,
         })
-        // Sort alphabetically for compat with glob <= 8.
+        // Sort alphabetically for compat with glob <= 8 (https://github.com/isaacs/node-glob/blob/v7.2.3/common.js#L20).
         // I'm not sure why oav requires these to be sorted, but without sorting, test "validate data-plane traffic"
         // fails with a small snapshot diff (jsonRef, column, and line are all undefined).
         .sort((a, b) => a.localeCompare(b, "en"));

@@ -713,7 +713,7 @@ export class LiveValidator {
           ignore: this.options.excludedSwaggerPathsPattern,
           nodir: true,
         })
-        // Sort alphabetically for compat with glob <= 8.
+        // Sort alphabetically for compat with glob <= 8 (https://github.com/isaacs/node-glob/blob/v7.2.3/common.js#L20).
         // Tests pass without sorting, but safer to keep sorting for consistent behavior.
         .sort((a, b) => a.localeCompare(b, "en"));
     } else {
@@ -723,7 +723,7 @@ export class LiveValidator {
             ignore: this.options.excludedSwaggerPathsPattern,
             nodir: true,
           })
-          // Sort alphabetically for compat with glob <= 8.
+          // Sort alphabetically for compat with glob <= 8 (https://github.com/isaacs/node-glob/blob/v7.2.3/common.js#L20).
           // Tests pass without sorting, but safer to keep sorting for consistent behavior.
           .sort((a, b) => a.localeCompare(b, "en"));
         for (const path of res) {
