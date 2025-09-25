@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { resolve as pathResolve } from "path";
-import { glob } from "glob";
+import * as glob from "glob";
 import { FilePosition } from "@azure-tools/openapi-tools-common";
 import {
   LiveValidationIssue,
@@ -108,9 +108,14 @@ export class TrafficValidator {
       this.trafficFiles.push(this.trafficPath);
     } else if (trafficPathStats.isDirectory()) {
       const searchPattern = path.join(this.trafficPath, "**/*.json");
-      const matchedPaths = glob.sync(searchPattern, {
-        nodir: true,
-      });
+      const matchedPaths = glob
+        .sync(searchPattern, {
+          nodir: true,
+        })
+        // Sort alphabetically for compat with glob <= 8 (https://github.com/isaacs/node-glob/blob/v7.2.3/common.js#L20).
+        // I'm not sure why oav requires these to be sorted, but without sorting, test "validate data-plane traffic"
+        // fails with a small snapshot diff (jsonRef, column, and line are all undefined).
+        .sort((a, b) => a.localeCompare(b, "en"));
       for (const filePath of matchedPaths) {
         this.trafficFiles.push(filePath);
       }

@@ -3,6 +3,7 @@
 ## 09/19/2025 4.0.1
 
 - Bump dependency `@apidevtools/swagger-parser` from `10.0.3` to `^12.0.0`
+- Bump dependency `glob` from `^7.2.3` to `^9.3.5`
 - Bump dependency `winston` from `^3.3.4` to `3.16.0`
 - Replace dependency `fs-extra` with built-in `fs`
 - Replace dependency `mkdirp` with built-in `fs.mkdir()`

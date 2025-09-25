@@ -8,6 +8,7 @@ import { resolve as pathResolve } from "path";
 import { ParsedUrlQuery } from "querystring";
 import * as util from "util";
 import { URL } from "url";
+import * as glob from "glob";
 import * as _ from "lodash";
 import { diffRequestResponse } from "../armValidator/roundTripValidator";
 import * as models from "../models";
@@ -40,8 +41,6 @@ import {
   validateSwaggerLiveResponse,
   ValidationRequest,
 } from "./operationValidator";
-
-const glob = require("glob");
 
 export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   swaggerPaths: string[];
@@ -709,16 +708,24 @@ export class LiveValidator {
     const startTime = Date.now();
     let matchedPaths: string[] = [];
     if (typeof jsonsPattern === "string") {
-      matchedPaths = glob.sync(jsonsPattern, {
-        ignore: this.options.excludedSwaggerPathsPattern,
-        nodir: true,
-      });
-    } else {
-      for (const pattern of jsonsPattern) {
-        const res: string[] = glob.sync(pattern, {
+      matchedPaths = glob
+        .sync(jsonsPattern, {
           ignore: this.options.excludedSwaggerPathsPattern,
           nodir: true,
-        });
+        })
+        // Sort alphabetically for compat with glob <= 8 (https://github.com/isaacs/node-glob/blob/v7.2.3/common.js#L20).
+        // Tests pass without sorting, but safer to keep sorting for consistent behavior.
+        .sort((a, b) => a.localeCompare(b, "en"));
+    } else {
+      for (const pattern of jsonsPattern) {
+        const res: string[] = glob
+          .sync(pattern, {
+            ignore: this.options.excludedSwaggerPathsPattern,
+            nodir: true,
+          })
+          // Sort alphabetically for compat with glob <= 8 (https://github.com/isaacs/node-glob/blob/v7.2.3/common.js#L20).
+          // Tests pass without sorting, but safer to keep sorting for consistent behavior.
+          .sort((a, b) => a.localeCompare(b, "en"));
         for (const path of res) {
           if (!matchedPaths.includes(path)) {
             matchedPaths.push(path);
