@@ -116,7 +116,6 @@ export class TrafficValidator {
         // I'm not sure why oav requires these to be sorted, but without sorting, test "validate data-plane traffic"
         // fails with a small snapshot diff (jsonRef, column, and line are all undefined).
         .sort((a, b) => a.localeCompare(b, "en"));
-      console.log(`[trafficValidator] searchPattern:${searchPattern} matchedPaths:${matchedPaths}`);
       for (const filePath of matchedPaths) {
         this.trafficFiles.push(filePath);
       }

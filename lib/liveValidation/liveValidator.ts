@@ -716,7 +716,6 @@ export class LiveValidator {
         // Sort alphabetically for compat with glob <= 8.
         // Tests pass without sorting, but safer to keep sorting for consistent behavior.
         .sort((a, b) => a.localeCompare(b, "en"));
-      console.log(`[liveValidator] jsonsPattern:${jsonsPattern} matchedPaths:${matchedPaths}`);
     } else {
       for (const pattern of jsonsPattern) {
         const res: string[] = glob
@@ -727,7 +726,6 @@ export class LiveValidator {
           // Sort alphabetically for compat with glob <= 8.
           // Tests pass without sorting, but safer to keep sorting for consistent behavior.
           .sort((a, b) => a.localeCompare(b, "en"));
-        console.log(`[liveValidator] pattern:${pattern} res:${res}`);
         for (const path of res) {
           if (!matchedPaths.includes(path)) {
             matchedPaths.push(path);
