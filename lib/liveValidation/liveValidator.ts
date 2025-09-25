@@ -8,7 +8,6 @@ import { resolve as pathResolve } from "path";
 import { ParsedUrlQuery } from "querystring";
 import * as util from "util";
 import { URL } from "url";
-import * as glob from "glob";
 import * as _ from "lodash";
 import { diffRequestResponse } from "../armValidator/roundTripValidator";
 import * as models from "../models";
@@ -41,6 +40,8 @@ import {
   validateSwaggerLiveResponse,
   ValidationRequest,
 } from "./operationValidator";
+
+const glob = require("glob");
 
 export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   swaggerPaths: string[];
