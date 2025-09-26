@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 09/26/2025 4.0.2
+
+- Requires Node 20 or higher
+
 ## 09/19/2025 4.0.1
 
 - Bump dependency `@apidevtools/swagger-parser` from `10.0.3` to `^12.0.0`
