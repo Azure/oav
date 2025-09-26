@@ -35,7 +35,7 @@ updates:
       # locked to 4.14.182, for compat with our version of TypeScript
       - dependency-name: "@types/lodash"
 
-      # locked to "^15.6.1", for compat with our version of TypeScript
+      # locked to "^20.0.0" to align with our minimum node version in package.json/engines
       - dependency-name: "@types/node"
 
       # locked for compat with our version of TypeScript
