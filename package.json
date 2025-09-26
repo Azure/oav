@@ -44,7 +44,7 @@
   "devDependencies": {
     "@types/commonmark": "^0.27.3",
     "@types/difflib": "^0.2.0",
-    "@types/jest": "^28.1.8",
+    "@types/jest": "^29.0.0",
     "@types/js-yaml": "^4.0.3",
     "@types/json-pointer": "^1.0.30",
     "@types/json-schema-traverse": "^0.4.0",
