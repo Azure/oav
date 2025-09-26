@@ -4,20 +4,20 @@
 
 - Bump dependency `@apidevtools/swagger-parser` from `10.0.3` to `^12.0.0`
 - Bump dependency `glob` from `^7.2.3` to `^9.3.5`
-- Bump dependency `winston` from `^3.3.4` to `3.16.0`
+- Bump dependency `winston` from `^3.3.4` to `~3.16.0`
 - Replace dependency `fs-extra` with built-in `fs`
 - Replace dependency `mkdirp` with built-in `fs.mkdir()`
 - Replace dependency `uuid` with built-in `crypto.randomUUID()`
 - Remove unused dependencies
-  - @azure/core-http
-  - @azure/core-util
-  - @azure/logging
-  - commonmark-to-markdown
-  - human-duration
-  - json-merge-patch
-  - junit-report-builder
-  - moment
-  - z-schema
+  - `@azure/core-http`
+  - `@azure/core-util`
+  - `@azure/logging`
+  - `commonmark-to-markdown`
+  - `human-duration`
+  - `json-merge-patch`
+  - `junit-report-builder`
+  - `moment`
+  - `z-schema`
 - Pin pre-release dependencies
   - `@azure/openapi-markdown` to `0.9.4`
   - `commonmark` to `0.31.2`

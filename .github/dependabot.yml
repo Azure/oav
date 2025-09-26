@@ -7,12 +7,6 @@ updates:
     ignore:
       # dependencies
 
-      # pinned to 1.7.2, for compat with our version of TypeScript
-      - dependency-name: "@azure/core-auth"
-
-      # pinned to 1.7.0, for compat with our version of TypeScript
-      - dependency-name: "@azure/core-util"
-
       # pinned to the most popular versions
       - dependency-name: "@azure/openapi-markdown"
       - dependency-name: "json-schema-traverse"
@@ -20,13 +14,16 @@ updates:
       # locked to "^6.12.6", for compat with our version of TypeScript
       - dependency-name: "ajv"
 
+      # Locked to "^9.3.5", for compat with cjs
+      - dependency-name: "glob"
+
       # locked to "^5.1.1", since newer majors include breaking changes that impact us
       - dependency-name: "inversify"
 
       # locked to "^6.3.0", since newer majors remove features we depend on
       - dependency-name: "path-to-regexp"
 
-      # locked to 3.16.0, since newer minors include an undocumented breaking change in typings that impacts us
+      # locked to ~3.16.0, since newer minors include an undocumented breaking change in typings that impacts us
       # https://github.com/winstonjs/winston/issues/2528
       - dependency-name: "winston"
 
@@ -58,3 +55,15 @@ updates:
 
       # locked to "~4.3.5", for compat with our TS code
       - dependency-name: "typescript"
+
+      # overrides
+
+      # pinned to 1.7.2, for compat with our version of TypeScript
+      - dependency-name: "@azure/core-auth"
+
+      # pinned to 1.7.0, for compat with our version of TypeScript
+      - dependency-name: "@azure/core-util"
+
+      # locked to ~2.6.1, since newer minors include an undocumented breaking change in typings that impacts us
+      # https://github.com/winstonjs/logform/issues/336
+      - dependency-name: "logform"
