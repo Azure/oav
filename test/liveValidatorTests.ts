@@ -217,7 +217,7 @@ describe("Live Validator", () => {
       const cache = validator.operationSearcher.cache;
       const cacheCount = cacheToCount(cache);
       expect(cacheCount[expectedProvider][expectedApiVersion]).toMatchInlineSnapshot(`
-        Object {
+        {
           "delete": 1,
           "get": 2,
           "head": 1,
@@ -226,8 +226,8 @@ describe("Live Validator", () => {
         }
       `);
       expect(cacheCount[Constants.unknownResourceProvider]).toMatchInlineSnapshot(`
-        Object {
-          "2015-11-01": Object {
+        {
+          "2015-11-01": {
             "delete": 5,
             "get": 13,
             "head": 2,
@@ -235,7 +235,7 @@ describe("Live Validator", () => {
             "post": 3,
             "put": 5,
           },
-          "2016-09-01": Object {
+          "2016-09-01": {
             "delete": 5,
             "get": 11,
             "head": 3,
@@ -243,12 +243,12 @@ describe("Live Validator", () => {
             "post": 4,
             "put": 5,
           },
-          "2018-09-01-preview": Object {
+          "2018-09-01-preview": {
             "delete": 1,
             "get": 2,
             "put": 1,
           },
-          "2019-02-02": Object {
+          "2019-02-02": {
             "delete": 2,
             "get": 6,
             "patch": 1,

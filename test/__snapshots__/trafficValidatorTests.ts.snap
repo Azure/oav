@@ -1,124 +1,124 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TrafficValidator validate data-plane traffic 1`] = `
-Object {
-  "operationCoverage": Array [
-    Object {
+{
+  "operationCoverage": [
+    {
       "apiVersion": "2019-02-02",
       "coverageRate": 0.14285714285714285,
       "coveredOperations": 2,
-      "coveredOperationsList": Array [
-        Object {
+      "coveredOperationsList": [
+        {
           "operationId": "Table_Delete",
         },
-        Object {
+        {
           "operationId": "Table_Query",
         },
       ],
       "totalOperations": 14,
       "unCoveredOperations": 12,
-      "unCoveredOperationsList": Array [
-        Object {
+      "unCoveredOperationsList": [
+        {
           "key": "Service",
           "operationId": "Service_GetProperties",
         },
-        Object {
+        {
           "key": "Service",
           "operationId": "Service_GetStatistics",
         },
-        Object {
+        {
           "key": "Service",
           "operationId": "Service_SetProperties",
         },
-        Object {
+        {
           "key": "Table",
           "operationId": "Table_Create",
         },
-        Object {
+        {
           "key": "Table",
           "operationId": "Table_DeleteEntity",
         },
-        Object {
+        {
           "key": "Table",
           "operationId": "Table_GetAccessPolicy",
         },
-        Object {
+        {
           "key": "Table",
           "operationId": "Table_InsertEntity",
         },
-        Object {
+        {
           "key": "Table",
           "operationId": "Table_MergeEntity",
         },
-        Object {
+        {
           "key": "Table",
           "operationId": "Table_QueryEntities",
         },
-        Object {
+        {
           "key": "Table",
           "operationId": "Table_QueryEntityWithPartitionAndRowKey",
         },
-        Object {
+        {
           "key": "Table",
           "operationId": "Table_SetAccessPolicy",
         },
-        Object {
+        {
           "key": "Table",
           "operationId": "Table_UpdateEntity",
         },
       ],
-      "unCoveredOperationsListGen": Array [
-        Object {
-          "operationIdList": Array [
-            Object {
+      "unCoveredOperationsListGen": [
+        {
+          "operationIdList": [
+            {
               "key": "Service",
               "operationId": "Service_SetProperties",
             },
-            Object {
+            {
               "key": "Service",
               "operationId": "Service_GetProperties",
             },
-            Object {
+            {
               "key": "Service",
               "operationId": "Service_GetStatistics",
             },
           ],
         },
-        Object {
-          "operationIdList": Array [
-            Object {
+        {
+          "operationIdList": [
+            {
               "key": "Table",
               "operationId": "Table_Create",
             },
-            Object {
+            {
               "key": "Table",
               "operationId": "Table_QueryEntities",
             },
-            Object {
+            {
               "key": "Table",
               "operationId": "Table_QueryEntityWithPartitionAndRowKey",
             },
-            Object {
+            {
               "key": "Table",
               "operationId": "Table_UpdateEntity",
             },
-            Object {
+            {
               "key": "Table",
               "operationId": "Table_MergeEntity",
             },
-            Object {
+            {
               "key": "Table",
               "operationId": "Table_DeleteEntity",
             },
-            Object {
+            {
               "key": "Table",
               "operationId": "Table_InsertEntity",
             },
-            Object {
+            {
               "key": "Table",
               "operationId": "Table_GetAccessPolicy",
             },
-            Object {
+            {
               "key": "Table",
               "operationId": "Table_SetAccessPolicy",
             },
@@ -128,46 +128,46 @@ Object {
       "validationFailOperations": 1,
     },
   ],
-  "validationIssues": Array [
-    Object {
-      "errors": Array [
-        Object {
+  "validationIssues": [
+    {
+      "errors": [
+        {
           "code": "MISSING_REQUIRED_PARAMETER",
           "documentationUrl": "",
           "issueSource": "request",
-          "jsonPathsInPayload": Array [
+          "jsonPathsInPayload": [
             ".headers.dataserviceversion",
           ],
           "message": "Value is required but was not provided",
-          "params": Array [
+          "params": [
             "dataserviceversion",
           ],
-          "pathsInPayload": Array [
+          "pathsInPayload": [
             "/headers/dataserviceversion",
           ],
-          "resourceIds": Array [],
+          "resourceIds": [],
           "schemaPath": "#/properties/headers/required",
           "severity": 0,
-          "source": Object {
+          "source": {
             "jsonRef": "#/parameters/DataServiceVersionParameter",
-            "position": Object {
+            "position": {
               "column": 36,
               "line": 1762,
             },
             "url": "preview/2019-02-02/table.json",
           },
         },
-        Object {
+        {
           "code": "INVALID_RESPONSE_CODE",
           "documentationUrl": "",
           "issueSource": "response",
-          "jsonPathsInPayload": Array [],
+          "jsonPathsInPayload": [],
           "message": "The swagger file does not define '204' response code",
-          "pathsInPayload": Array [],
+          "pathsInPayload": [],
           "schemaPath": "",
           "severity": 0,
-          "source": Object {
-            "position": Object {
+          "source": {
+            "position": {
               "column": 22,
               "line": 80,
             },
@@ -175,19 +175,19 @@ Object {
           },
         },
       ],
-      "operationInfo": Object {
+      "operationInfo": {
         "apiVersion": "2019-02-02",
         "operationId": "Table_Query",
-        "position": Object {
+        "position": {
           "column": 24,
           "line": 43,
         },
       },
-      "payloadFilePathPosition": Object {
+      "payloadFilePathPosition": {
         "column": 17,
         "line": 2,
       },
-      "runtimeExceptions": Array [],
+      "runtimeExceptions": [],
     },
   ],
 }

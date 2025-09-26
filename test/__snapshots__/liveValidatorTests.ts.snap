@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Live Validator Initialize cache and validate should not report error in response for GET/PUT resource calls when id is not returned in sub-level resources 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2015-11-01-preview",
       "operationId": "Solutions_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2015-11-01-preview",
       "operationId": "Solutions_Get",
     },
@@ -24,20 +24,20 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should not report error when LRO header is not returned in response in case of returning 201 code 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",
     },
@@ -47,37 +47,37 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should report error in response for GET/PUT resource calls when id is not returned 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "MISSING_RESOURCE_ID",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$",
         ],
         "message": "id is required to return in response of GET/PUT resource calls but not being provided",
-        "params": Array [
+        "params": [
           "x-ms-azure-resource",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/x-ms-azure-resource",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/LinkerResource",
-          "position": Object {
+          "position": {
             "column": 23,
             "line": 524,
           },
@@ -86,7 +86,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",
     },
@@ -96,28 +96,28 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should report error in response when response code isn't correct in case of long running operation 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_Update",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "LRO_RESPONSE_CODE",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [],
+        "jsonPathsInPayload": [],
         "message": "Respond to the initial request of a long running operation, Patch/Post call must return 201 or 202, Delete call must return 202 or 204, Put call must return 202 or 201 or 200, but 204 being returned",
-        "pathsInPayload": Array [],
+        "pathsInPayload": [],
         "schemaPath": "",
         "severity": 0,
-        "source": Object {
-          "position": Object {
+        "source": {
+          "position": {
             "column": 22,
             "line": 252,
           },
@@ -126,7 +126,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_Update",
     },
@@ -136,28 +136,28 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should report error when LRO header is not returned in response in case of long running operation 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_Update",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "LRO_RESPONSE_HEADER",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [],
+        "jsonPathsInPayload": [],
         "message": "Long running operation should return location or azure-AsyncOperation in header but not provided",
-        "pathsInPayload": Array [],
+        "pathsInPayload": [],
         "schemaPath": "",
         "severity": 0,
-        "source": Object {
-          "position": Object {
+        "source": {
+          "position": {
             "column": 22,
             "line": 252,
           },
@@ -166,7 +166,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_Update",
     },
@@ -176,20 +176,20 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should return no errors for valid input with optional parameter body empty 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_Patch",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_Patch",
     },
@@ -199,20 +199,20 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should return no errors for valid input with optional parameter body null 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_Patch",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_Patch",
     },
@@ -222,28 +222,28 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should match all errors for no options 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [
-      Object {
+{
+  "requestValidationResult": {
+    "errors": [
+      {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.email",
         ],
         "message": "Missing required property: email",
-        "params": Array [
+        "params": [
           "email",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/email",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/required",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/UserCreateParameterProperties",
-          "position": Object {
+          "position": {
             "column": 38,
             "line": 696,
           },
@@ -252,124 +252,124 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "INVALID_TYPE",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.lastName",
         ],
         "message": "Expected type string but found type integer",
-        "params": Array [
+        "params": [
           "string",
           "integer",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/lastName",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/lastName/type",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/UserContractProperties/properties/lastName",
-          "position": Object {
+          "position": {
             "column": 21,
             "line": 657,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
         },
       },
-      Object {
+      {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.registrationDate",
         ],
         "message": "Object didn't pass validation for format date-time: 2018-09-11",
-        "params": Array [
+        "params": [
           "date-time",
           "2018-09-11",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/registrationDate",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/registrationDate/format",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/UserContractProperties/properties/registrationDate",
-          "position": Object {
+          "position": {
             "column": 29,
             "line": 665,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
         },
       },
-      Object {
+      {
         "code": "OBJECT_ADDITIONAL_PROPERTIES",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.groups[0].id",
         ],
         "message": "Additional properties not allowed: id",
-        "params": Array [
+        "params": [
           "id",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/groups/0/id",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/additionalProperties",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/GroupContractProperties",
-          "position": Object {
+          "position": {
             "column": 32,
             "line": 593,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimgroups.json",
         },
       },
-      Object {
+      {
         "code": "ENUM_CASE_MISMATCH",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.state",
         ],
         "message": "Enum does not match case for: Active",
-        "params": Array [
+        "params": [
           "Active",
-          Array [
+          [
             "active",
             "blocked",
             "pending",
             "deleted",
           ],
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/state",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/state/enum",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
-          "position": Object {
+          "position": {
             "column": 18,
             "line": 750,
           },
@@ -378,7 +378,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
@@ -388,29 +388,29 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should match for one of missing 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [
-      Object {
+{
+  "requestValidationResult": {
+    "errors": [
+      {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.options[0].restriction.primaryVerificationKey.keyValue",
         ],
         "message": "Object didn't pass validation for format byte: not valid base64",
-        "params": Array [
+        "params": [
           "byte",
           "not valid base64",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/options/0/restriction/primaryVerificationKey/keyValue",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/discriminatorMap",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/ContentKeyPolicySymmetricTokenKey/properties/keyValue",
-          "position": Object {
+          "position": {
             "column": 21,
             "line": 388,
           },
@@ -419,117 +419,117 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-07-01",
       "operationId": "ContentKeyPolicies_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.policyId",
         ],
         "message": "Object didn't pass validation for format uuid: not valid base64",
-        "params": Array [
+        "params": [
           "uuid",
           "not valid base64",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/policyId",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/policyId/format",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/ContentKeyPolicyProperties/properties/policyId",
-          "position": Object {
+          "position": {
             "column": 21,
             "line": 688,
           },
           "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
         },
       },
-      Object {
+      {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.options[0].policyOptionId",
         ],
         "message": "Object didn't pass validation for format uuid: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "params": Array [
+        "params": [
           "uuid",
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/options/0/policyOptionId",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/policyOptionId/format",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/ContentKeyPolicyOption/properties/policyOptionId",
-          "position": Object {
+          "position": {
             "column": 27,
             "line": 659,
           },
           "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
         },
       },
-      Object {
+      {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.options[0].restriction.audience",
         ],
         "message": "Missing required property: audience",
-        "params": Array [
+        "params": [
           "audience",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/options/0/restriction/audience",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/discriminatorMap",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/ContentKeyPolicyTokenRestriction",
-          "position": Object {
+          "position": {
             "column": 41,
             "line": 446,
           },
           "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
         },
       },
-      Object {
+      {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.options[0].restriction.primaryVerificationKey.keyValue",
         ],
         "message": "Object didn't pass validation for format byte: not valid base64",
-        "params": Array [
+        "params": [
           "byte",
           "not valid base64",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/options/0/restriction/primaryVerificationKey/keyValue",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/discriminatorMap",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/ContentKeyPolicySymmetricTokenKey/properties/keyValue",
-          "position": Object {
+          "position": {
             "column": 21,
             "line": 388,
           },
@@ -538,7 +538,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-07-01",
       "operationId": "ContentKeyPolicies_CreateOrUpdate",
     },
@@ -548,29 +548,29 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should pass discriminator tests 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [
-      Object {
+{
+  "requestValidationResult": {
+    "errors": [
+      {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.pet.lifetime",
         ],
         "message": "Object didn't pass validation for format date-time: abc",
-        "params": Array [
+        "params": [
           "date-time",
           "abc",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/pet/lifetime",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/discriminatorMap",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/Cat/properties/lifetime",
-          "position": Object {
+          "position": {
             "column": 21,
             "line": 185,
           },
@@ -579,16 +579,16 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_CreateOrUpdate",
     },
@@ -598,55 +598,55 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return expected error for readonly property in the request 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [
-      Object {
+{
+  "requestValidationResult": {
+    "errors": [
+      {
         "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.name",
         ],
-        "message": "ReadOnly property \\"name\\" cannot be sent in the request",
-        "params": Array [
+        "message": "ReadOnly property "name" cannot be sent in the request",
+        "params": [
           "name",
           null,
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/name",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/properties/name/readOnly",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/User/properties/name",
-          "position": Object {
+          "position": {
             "column": 17,
             "line": 133,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
       },
-      Object {
+      {
         "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.readOnlyProperty",
         ],
-        "message": "ReadOnly property \\"readOnlyProperty\\" cannot be sent in the request",
-        "params": Array [
+        "message": "ReadOnly property "readOnlyProperty" cannot be sent in the request",
+        "params": [
           "readOnlyProperty",
           null,
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/readOnlyProperty",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/properties/readOnlyProperty/x-ms-mutability",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/User/properties/readOnlyProperty",
-          "position": Object {
+          "position": {
             "column": 29,
             "line": 142,
           },
@@ -655,16 +655,16 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_CreateOrUpdate",
     },
@@ -674,20 +674,20 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return no errors for valid input 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_Get",
     },
@@ -697,44 +697,44 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for ENUM_CASE_MISMATCH 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "ENUM_CASE_MISMATCH",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.groups[0].type",
         ],
         "message": "Enum does not match case for: System",
-        "params": Array [
+        "params": [
           "System",
-          Array [
+          [
             "custom",
             "system",
             "external",
           ],
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/groups/0/type",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/type/enum",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
-          "position": Object {
+          "position": {
             "column": 17,
             "line": 611,
           },
@@ -743,7 +743,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
@@ -753,34 +753,34 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for ENUM_MISMATCH 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [
-      Object {
+{
+  "requestValidationResult": {
+    "errors": [
+      {
         "code": "ENUM_MISMATCH",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.state",
         ],
         "message": "No enum match for: dasda",
-        "params": Array [
+        "params": [
           "dasda",
-          Array [
+          [
             "active",
             "blocked",
             "pending",
             "deleted",
           ],
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/state",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/properties/state/enum",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
-          "position": Object {
+          "position": {
             "column": 18,
             "line": 750,
           },
@@ -789,40 +789,40 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "ENUM_MISMATCH",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.groups[0].type",
         ],
         "message": "No enum match for: banana",
-        "params": Array [
+        "params": [
           "banana",
-          Array [
+          [
             "custom",
             "system",
             "external",
           ],
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/groups/0/type",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/type/enum",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
-          "position": Object {
+          "position": {
             "column": 17,
             "line": 611,
           },
@@ -831,7 +831,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
@@ -841,20 +841,20 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_FORMAT 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
     },
@@ -864,36 +864,36 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_RESPONSE_BODY 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "Api_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "INVALID_RESPONSE_BODY",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           ".body",
         ],
         "message": "Body is required in response but not provided",
-        "params": Array [
+        "params": [
           "body",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/body",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/required",
         "severity": 0,
-        "source": Object {
-          "position": Object {
+        "source": {
+          "position": {
             "column": 18,
             "line": 192,
           },
@@ -902,7 +902,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "Api_Get",
     },
@@ -912,37 +912,37 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_RESPONSE_HEADER 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "Api_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "INVALID_TYPE",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           ".headers.featureaflag",
         ],
         "message": "Expected type boolean but found type string",
-        "params": Array [
+        "params": [
           "boolean",
           "string",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/headers/featureaflag",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/properties/headers/properties/featureaflag/type",
         "severity": 0,
-        "source": Object {
-          "position": Object {
+        "source": {
+          "position": {
             "column": 31,
             "line": 198,
           },
@@ -951,7 +951,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "Api_Get",
     },
@@ -961,40 +961,40 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_TYPE 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "INVALID_TYPE",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.hostnameConfigurations",
         ],
         "message": "Expected type array but found type string",
-        "params": Array [
+        "params": [
           "array",
           "string",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/hostnameConfigurations",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/hostnameConfigurations/type",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/hostnameConfigurations",
-          "position": Object {
+          "position": {
             "column": 35,
             "line": 934,
           },
@@ -1003,7 +1003,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
     },
@@ -1013,40 +1013,40 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for MAX_LENGTH 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "ApiOperation_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "MAX_LENGTH",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.description",
         ],
         "message": "String is too long (1958 chars), maximum 1000",
-        "params": Array [
+        "params": [
           1958,
           1000,
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/description",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/properties/description/maxLength",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/OperationEntityBaseContract/properties/description",
-          "position": Object {
+          "position": {
             "column": 24,
             "line": 4236,
           },
@@ -1055,7 +1055,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "ApiOperation_Get",
     },
@@ -1065,27 +1065,27 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for MISSING_REQUIRED_PARAMETER 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [
-      Object {
+{
+  "requestValidationResult": {
+    "errors": [
+      {
         "code": "MISSING_REQUIRED_PARAMETER",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           ".body",
         ],
         "message": "Value is required but was not provided",
-        "params": Array [
+        "params": [
           "body",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/body",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/required",
         "severity": 0,
-        "source": Object {
-          "position": Object {
+        "source": {
+          "position": {
             "column": 11,
             "line": 197,
           },
@@ -1094,16 +1094,16 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
@@ -1113,42 +1113,42 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_ADDITIONAL_PROPERTIES 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "OBJECT_ADDITIONAL_PROPERTIES",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.groups[0].id",
           "$.properties.groups[1].id",
         ],
         "message": "Additional properties not allowed: id",
-        "params": Array [
+        "params": [
           "id",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/groups/0/id",
           "/properties/groups/1/id",
         ],
-        "resourceIds": Array [
+        "resourceIds": [
           "aaaaaaaaaaaaaaaaaaaaaaaa",
           "aaaaaaaaaaaaaaaaaaaaaa",
         ],
         "schemaPath": "#/additionalProperties",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/GroupContractProperties",
-          "position": Object {
+          "position": {
             "column": 32,
             "line": 593,
           },
@@ -1157,7 +1157,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
@@ -1167,37 +1167,37 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_MISSING_REQUIRED_PROPERTY 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.groups[0].displayName",
         ],
         "message": "Missing required property: displayName",
-        "params": Array [
+        "params": [
           "displayName",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/groups/0/displayName",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/required",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/GroupContractProperties",
-          "position": Object {
+          "position": {
             "column": 32,
             "line": 593,
           },
@@ -1206,7 +1206,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
@@ -1216,38 +1216,38 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_PROPERTIES_MAXIMUM 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "Api_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "OBJECT_PROPERTIES_MAXIMUM",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.testMaxMinProperties",
         ],
         "message": "Too many properties defined (4), maximum 3",
-        "params": Array [
+        "params": [
           4,
           3,
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/testMaxMinProperties",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/properties/testMaxMinProperties/maxProperties",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/ApiContract/properties/testMaxMinProperties",
-          "position": Object {
+          "position": {
             "column": 33,
             "line": 3643,
           },
@@ -1256,7 +1256,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "Api_Get",
     },
@@ -1266,38 +1266,38 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_PROPERTIES_MINIMUM 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "Api_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "OBJECT_PROPERTIES_MINIMUM",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.testMaxMinProperties",
         ],
         "message": "Too few properties defined (1), minimum 2",
-        "params": Array [
+        "params": [
           1,
           2,
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/testMaxMinProperties",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/properties/testMaxMinProperties/minProperties",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/ApiContract/properties/testMaxMinProperties",
-          "position": Object {
+          "position": {
             "column": 33,
             "line": 3643,
           },
@@ -1306,7 +1306,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "Api_Get",
     },
@@ -1316,38 +1316,38 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for SECRET_PROPERTY 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "SecretUser_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "SECRET_PROPERTY",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.password",
         ],
-        "message": "Secret property \\"password\\" cannot be sent in the response",
-        "params": Array [
+        "message": "Secret property "password" cannot be sent in the response",
+        "params": [
           "password",
           null,
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/password",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/properties/password/x-ms-secret",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/SecretUserContractProperties/properties/password",
-          "position": Object {
+          "position": {
             "column": 21,
             "line": 146,
           },
@@ -1356,7 +1356,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "SecretUser_Get",
     },
@@ -1366,38 +1366,38 @@ Object {
 `;
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "WriteOnlyProperty_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$.properties.propertyUsage",
         ],
-        "message": "Write-only property \\"propertyUsage\\" is not allowed in the response",
-        "params": Array [
+        "message": "Write-only property "propertyUsage" is not allowed in the response",
+        "params": [
           "propertyUsage",
           null,
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "/properties/propertyUsage",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/properties/propertyUsage/x-ms-mutability",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/WriteOnlyPropertyContractProperties/properties/propertyUsage",
-          "position": Object {
+          "position": {
             "column": 26,
             "line": 142,
           },
@@ -1406,7 +1406,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2018-01-01",
       "operationId": "WriteOnlyProperty_Get",
     },
