@@ -32,9 +32,6 @@ updates:
 
       # devDependencies
 
-      # locked to 4.14.182, for compat with our version of TypeScript
-      - dependency-name: "@types/lodash"
-
       # locked to "^15.6.1", for compat with our version of TypeScript
       - dependency-name: "@types/node"
 
