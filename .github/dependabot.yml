@@ -45,7 +45,7 @@ updates:
       - dependency-name: "eslint-config-prettier"
       - dependency-name: "eslint-plugin-prettier"
 
-      # locked to "^26" for compat with each other
+      # locked to "^29" for compat with each other
       - dependency-name: "@types/jest"
       - dependency-name: "jest"
       - dependency-name: "ts-jest"
