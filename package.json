@@ -35,6 +35,8 @@
     "yargs": "^15.4.1"
   },
   "overrides": {
+    "@azure/core-auth": "1.7.2",
+    "@azure/core-util": "1.7.0",
     "braces": "3.0.3",
     "glob": "^9.3.5"
   },

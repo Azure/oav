@@ -7,6 +7,12 @@ updates:
     ignore:
       # dependencies
 
+      # pinned to 1.7.2, for compat with our version of TypeScript
+      - dependency-name: "@azure/core-auth"
+
+      # pinned to 1.7.0, for compat with our version of TypeScript
+      - dependency-name: "@azure/core-util"
+
       # pinned to the most popular versions
       - dependency-name: "@azure/openapi-markdown"
       - dependency-name: "json-schema-traverse"
