@@ -35,7 +35,7 @@
     "yargs": "^15.4.1"
   },
   "overrides": {
-    "test-excludes": {
+    "test-exclude": {
       "glob": "^9.3.5"
     },
     "logform": "~2.6.1"
