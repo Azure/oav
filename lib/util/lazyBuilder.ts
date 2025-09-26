@@ -3,7 +3,7 @@ interface BuilderListener<T> {
   reject: (err: any) => void;
 }
 
-export const getLazyBuilder = <SourceType, Key extends keyof SourceType>(
+export const getLazyBuilder = <SourceType, Key extends keyof SourceType & string>(
   key: Key,
   builder: (source: SourceType) => Promise<Exclude<SourceType[Key], undefined>>
 ) => {
