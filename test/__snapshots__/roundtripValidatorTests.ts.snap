@@ -1,121 +1,121 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Live Validator Initialization Round trip validation fail 1`] = `
-Object {
-  "errors": Array [
-    Object {
+{
+  "errors": [
+    {
       "code": "ROUNDTRIP_INCONSISTENT_PROPERTY",
-      "jsonPathsInPayload": Array [],
+      "jsonPathsInPayload": [],
       "message": "The property's value 'westcentralus1' in the GET response is different from what was set 'westcentralus' in the preceding PUT request.",
-      "pathsInPayload": Array [
+      "pathsInPayload": [
         "/location",
       ],
       "schemaPath": "",
       "severity": 0,
-      "source": Object {
-        "position": Object {
+      "source": {
+        "position": {
           "column": 0,
           "line": 0,
         },
         "url": "",
       },
     },
-    Object {
+    {
       "code": "ROUNDTRIP_ADDITIONAL_PROPERTY",
-      "jsonPathsInPayload": Array [],
+      "jsonPathsInPayload": [],
       "message": "The property 'versionlist/1' is returned in the GET response, but it is not declared in the PUT request.",
-      "pathsInPayload": Array [
+      "pathsInPayload": [
         "/versionlist/1",
       ],
       "schemaPath": "",
       "severity": 0,
-      "source": Object {
-        "position": Object {
+      "source": {
+        "position": {
           "column": 0,
           "line": 0,
         },
         "url": "",
       },
     },
-    Object {
+    {
       "code": "ROUNDTRIP_MISSING_PROPERTY",
-      "jsonPathsInPayload": Array [],
+      "jsonPathsInPayload": [],
       "message": "The property 'createOption' is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
-      "pathsInPayload": Array [
+      "pathsInPayload": [
         "/properties/storageProfile/osDisk/createOption",
       ],
       "schemaPath": "",
       "severity": 0,
-      "source": Object {
-        "position": Object {
+      "source": {
+        "position": {
           "column": 0,
           "line": 0,
         },
         "url": "",
       },
     },
-    Object {
+    {
       "code": "ROUNDTRIP_ADDITIONAL_PROPERTY",
-      "jsonPathsInPayload": Array [],
+      "jsonPathsInPayload": [],
       "message": "The property 'caching' is returned in the GET response, but it is not declared in the PUT request.",
-      "pathsInPayload": Array [
+      "pathsInPayload": [
         "/properties/storageProfile/osDisk/caching",
       ],
       "schemaPath": "",
       "severity": 0,
-      "source": Object {
-        "position": Object {
+      "source": {
+        "position": {
           "column": 0,
           "line": 0,
         },
         "url": "",
       },
     },
-    Object {
+    {
       "code": "ROUNDTRIP_MISSING_PROPERTY",
-      "jsonPathsInPayload": Array [],
+      "jsonPathsInPayload": [],
       "message": "The property 'offer' is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
-      "pathsInPayload": Array [
+      "pathsInPayload": [
         "/properties/storageProfile/imageReference/offer",
       ],
       "schemaPath": "",
       "severity": 0,
-      "source": Object {
-        "position": Object {
+      "source": {
+        "position": {
           "column": 0,
           "line": 0,
         },
         "url": "",
       },
     },
-    Object {
+    {
       "code": "ROUNDTRIP_MISSING_PROPERTY",
-      "jsonPathsInPayload": Array [],
+      "jsonPathsInPayload": [],
       "message": "The property 'computerName' is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
-      "pathsInPayload": Array [
+      "pathsInPayload": [
         "/properties/osProfile/computerName",
       ],
       "schemaPath": "",
       "severity": 0,
-      "source": Object {
-        "position": Object {
+      "source": {
+        "position": {
           "column": 0,
           "line": 0,
         },
         "url": "",
       },
     },
-    Object {
+    {
       "code": "ROUNDTRIP_ADDITIONAL_PROPERTY",
-      "jsonPathsInPayload": Array [],
+      "jsonPathsInPayload": [],
       "message": "The property 'hardwareProfile' is returned in the GET response, but it is not declared in the PUT request.",
-      "pathsInPayload": Array [
+      "pathsInPayload": [
         "/hardwareProfile",
       ],
       "schemaPath": "",
       "severity": 0,
-      "source": Object {
-        "position": Object {
+      "source": {
+        "position": {
           "column": 0,
           "line": 0,
         },
@@ -124,7 +124,7 @@ Object {
     },
   ],
   "isSuccessful": false,
-  "operationInfo": Object {
+  "operationInfo": {
     "apiVersion": "2021-11-01",
     "operationId": "VirtualMachines_CreateOrUpdate",
   },
@@ -133,10 +133,10 @@ Object {
 `;
 
 exports[`Live Validator Initialization readonly properties should not cause error 1`] = `
-Object {
-  "errors": Array [],
+{
+  "errors": [],
   "isSuccessful": true,
-  "operationInfo": Object {
+  "operationInfo": {
     "apiVersion": "2021-11-01",
     "operationId": "VirtualMachines_CreateOrUpdate",
   },
@@ -145,20 +145,20 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should not report error in response for GET/PUT resource calls when id is not returned in sub-level resources 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2015-11-01-preview",
       "operationId": "Solutions_Get",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2015-11-01-preview",
       "operationId": "Solutions_Get",
     },
@@ -168,20 +168,20 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should not report error when LRO header is not returned in response in case of returning 201 code 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",
     },
@@ -191,37 +191,37 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should report error in response for GET/PUT resource calls when id is not returned 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "MISSING_RESOURCE_ID",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [
+        "jsonPathsInPayload": [
           "$",
         ],
         "message": "id is required to return in response of GET/PUT resource calls but not being provided",
-        "params": Array [
+        "params": [
           "x-ms-azure-resource",
         ],
-        "pathsInPayload": Array [
+        "pathsInPayload": [
           "",
         ],
-        "resourceIds": Array [],
+        "resourceIds": [],
         "schemaPath": "#/x-ms-azure-resource",
         "severity": 0,
-        "source": Object {
+        "source": {
           "jsonRef": "#/definitions/LinkerResource",
-          "position": Object {
+          "position": {
             "column": 23,
             "line": 524,
           },
@@ -230,7 +230,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",
     },
@@ -240,28 +240,28 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should report error in response when response code isn't correct in case of long running operation 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_Update",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "LRO_RESPONSE_CODE",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [],
+        "jsonPathsInPayload": [],
         "message": "Respond to the initial request of a long running operation, Patch/Post call must return 201 or 202, Delete call must return 202 or 204, Put call must return 202 or 201 or 200, but 204 being returned",
-        "pathsInPayload": Array [],
+        "pathsInPayload": [],
         "schemaPath": "",
         "severity": 0,
-        "source": Object {
-          "position": Object {
+        "source": {
+          "position": {
             "column": 22,
             "line": 252,
           },
@@ -270,7 +270,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_Update",
     },
@@ -280,28 +280,28 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should report error when LRO header is not returned in response in case of long running operation 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_Update",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
+  "responseValidationResult": {
+    "errors": [
+      {
         "code": "LRO_RESPONSE_HEADER",
         "documentationUrl": "",
-        "jsonPathsInPayload": Array [],
+        "jsonPathsInPayload": [],
         "message": "Long running operation should return location or azure-AsyncOperation in header but not provided",
-        "pathsInPayload": Array [],
+        "pathsInPayload": [],
         "schemaPath": "",
         "severity": 0,
-        "source": Object {
-          "position": Object {
+        "source": {
+          "position": {
             "column": 22,
             "line": 252,
           },
@@ -310,7 +310,7 @@ Object {
       },
     ],
     "isSuccessful": false,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_Update",
     },
@@ -320,20 +320,20 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should return no errors for valid input with optional parameter body empty 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_Patch",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_Patch",
     },
@@ -343,20 +343,20 @@ Object {
 `;
 
 exports[`Live Validator Initialize cache and validate should return no errors for valid input with optional parameter body null 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
+{
+  "requestValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_Patch",
     },
     "runtimeException": undefined,
   },
-  "responseValidationResult": Object {
-    "errors": Array [],
+  "responseValidationResult": {
+    "errors": [],
     "isSuccessful": true,
-    "operationInfo": Object {
+    "operationInfo": {
       "apiVersion": "2020-01-01",
       "operationId": "User_Patch",
     },
