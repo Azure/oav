@@ -53,7 +53,7 @@ updates:
       # locked to 2.8.8, for compat with our version of TypeScript
       - dependency-name: "prettier"
 
-      # locked to "~4.4.4", for compat with our TS code
+      # locked to "~4.7.4", for compat with our TS code
       - dependency-name: "typescript"
 
       # overrides
