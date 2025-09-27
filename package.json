@@ -31,12 +31,11 @@
     "path-to-regexp": "^6.2.1",
     "reflect-metadata": "0.2.2",
     "toposort": "^2.0.2",
-    "winston": "~3.16.0",
+    "winston": "^3.17.0",
     "yargs": "^15.4.1"
   },
   "overrides": {
-    "glob": "^9.3.5",
-    "logform": "~2.6.1"
+    "glob": "^9.3.5"
   },
   "devDependencies": {
     "@types/commonmark": "^0.27.3",
