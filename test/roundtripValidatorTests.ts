@@ -1,8 +1,8 @@
 import * as assert from "assert";
 import * as glob from "glob";
 import * as path from "path";
-import { LiveValidator, RequestResponsePair } from "../lib/liveValidation/liveValidator";
 import { DefaultConfig } from "../lib/util/constants";
+import { RequestResponsePair, LiveValidator } from "../lib/liveValidation/liveValidator";
 
 jest.setTimeout(999999);
 
