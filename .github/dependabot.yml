@@ -35,14 +35,14 @@ updates:
       # locked to "^20.0.0" to align with our minimum node version in package.json/engines
       - dependency-name: "@types/node"
 
-      # locked for compat with our version of TypeScript
+      # locked to "^8", since newer versions include breaking changes
       - dependency-name: "@typescript-eslint/eslint-plugin"
       - dependency-name: "@typescript-eslint/parser"
       - dependency-name: "eslint"
+
+      # locked since newer versions include breaking changes
       - dependency-name: "eslint-config-prettier"
       - dependency-name: "eslint-plugin-prettier"
-
-      # locked to 2.8.8, for compat with our version of TypeScript
       - dependency-name: "prettier"
 
       # locked to "~4.9.5", for compat with our TS code
