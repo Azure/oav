@@ -4,10 +4,10 @@ export const TYPES = {
   schemaValidator: Symbol("InversifyTYPES.schemaValidator"),
 };
 
-import { Container, interfaces } from "inversify";
+import { Container, type ContainerOptions, type Newable } from "inversify";
 import { setDefaultOpts } from "./swagger/loader";
 
-export const inversifyGetContainer = (opts: interfaces.ContainerOptions = {}) => {
+export const inversifyGetContainer = (opts: ContainerOptions = {}) => {
   setDefaultOpts(opts, {
     defaultScope: "Singleton",
     autoBindInjectable: true,
@@ -16,9 +16,9 @@ export const inversifyGetContainer = (opts: interfaces.ContainerOptions = {}) =>
 };
 
 export const inversifyGetInstance = <T, Opt = {}>(
-  claz: interfaces.Newable<T>,
+  claz: Newable<T>,
   opts: Opt &
-    interfaces.ContainerOptions & {
+    ContainerOptions & {
       container?: Container;
     }
 ) => {
