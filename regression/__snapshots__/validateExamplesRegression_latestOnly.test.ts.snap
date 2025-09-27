@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`validateExamples should not regress for file '/mnt/vss/_work/1/s/regression/azure-rest-api-specs/specification/adhybridhealthservice/resource-manager/Microsoft.ADHybridHealthService/stable/2014-01-01/ADHybridHealthService.json': input file hash 1`] = `"e31a3740c81d0417da97fdcc30ca1109"`;
 
