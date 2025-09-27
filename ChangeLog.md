@@ -3,6 +3,7 @@
 ## 09/26/2025 4.0.2
 
 - Requires Node 20 or higher
+- Bump dependency `winston` from `~3.16.0` to `^3.17.0`
 
 ## 09/19/2025 4.0.1
 
