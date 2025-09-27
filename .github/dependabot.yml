@@ -42,11 +42,6 @@ updates:
       - dependency-name: "eslint-config-prettier"
       - dependency-name: "eslint-plugin-prettier"
 
-      # locked to "^29", for compat with our version of TypeScript
-      - dependency-name: "@types/jest"
-      - dependency-name: "jest"
-      - dependency-name: "ts-jest"
-
       # locked to 2.8.8, for compat with our version of TypeScript
       - dependency-name: "prettier"
 
