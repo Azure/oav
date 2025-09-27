@@ -28,10 +28,7 @@ export class SuppressionLoader implements Loader<void, SwaggerSpec> {
   private suppressionCache = new Map<string, SuppressionItem[]>();
   private suppressionToLoad: Set<string>;
 
-  private constructor(
-    @inject(TYPES.opts) opts: SuppressionLoaderOption,
-    private fileLoader: FileLoader
-  ) {
+  constructor(@inject(TYPES.opts) opts: SuppressionLoaderOption, private fileLoader: FileLoader) {
     this.suppressionToLoad = new Set(opts?.loadSuppression ?? []);
   }
 
