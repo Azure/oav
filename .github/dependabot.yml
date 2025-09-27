@@ -50,12 +50,6 @@ updates:
 
       # overrides
 
-      # pinned to 1.7.2, for compat with our version of TypeScript
-      - dependency-name: "@azure/core-auth"
-
-      # pinned to 1.7.0, for compat with our version of TypeScript
-      - dependency-name: "@azure/core-util"
-
       # locked to ~2.6.1, since newer minors include an undocumented breaking change in typings that impacts us
       # https://github.com/winstonjs/logform/issues/336
       - dependency-name: "logform"
