@@ -20,7 +20,7 @@
     "difflib": "0.2.4",
     "fast-json-stable-stringify": "^2.1.0",
     "glob": "^9.3.5",
-    "inversify": "^5.1.1",
+    "inversify": "^6.2.2",
     "js-yaml": "^4.1.0",
     "json-pointer": "0.6.2",
     "json-schema-traverse": "0.4.1",
