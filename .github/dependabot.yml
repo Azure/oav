@@ -14,9 +14,6 @@ updates:
       # locked to "^6.12.6", since newer majors include breaking changes that impact us
       - dependency-name: "ajv"
 
-      # Locked to "^10.4.5"
-      - dependency-name: "glob"
-
       # locked to "^5.1.1", since newer majors include breaking changes that impact us
       - dependency-name: "inversify"
 
