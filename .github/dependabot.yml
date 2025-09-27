@@ -17,9 +17,6 @@ updates:
       # Locked to "^9.3.5", for compat with cjs
       - dependency-name: "glob"
 
-      # locked to "^6.2.2", since newer majors include breaking changes that may impact us
-      - dependency-name: "inversify"
-
       # locked to "^6.3.0", since newer majors remove features we depend on
       - dependency-name: "path-to-regexp"
 

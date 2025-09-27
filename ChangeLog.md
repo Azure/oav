@@ -3,7 +3,7 @@
 ## 09/26/2025 4.0.2
 
 - Requires Node 20 or higher
-- Bump dependency `inversify` from `^5.1.1` to `^6.2.2`
+- Bump dependency `inversify` from `^5.1.1` to `^7.10.1`
 
 ## 09/19/2025 4.0.1
 
