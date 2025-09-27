@@ -42,7 +42,7 @@ updates:
       - dependency-name: "eslint-plugin-prettier"
       - dependency-name: "prettier"
 
-      # locked to "~4.9.5", for compat with our TS code
+      # locked to "~5.0.4", for compat with our TS code
       - dependency-name: "typescript"
 
       # overrides
