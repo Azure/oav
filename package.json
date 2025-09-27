@@ -41,7 +41,7 @@
   "devDependencies": {
     "@types/commonmark": "^0.27.3",
     "@types/difflib": "^0.2.0",
-    "@types/jest": "^29.5.14",
+    "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.3",
     "@types/json-pointer": "^1.0.30",
     "@types/json-schema-traverse": "^0.4.0",
@@ -57,7 +57,7 @@
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "jest": "^29.7.0",
+    "jest": "^30.1.3",
     "jest-junit": "^16.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "2.8.8",
