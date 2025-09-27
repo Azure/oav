@@ -10,7 +10,7 @@ import { setDefaultOpts } from "./swagger/loader";
 export const inversifyGetContainer = (opts: ContainerOptions = {}) => {
   setDefaultOpts(opts, {
     defaultScope: "Singleton",
-    autoBindInjectable: true,
+    autobind: true,
   } as any);
   return new Container(opts);
 };
