@@ -11,7 +11,7 @@ updates:
       - dependency-name: "@azure/openapi-markdown"
       - dependency-name: "json-schema-traverse"
 
-      # locked to "^6.12.6", for compat with our version of TypeScript
+      # locked to "^6.12.6", since newer majors include breaking changes that impact us
       - dependency-name: "ajv"
 
       # Locked to "^9.3.5", for compat with cjs
