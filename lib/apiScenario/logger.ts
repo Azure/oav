@@ -8,7 +8,7 @@ export const logger = winston.createLogger({
         winston.format.colorize({
           message: true,
         }),
-        winston.format.printf((info) => info.message)
+        winston.format.printf((info) => String(info.message))
       ),
     }),
   ],
