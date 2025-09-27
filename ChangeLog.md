@@ -3,6 +3,7 @@
 ## 09/26/2025 4.0.2
 
 - Requires Node 20 or higher
+- Bump dependency `glob` from `^9.3.5` to `^10.4.5`
 
 ## 09/19/2025 4.0.1
 
