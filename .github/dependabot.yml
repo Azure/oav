@@ -23,10 +23,6 @@ updates:
       # locked to "^6.3.0", since newer majors remove features we depend on
       - dependency-name: "path-to-regexp"
 
-      # locked to ~3.16.0, since newer minors include an undocumented breaking change in typings that impacts us
-      # https://github.com/winstonjs/winston/issues/2528
-      - dependency-name: "winston"
-
       # locked to ^15.4.1, since newer majors include breaking changes that may impact us
       - dependency-name: "yargs"
 
@@ -47,9 +43,3 @@ updates:
 
       # locked to "~4.9.5", for compat with our TS code
       - dependency-name: "typescript"
-
-      # overrides
-
-      # locked to ~2.6.1, since newer minors include an undocumented breaking change in typings that impacts us
-      # https://github.com/winstonjs/logform/issues/336
-      - dependency-name: "logform"
