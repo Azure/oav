@@ -1,5 +1,5 @@
 import * as path from "path";
-import glob = require("glob");
+import * as glob from "glob";
 import * as _ from "lodash";
 
 const specPaths: string[] = glob

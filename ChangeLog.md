@@ -3,6 +3,7 @@
 ## 09/26/2025 4.0.2
 
 - Requires Node 20 or higher
+- Bump dependency `glob` from `^9.3.5` to `^11.0.3`
 - Bump dependency `inversify` from `^5.1.1` to `^7.10.1`
 - Bump dependency `winston` from `~3.16.0` to `^3.17.0`
 
