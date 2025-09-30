@@ -14,9 +14,6 @@ updates:
       # locked to "^6.12.6", since newer majors include breaking changes that impact us
       - dependency-name: "ajv"
 
-      # locked to "^5.1.1", since newer majors include breaking changes that impact us
-      - dependency-name: "inversify"
-
       # locked to "^6.3.0", since newer majors remove features we depend on
       - dependency-name: "path-to-regexp"
 
@@ -37,6 +34,3 @@ updates:
       - dependency-name: "eslint-config-prettier"
       - dependency-name: "eslint-plugin-prettier"
       - dependency-name: "prettier"
-
-      # locked to "~4.9.5", for compat with our TS code
-      - dependency-name: "typescript"
