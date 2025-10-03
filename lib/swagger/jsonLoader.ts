@@ -74,7 +74,14 @@ export class JsonLoader implements Loader<Json> {
     cache.resolved = fileContent;
     (fileContent as any)[$id] = cache.mockName;
     if (cache.skipResolveRef !== true) {
-      fileContent = await this.resolveRef(fileContent, ["$"], fileContent, cache.filePath, false);
+      fileContent = await this.resolveRef(
+        fileContent,
+        ["$"],
+        fileContent,
+        cache.filePath,
+        false,
+        true
+      );
     }
     this.loadedFiles.push(fileContent);
     return fileContent;
@@ -289,7 +296,8 @@ export class JsonLoader implements Loader<Json> {
             pathArr.concat([idx.toString()]),
             rootObject,
             relativeFilePath,
-            skipResolveChildRef
+            skipResolveChildRef,
+            keepRefSiblings
           );
           if (newRef !== item) {
             // eslint-disable-next-line require-atomic-updates
@@ -314,7 +322,8 @@ export class JsonLoader implements Loader<Json> {
             pathArr.concat([key]),
             rootObject,
             relativeFilePath,
-            skipResolveChildRef || this.skipResolveRefKeys.has(key)
+            skipResolveChildRef || this.skipResolveRefKeys.has(key),
+            keepRefSiblings
           );
           if (newRef !== item) {
             obj[key] = newRef;
