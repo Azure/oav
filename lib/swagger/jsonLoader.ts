@@ -79,8 +79,8 @@ export class JsonLoader implements Loader<Json> {
         ["$"],
         fileContent,
         cache.filePath,
-        false,
-        true
+        /* skipResolveChildRef */ false,
+        /* keepRefSiblings */ true
       );
     }
     this.loadedFiles.push(fileContent);
@@ -103,8 +103,8 @@ export class JsonLoader implements Loader<Json> {
         ["$"],
         fileContent,
         cache.filePath,
-        false,
-        true
+        /* skipResolveChildRef */ false,
+        /* keepRefSiblings */ true
       );
     }
     this.loadedFiles.push(fileContent);
