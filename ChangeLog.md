@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 11/18/2025 4.0.3
+
+- Bump dependency `glob` from `^11.0.3` to `^12.0.0`
+
 ## 09/26/2025 4.0.2
 
 - Requires Node 20 or higher
