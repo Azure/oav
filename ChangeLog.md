@@ -2,7 +2,7 @@
 
 ## 11/18/2025 4.0.3
 
-- Bump dependency `glob` from `^11.0.3` to `^12.0.0`
+- Bump dependency `glob` from `^11.0.3` to `^13.0.0`
 
 ## 09/26/2025 4.0.2
 
