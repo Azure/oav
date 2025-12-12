@@ -1,9 +1,14 @@
 version: 2
 updates:
+  # repo does not use GitHub Actions yet, but let's enable dependabot so we don't forget
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     cooldown:
       default-days: 7
     ignore:
