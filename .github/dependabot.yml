@@ -18,8 +18,10 @@ updates:
       - dependency-name: "@azure/openapi-markdown"
       - dependency-name: "json-schema-traverse"
 
-      # locked to "^6.12.6", since newer majors include breaking changes that impact us
+      # ignore v6 updates (locked to "^6.12.6"), since newer majors include breaking changes that impact us
+      # but allow updates to newer majors referenced transitively (like v8)
       - dependency-name: "ajv"
+        versions: ["6.x"]
 
       # locked to "^6.3.0", since newer majors remove features we depend on
       - dependency-name: "path-to-regexp"
