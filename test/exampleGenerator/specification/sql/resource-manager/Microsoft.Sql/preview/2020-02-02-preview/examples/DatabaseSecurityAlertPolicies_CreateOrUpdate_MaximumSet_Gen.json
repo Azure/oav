@@ -3,8 +3,8 @@
   "operationId": "DatabaseSecurityAlertPolicies_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgDatabaseSecurityAlertPolicies",
-    "serverName": "mlcvzknrjkgdtfybdugdfwq",
-    "databaseName": "jzolopxgtmx",
+    "serverName": "r",
+    "databaseName": "zjgitit",
     "securityAlertPolicyName": "default",
     "parameters": {
       "properties": {

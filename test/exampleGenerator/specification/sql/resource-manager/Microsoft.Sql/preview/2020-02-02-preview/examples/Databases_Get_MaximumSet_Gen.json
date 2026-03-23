@@ -17,44 +17,44 @@
           "family": "Gen4",
           "capacity": 2,
           "tier": "BusinessCritical",
-          "size": "hknnoophp"
+          "size": "jw"
         },
         "kind": "v12.0,user,vcore",
-        "managedBy": "upcbrtidjsdbaxotmdspjytikocl",
+        "managedBy": "lomqamthvisu",
         "properties": {
           "collation": "SQL_Latin1_General_CP1_CI_AS",
           "maxSizeBytes": 268435456000,
-          "elasticPoolId": "updwacsulmcs",
+          "elasticPoolId": "vsembjeubyyxm",
           "status": "Online",
           "databaseId": "6c764297-577b-470f-9af4-96d3d41e2ba3",
           "creationDate": "2017-06-07T04:41:33.937Z",
           "currentServiceObjectiveName": "BC_Gen4_2",
-          "requestedServiceObjectiveName": "yvxauhzx",
+          "requestedServiceObjectiveName": "wnxwniyjh",
           "defaultSecondaryLocation": "North Europe",
-          "failoverGroupId": "ucblbzuhswnx",
+          "failoverGroupId": "bikxwobnxcztiyadqhykbvpowmbktn",
           "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
           "zoneRedundant": true,
           "licenseType": "LicenseIncluded",
           "maxLogSizeBytes": 104857600,
-          "earliestRestoreDate": "2026-03-23T22:06:45.143Z",
+          "earliestRestoreDate": "2026-03-23T22:09:46.304Z",
           "readScale": "Enabled",
           "readReplicaCount": 1,
           "currentSku": {
-            "name": "nzjrapsw",
-            "tier": "mtguiynsjxvwptl",
-            "size": "fzirbjcthc",
-            "family": "ieggttprdqphxwrjxywznuhgqn",
-            "capacity": 11
+            "name": "wuhtpxlxnohqg",
+            "tier": "oupmsz",
+            "size": "grpersznnhtjxa",
+            "family": "aogxpuofdlchkjunxiwcieymfxlbt",
+            "capacity": 16
           },
-          "autoPauseDelay": 8,
+          "autoPauseDelay": 5,
           "storageAccountType": "GRS",
-          "minCapacity": 7,
-          "pausedDate": "2026-03-23T22:06:45.143Z",
-          "resumedDate": "2026-03-23T22:06:45.143Z"
+          "minCapacity": 23,
+          "pausedDate": "2026-03-23T22:09:46.304Z",
+          "resumedDate": "2026-03-23T22:09:46.304Z"
         },
         "tags": {
-          "key1579": "urznmpgjkfdztyehguju",
-          "key1272": "tkcyeimgo"
+          "key6752": "rwekgtpqeuzglrrytwrmuxt",
+          "key1425": "fqzhuqchniorralqc"
         },
         "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/Default-SQL-SouthEastAsia/providers/Microsoft.Sql/servers/testsvr/databases/testdb",
         "name": "testdb",
