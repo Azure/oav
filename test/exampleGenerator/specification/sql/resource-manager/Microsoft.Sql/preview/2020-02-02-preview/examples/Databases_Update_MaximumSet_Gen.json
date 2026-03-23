@@ -8,42 +8,42 @@
     "parameters": {
       "sku": {
         "name": "BC_Gen4_4",
-        "tier": "vsqmiqlbmcsojkyu",
-        "size": "dcmzzdjxhbdtxsvrz",
-        "family": "y",
-        "capacity": 8
+        "tier": "xjiwrxbcbmujdmmuccw",
+        "size": "umejngmvlfxmmjdsvqfkacusxcj",
+        "family": "zehgvrtmlhzyzervej",
+        "capacity": 24
       },
       "properties": {
         "maxSizeBytes": 1073741824,
         "licenseType": "LicenseIncluded",
         "createMode": "Default",
-        "collation": "izkoerdtubekbzk",
+        "collation": "hfolkleqzbcxe",
         "sampleName": "AdventureWorksLT",
-        "elasticPoolId": "xgotcgkwtorhggoyq",
-        "sourceDatabaseId": "ebclijc",
-        "restorePointInTime": "2026-03-23T22:09:46.326Z",
-        "sourceDatabaseDeletionDate": "2026-03-23T22:09:46.326Z",
-        "recoveryServicesRecoveryPointId": "qmouewcp",
-        "longTermRetentionBackupResourceId": "qlwbnsgstvjivwzkmejxtqty",
-        "recoverableDatabaseId": "j",
-        "restorableDroppedDatabaseId": "ynoqtlquxkbfobrxuym",
+        "elasticPoolId": "lmehrey",
+        "sourceDatabaseId": "usxnr",
+        "restorePointInTime": "2026-03-23T22:25:55.155Z",
+        "sourceDatabaseDeletionDate": "2026-03-23T22:25:55.155Z",
+        "recoveryServicesRecoveryPointId": "vexhopg",
+        "longTermRetentionBackupResourceId": "huvubmpnlxkrjwiadfbe",
+        "recoverableDatabaseId": "blridzndzsonieqzocoo",
+        "restorableDroppedDatabaseId": "ariuooqnpelbbsfgfudhsrli",
         "catalogCollation": "DATABASE_DEFAULT",
         "zoneRedundant": true,
         "readScale": "Enabled",
-        "readReplicaCount": 27,
+        "readReplicaCount": 28,
         "currentSku": {
-          "name": "wuhtpxlxnohqg",
-          "tier": "oupmsz",
-          "size": "grpersznnhtjxa",
-          "family": "aogxpuofdlchkjunxiwcieymfxlbt",
-          "capacity": 16
+          "name": "cdyjlundfdlyzcvai",
+          "tier": "xvontgpxoeifwuxmfmisfukmlfn",
+          "size": "nircwhwqgaiimolsrdvwhih",
+          "family": "whl",
+          "capacity": 4
         },
-        "autoPauseDelay": 18,
+        "autoPauseDelay": 6,
         "storageAccountType": "GRS",
-        "minCapacity": 11
+        "minCapacity": 13
       },
       "tags": {
-        "key5487": "zhlxdnikqazheld"
+        "key3713": "avkunchiwazulsvyktymdl"
       }
     },
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
@@ -58,44 +58,44 @@
           "family": "Gen4",
           "capacity": 2,
           "tier": "BusinessCritical",
-          "size": "jw"
+          "size": "daua"
         },
         "kind": "v12.0,user,vcore",
-        "managedBy": "lomqamthvisu",
+        "managedBy": "lxso",
         "properties": {
           "collation": "SQL_Latin1_General_CP1_CI_AS",
           "maxSizeBytes": 268435456000,
-          "elasticPoolId": "vsembjeubyyxm",
+          "elasticPoolId": "bqrkfcftxiaxpeymtsiaatjjge",
           "status": "Online",
           "databaseId": "6c764297-577b-470f-9af4-96d3d41e2ba3",
           "creationDate": "2017-06-07T04:41:33.937Z",
           "currentServiceObjectiveName": "BC_Gen4_2",
-          "requestedServiceObjectiveName": "wnxwniyjh",
+          "requestedServiceObjectiveName": "tpaqnyzasvxcypzzqrxszeuuvzpuc",
           "defaultSecondaryLocation": "North Europe",
-          "failoverGroupId": "bikxwobnxcztiyadqhykbvpowmbktn",
+          "failoverGroupId": "drqdcyucxenae",
           "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
           "zoneRedundant": true,
           "licenseType": "LicenseIncluded",
           "maxLogSizeBytes": 104857600,
-          "earliestRestoreDate": "2026-03-23T22:09:46.304Z",
+          "earliestRestoreDate": "2026-03-23T22:25:55.130Z",
           "readScale": "Enabled",
           "readReplicaCount": 1,
           "currentSku": {
-            "name": "wuhtpxlxnohqg",
-            "tier": "oupmsz",
-            "size": "grpersznnhtjxa",
-            "family": "aogxpuofdlchkjunxiwcieymfxlbt",
-            "capacity": 16
+            "name": "cdyjlundfdlyzcvai",
+            "tier": "xvontgpxoeifwuxmfmisfukmlfn",
+            "size": "nircwhwqgaiimolsrdvwhih",
+            "family": "whl",
+            "capacity": 4
           },
-          "autoPauseDelay": 5,
+          "autoPauseDelay": 9,
           "storageAccountType": "GRS",
-          "minCapacity": 23,
-          "pausedDate": "2026-03-23T22:09:46.304Z",
-          "resumedDate": "2026-03-23T22:09:46.304Z"
+          "minCapacity": 13,
+          "pausedDate": "2026-03-23T22:25:55.130Z",
+          "resumedDate": "2026-03-23T22:25:55.130Z"
         },
         "tags": {
-          "key6752": "rwekgtpqeuzglrrytwrmuxt",
-          "key1425": "fqzhuqchniorralqc"
+          "key5776": "lfkvklofshqyfepooqokxvgbyvwte",
+          "key1855": "qsqwbucxszuyxtkyaqidls"
         },
         "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/Default-SQL-SouthEastAsia/providers/Microsoft.Sql/servers/testsvr/databases/testdb",
         "name": "testdb",
