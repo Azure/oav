@@ -4,7 +4,11 @@
 module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.js$": "ts-jest",
   },
+  transformIgnorePatterns: [
+    "/node_modules/(?!(inversify|@inversifyjs)/)",
+  ],
   testEnvironment: "node",
   moduleFileExtensions: ["ts", "js", "json", "node"],
   moduleNameMapper: {},
