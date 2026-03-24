@@ -1,5 +1,5 @@
 import { FilePosition, getInfo } from "@azure-tools/openapi-tools-common";
-import { default as jsonPointer } from "json-pointer";
+import jsonPointer from "json-pointer";
 import { JSONPath } from "jsonpath-plus";
 
 export const jsonPathToArray = (jsonPath: string): string[] => {

@@ -1,4 +1,4 @@
-import { Ajv, CompilationContext } from "ajv";
+import type { Ajv, CompilationContext } from "ajv";
 import { JsonLoader } from "../swagger/jsonLoader.js";
 import { Schema } from "../swagger/swaggerTypes.js";
 import { xmsAzureResource, xmsMutability, xmsSecret } from "../util/constants.js";

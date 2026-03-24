@@ -1,7 +1,8 @@
-import { default as stableStringify } from "fast-json-stable-stringify";
-import * as jsonPointer from "json-pointer";
+import stableStringify from "fast-json-stable-stringify";
+import jsonPointer from "json-pointer";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
-import { SequenceMatcher } from "difflib";
+import difflib from "difflib";
+const { SequenceMatcher } = difflib;
 import {
   JsonPatchOp,
   JsonPatchOpAdd,
@@ -291,7 +292,7 @@ const calcArrayDiff = (
 const calcArrayDiffWithIndex = (
   from: any[],
   to: any[]
-): ReturnType<SequenceMatcher<any>["getOpcodes"]> | undefined => {
+): ReturnType<InstanceType<typeof SequenceMatcher<any>>["getOpcodes"]> | undefined => {
   const fromKeys = new Array(from.length);
   const toKeys = new Array(to.length);
   let hasKey = false;

@@ -2,7 +2,7 @@
 
 import "reflect-metadata";
 import { createRequire } from "module";
-import * as yargs from "yargs";
+import yargs from "yargs";
 import { log } from "./lib/util/logging.js";
 import * as extractXmsExamples from "./lib/commands/extract-xmsexamples.js";
 import * as generateExamples from "./lib/commands/generate-examples.js";

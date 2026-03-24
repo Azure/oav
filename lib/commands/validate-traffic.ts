@@ -1,4 +1,4 @@
-import * as yargs from "yargs";
+import type { Arguments, CommandBuilder } from "yargs";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions.js";
 import { TrafficValidationOptions } from "../swaggerValidator/trafficValidator.js";
@@ -8,7 +8,7 @@ import * as validate from "../validate.js";
 export const command = "validate-traffic <traffic-path> <spec-path>";
 export const describe = "Validate traffic payload against the spec.";
 
-export const builder: yargs.CommandBuilder = {
+export const builder: CommandBuilder = {
   trafficPath: {
     alias: "t",
     describe: "The recording payload path.",
@@ -67,7 +67,7 @@ export const builder: yargs.CommandBuilder = {
   },
 };
 
-export async function handler(argv: yargs.Arguments): Promise<void> {
+export async function handler(argv: Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     log.debug(argv.toString());
     const specPath = argv.specPath;

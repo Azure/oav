@@ -1,13 +1,14 @@
-import * as lodash from "lodash";
+import { createRequire } from "module";
 import {
   ChildObjectInfo,
   getInfo,
   getRootObjectInfo,
   RootObjectInfo,
 } from "@azure-tools/openapi-tools-common";
-import { Ajv, default as ajvInit, ErrorObject, ValidateFunction } from "ajv";
+import ajvInit from "ajv";
+import type { Ajv, ErrorObject, ValidateFunction } from "ajv";
 import { inject, injectable } from "inversify";
-import { createRequire } from "module";
+import lodash from "lodash";
 import { TYPES } from "../inversifyUtils.js";
 import { $id, JsonLoader } from "../swagger/jsonLoader.js";
 import { isSuppressed } from "../swagger/suppressionLoader.js";
@@ -27,11 +28,11 @@ import { SourceLocation } from "../util/validationError.js";
 import { ajvEnableAll, ajvEnableArmRule, ajvEnableArmIdFormat } from "./ajv.js";
 import {
   getIncludeErrorsMap,
-  SchemaValidateContext,
-  SchemaValidateFunction,
-  SchemaValidateIssue,
-  SchemaValidator,
-  SchemaValidatorOption,
+  type SchemaValidateContext,
+  type SchemaValidateFunction,
+  type SchemaValidateIssue,
+  type SchemaValidator,
+  type SchemaValidatorOption,
 } from "./schemaValidator.js";
 
 const require = createRequire(import.meta.url);

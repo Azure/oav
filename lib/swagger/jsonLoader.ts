@@ -7,8 +7,9 @@ import {
   parseJson,
   pathJoin,
 } from "@azure-tools/openapi-tools-common";
-import { load as parseYaml } from "js-yaml";
-import { default as jsonPointer } from "json-pointer";
+import jsYaml from "js-yaml";
+const { load: parseYaml } = jsYaml;
+import jsonPointer from "json-pointer";
 import { inject, injectable } from "inversify";
 import { xmsExamples, xmsReadonlyRef } from "../util/constants.js";
 import { getLazyBuilder } from "../util/lazyBuilder.js";

@@ -3,7 +3,7 @@
 
 /* eslint-disable id-blacklist */
 
-import * as yargs from "yargs";
+import type { Arguments, CommandBuilder } from "yargs";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions.js";
 import { log } from "../util/logging.js";
@@ -13,7 +13,7 @@ export const command = "generate-examples [spec-path]";
 
 export const describe = "Generate swagger examples from real payload records.";
 
-export const builder: yargs.CommandBuilder = {
+export const builder: CommandBuilder = {
   o: {
     alias: "operationIds",
     describe: "string of operation ids split by comma.",
@@ -48,7 +48,7 @@ export const builder: yargs.CommandBuilder = {
   },
 };
 
-export async function handler(argv: yargs.Arguments): Promise<void> {
+export async function handler(argv: Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     log.debug(argv.toString());
     const specPath = argv.specPath;

@@ -1,4 +1,4 @@
-import { Ajv, ErrorObject, ValidateFunction } from "ajv";
+import type { Ajv, ErrorObject, ValidateFunction } from "ajv";
 import { JsonLoader } from "../swagger/jsonLoader.js";
 import { Schema } from "../swagger/swaggerTypes.js";
 
