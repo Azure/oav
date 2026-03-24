@@ -13,7 +13,7 @@ import jsonPointer from "json-pointer";
 import { inject, injectable } from "inversify";
 import { xmsExamples, xmsReadonlyRef } from "../util/constants.js";
 import { getLazyBuilder } from "../util/lazyBuilder.js";
-import { TYPES } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
 import { FileLoader, FileLoaderOption } from "./fileLoader.js";
 import { Loader, setDefaultOpts } from "./loader.js";
 

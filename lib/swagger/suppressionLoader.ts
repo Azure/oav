@@ -14,7 +14,7 @@ import {
 import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
 import { log } from "../util/logging.js";
-import { TYPES } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
 import { FileLoader, FileLoaderOption } from "./fileLoader.js";
 import { Loader } from "./loader.js";
 import { SwaggerSpec } from "./swaggerTypes.js";

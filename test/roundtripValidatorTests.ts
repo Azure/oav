@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import * as assert from "assert";
 import * as glob from "glob";
 import * as path from "path";

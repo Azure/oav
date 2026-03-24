@@ -7,7 +7,8 @@ import {
 } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
 import jsonPointer from "json-pointer";
-import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils.js";
+import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
 import { $id, JsonLoader, JsonLoaderRefError } from "../swagger/jsonLoader.js";
 import { SwaggerLoaderOption } from "../swagger/swaggerLoader.js";
 import { Parameter, refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes.js";

@@ -1,6 +1,6 @@
 import { copyInfo, StringMap } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
 import { JsonLoader } from "../swagger/jsonLoader.js";
 import { Loader, setDefaultOpts } from "../swagger/loader.js";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader.js";

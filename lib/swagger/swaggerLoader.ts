@@ -1,6 +1,6 @@
 import { relative as pathRelative, dirname } from "path";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
 import { traverseSwagger } from "../transform/traverseSwagger.js";
 import { xmsExamples } from "../util/constants.js";
 import { getProviderFromSpecPath } from "../util/utils.js";

@@ -9,7 +9,7 @@ import ajvInit from "ajv";
 import type { Ajv, ErrorObject, ValidateFunction } from "ajv";
 import { inject, injectable } from "inversify";
 import lodash from "lodash";
-import { TYPES } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
 import { $id, JsonLoader } from "../swagger/jsonLoader.js";
 import { isSuppressed } from "../swagger/suppressionLoader.js";
 import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes.js";

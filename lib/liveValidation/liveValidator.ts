@@ -23,7 +23,8 @@ import * as C from "../util/constants.js";
 import { log } from "../util/logging.js";
 import * as utils from "../util/utils.js";
 import { RuntimeException } from "../util/validationError.js";
-import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils.js";
+import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
 import { setDefaultOpts } from "../swagger/loader.js";
 import { apiValidationErrors, ApiValidationErrorCode } from "../util/errorDefinitions.js";
 import {

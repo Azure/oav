@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import lodash from "lodash";
 const { cloneDeep } = lodash;
 import jp from "json-pointer";
-import { TYPES } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
 import { Schema } from "../swagger/swaggerTypes.js";
 import { type SchemaValidator } from "../swaggerValidator/schemaValidator.js";
 import { jsonPathToPointer } from "../util/jsonUtils.js";

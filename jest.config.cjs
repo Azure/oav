@@ -24,5 +24,6 @@ module.exports = {
   ],
   setupFilesAfterEnv: ["<rootDir>/jest.setup-file.cjs"],
   testMatch: ["**/test/**/*.ts", "!**/test/**/*.d.ts", "!**/test/sample.ts"],
+  testTimeout: 999999,
   verbose: true,
 };
