@@ -9,7 +9,7 @@ import { ParsedUrlQuery } from "querystring";
 import * as util from "util";
 import { URL } from "url";
 import * as glob from "glob";
-import * as _ from "lodash";
+import _ from "lodash";
 import { diffRequestResponse } from "../armValidator/roundTripValidator.js";
 import * as models from "../models/index.js";
 import { requestResponseDefinition } from "../models/requestResponse.js";

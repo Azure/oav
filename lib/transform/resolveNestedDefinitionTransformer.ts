@@ -1,4 +1,5 @@
-import { arrayKeywords, keywords, propsKeywords } from "json-schema-traverse";
+import jsonSchemaTraverse from "json-schema-traverse";
+const { arrayKeywords, keywords, propsKeywords } = jsonSchemaTraverse;
 import { $id } from "../swagger/jsonLoader.js";
 import { Operation, Path, refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes.js";
 import { SpecTransformer, TransformerType } from "./transformer.js";

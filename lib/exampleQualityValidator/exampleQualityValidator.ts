@@ -1,6 +1,6 @@
 import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
-import * as _ from "lodash";
+import _ from "lodash";
 
 import { FileLoaderOption } from "../swagger/fileLoader.js";
 import { JsonLoaderOption, JsonLoader } from "../swagger/jsonLoader.js";

@@ -10,14 +10,14 @@ export {
   validateTraffic as validateTrafficAgainstSpec,
 } from "./lib/validate.js";
 
-export { BaseValidationError } from "./lib/util/baseValidationError.js";
+export type { BaseValidationError } from "./lib/util/baseValidationError.js";
 export { Severity } from "./lib/util/severity.js";
-export { ModelValidationError } from "./lib/util/modelValidationError.js";
+export type { ModelValidationError } from "./lib/util/modelValidationError.js";
 export { ValidationResultSource } from "./lib/util/validationResultSource.js";
-export {
+export { errorCodeToErrorMetadata } from "./lib/util/validationError.js";
+export type {
   NodeError,
   ValidationErrorMetadata,
-  errorCodeToErrorMetadata,
   ValidationResult,
   ErrorCode,
   ExtendedErrorCode,
@@ -31,22 +31,24 @@ export { getResourceType, getProvider } from "./lib/util/utils.js";
 // Classes
 export {
   LiveValidator,
+  LiveValidatorLoggingTypes,
+  legacyParseValidationRequest as parseValidationRequest,
+} from "./lib/liveValidation/liveValidator.js";
+export type {
   RequestResponsePair,
   LiveValidationIssue,
   LiveValidatorOptions,
   RequestResponseLiveValidationResult,
   LiveValidationResult,
   ValidateOptions,
-  LiveValidatorLoggingTypes,
-  legacyParseValidationRequest as parseValidationRequest,
 } from "./lib/liveValidation/liveValidator.js";
-export {
+export type {
   LiveRequest,
   LiveResponse,
   ValidationRequest,
 } from "./lib/liveValidation/operationValidator.js";
 
-export {
+export type {
   ScenarioDefinition,
   Scenario,
   Step,
@@ -54,29 +56,38 @@ export {
   StepRestCall,
 } from "./lib/apiScenario/apiScenarioTypes.js";
 
-export { FileLoaderOption, FileLoader } from "./lib/swagger/fileLoader.js";
+export { FileLoader } from "./lib/swagger/fileLoader.js";
+export type { FileLoaderOption } from "./lib/swagger/fileLoader.js";
 
-export { SwaggerLoaderOption, SwaggerLoader } from "./lib/swagger/swaggerLoader.js";
+export { SwaggerLoader } from "./lib/swagger/swaggerLoader.js";
+export type { SwaggerLoaderOption } from "./lib/swagger/swaggerLoader.js";
 
-export { SuppressionLoaderOption, SuppressionLoader } from "./lib/swagger/suppressionLoader.js";
+export { SuppressionLoader } from "./lib/swagger/suppressionLoader.js";
+export type { SuppressionLoaderOption } from "./lib/swagger/suppressionLoader.js";
 
-export { JsonLoader, JsonLoaderOption, JsonLoaderRefError } from "./lib/swagger/jsonLoader.js";
+export { JsonLoader, JsonLoaderRefError } from "./lib/swagger/jsonLoader.js";
+export type { JsonLoaderOption } from "./lib/swagger/jsonLoader.js";
 
 export {
-  SwaggerExampleErrorDetail,
   SwaggerExampleValidator,
   NewModelValidator,
+} from "./lib/swaggerValidator/modelValidator.js";
+export type {
+  SwaggerExampleErrorDetail,
   ExampleValidationOption,
 } from "./lib/swaggerValidator/modelValidator.js";
 
 export {
-  SemanticErrorDetail,
   SwaggerSemanticValidator,
-  SemanticValidationOption,
   SemanticValidator,
 } from "./lib/swaggerValidator/semanticValidator.js";
+export type {
+  SemanticErrorDetail,
+  SemanticValidationOption,
+} from "./lib/swaggerValidator/semanticValidator.js";
 
-export { TrafficValidationIssue, TrafficValidator } from "./lib/swaggerValidator/trafficValidator.js";
+export { TrafficValidator } from "./lib/swaggerValidator/trafficValidator.js";
+export type { TrafficValidationIssue } from "./lib/swaggerValidator/trafficValidator.js";
 
 // Constants
 export const Constants = C;

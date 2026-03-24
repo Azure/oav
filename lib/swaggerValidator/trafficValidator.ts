@@ -185,9 +185,7 @@ export class TrafficValidator {
     try {
       for (const trafficFile of this.trafficFiles) {
         payloadFilePath = trafficFile;
-        const payload: RequestResponsePair = JSON.parse(
-          fs.readFileSync(trafficFile, "utf-8")
-        );
+        const payload: RequestResponsePair = JSON.parse(fs.readFileSync(trafficFile, "utf-8"));
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
         let operationInfo = validationResult.requestValidationResult?.operationInfo;
         const liveRequest = payload.liveRequest;

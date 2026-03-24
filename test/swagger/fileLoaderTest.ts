@@ -2,10 +2,9 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import assert from "assert";
-import { FileLoader, FileLoaderOption } from "../../lib/swagger/fileLoader.js";
-
-import { fileURLToPath } from "url";
 import * as path from "path";
+import { fileURLToPath } from "url";
+import { FileLoader, FileLoaderOption } from "../../lib/swagger/fileLoader.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

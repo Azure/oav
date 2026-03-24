@@ -30,6 +30,13 @@ module.exports = {
     "plugin:import/warnings",
     "plugin:import/typescript",
   ],
+  settings: {
+    "import/resolver": {
+      typescript: {
+        alwaysTryTypes: true,
+      },
+    },
+  },
   rules: {
     "import/order": "error",
     "import/namespace": "off",

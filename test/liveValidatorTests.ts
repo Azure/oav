@@ -4,7 +4,7 @@
 import * as assert from "assert";
 import * as os from "os";
 import * as path from "path";
-import * as lodash from "lodash";
+import lodash from "lodash";
 import * as glob from "glob";
 import { LiveValidator, parseValidationRequest } from "../lib/liveValidation/liveValidator.js";
 import { OperationSearcher } from "../lib/liveValidation/operationSearcher.js";

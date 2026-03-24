@@ -3,7 +3,8 @@ import { inject, injectable } from "inversify";
 import { FilePosition, getInfo, ParseError, StringMap } from "@azure-tools/openapi-tools-common";
 import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
 import jsonPointer from "json-pointer";
-import { parseInt } from "lodash";
+import lodash from "lodash";
+const { parseInt: lodashParseInt } = lodash;
 import * as C from "../util/constants.js";
 import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils.js";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader.js";
@@ -48,7 +49,11 @@ import { getFilePositionFromJsonPath } from "../util/jsonUtils.js";
 import { checkAndResolveGithubUrl, getProviderFromSpecPath } from "../util/utils.js";
 import { Severity } from "../util/severity.js";
 import { ValidationResultSource } from "../util/validationResultSource.js";
-import { SchemaValidateIssue, SchemaValidator, SchemaValidatorOption } from "./schemaValidator.js";
+import {
+  type SchemaValidateIssue,
+  type SchemaValidator,
+  type SchemaValidatorOption,
+} from "./schemaValidator.js";
 
 @injectable()
 export class SwaggerExampleValidator {
@@ -833,7 +838,7 @@ export class SwaggerExampleValidator {
     headers: StringMap<string>,
     exampleObj?: any
   ) => {
-    if (operation["x-ms-long-running-operation"] === true && parseInt(statusCode, 10) < 300) {
+    if (operation["x-ms-long-running-operation"] === true && lodashParseInt(statusCode, 10) < 300) {
       if (operation._method === "post") {
         if (statusCode === "202" || statusCode === "201") {
           this.validateLroHeader(examplePath, operation, statusCode, headers);

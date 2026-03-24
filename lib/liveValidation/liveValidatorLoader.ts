@@ -15,9 +15,9 @@ import {
   SwaggerSpec,
 } from "../swagger/swaggerTypes.js";
 import {
-  SchemaValidateFunction,
-  SchemaValidator,
-  SchemaValidatorOption,
+  type SchemaValidateFunction,
+  type SchemaValidator,
+  type SchemaValidatorOption,
 } from "../swaggerValidator/schemaValidator.js";
 import { allOfTransformer } from "../transform/allOfTransformer.js";
 import { getTransformContext, TransformContext } from "../transform/context.js";
