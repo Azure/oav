@@ -1,27 +1,27 @@
 import * as path from "path";
 import deepdash from "deepdash";
 import lodash from "lodash";
-import { JsonLoader } from "../swagger/jsonLoader";
-import { Operation, SwaggerSpec } from "../swagger/swaggerTypes";
-import { traverseSwaggerAsync } from "../transform/traverseSwagger";
-import { ModelValidationError } from "../util/modelValidationError";
-import * as validate from "../validate";
-import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
-import { TransformContext, getTransformContext } from "../transform/context";
-import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
-import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
-import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
-import { discriminatorTransformer } from "../transform/discriminatorTransformer";
-import { allOfTransformer } from "../transform/allOfTransformer";
-import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
-import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
-import { log } from "../util/logging";
-import { inversifyGetInstance } from "../inversifyUtils";
-import { ExampleRule, RuleSet } from "./exampleRule";
-import * as util from "./util";
-import Translator from "./translator";
-import SwaggerMocker from "./swaggerMocker";
-import { MockerCache, PayloadCache } from "./exampleCache";
+import { JsonLoader } from "../swagger/jsonLoader.js";
+import { Operation, SwaggerSpec } from "../swagger/swaggerTypes.js";
+import { traverseSwaggerAsync } from "../transform/traverseSwagger.js";
+import { ModelValidationError } from "../util/modelValidationError.js";
+import * as validate from "../validate.js";
+import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator.js";
+import { TransformContext, getTransformContext } from "../transform/context.js";
+import { xmsPathsTransformer } from "../transform/xmsPathsTransformer.js";
+import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer.js";
+import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer.js";
+import { discriminatorTransformer } from "../transform/discriminatorTransformer.js";
+import { allOfTransformer } from "../transform/allOfTransformer.js";
+import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer.js";
+import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer.js";
+import { log } from "../util/logging.js";
+import { inversifyGetInstance } from "../inversifyUtils.js";
+import { ExampleRule, RuleSet } from "./exampleRule.js";
+import * as util from "./util.js";
+import Translator from "./translator.js";
+import SwaggerMocker from "./swaggerMocker.js";
+import { MockerCache, PayloadCache } from "./exampleCache.js";
 const _ = deepdash(lodash);
 
 export default class Generator {
@@ -275,7 +275,7 @@ export default class Generator {
     type pathNode = string | number;
     type pathNodes = pathNode[];
 
-    const requestPaths = _.paths(example.parameters, { pathFormat: "array" }).map((v) =>
+    const requestPaths = _.paths(example.parameters, { pathFormat: "array" }).map((v: any) =>
       (v as pathNode[]).reverse()
     );
 
@@ -283,7 +283,7 @@ export default class Generator {
      * construct a inverted index , the key is leaf property key, value is reverse of the path from the root to the leaf property.
      */
     const invertedIndex = new Map<string | number, pathNodes[]>();
-    requestPaths.forEach((v) => {
+    requestPaths.forEach((v: any) => {
       if (v.length && typeof v[0] === "string") {
         const parentPaths = invertedIndex.get(v[0]);
         if (!parentPaths) {
@@ -315,7 +315,7 @@ export default class Generator {
      */
     const res = _.mapValuesDeep(
       example.responses,
-      (value, key, parentValue, context) => {
+      (value: any, key: any, parentValue: any, context: any) => {
         if (!parentValue) {
           log.warn(`parent is null`);
         }

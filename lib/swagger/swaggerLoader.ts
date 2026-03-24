@@ -1,14 +1,14 @@
 import { relative as pathRelative, dirname } from "path";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../inversifyUtils";
-import { traverseSwagger } from "../transform/traverseSwagger";
-import { xmsExamples } from "../util/constants";
-import { getProviderFromSpecPath } from "../util/utils";
-import { FileLoader, FileLoaderOption } from "./fileLoader";
-import { JsonLoader, JsonLoaderOption } from "./jsonLoader";
-import { Loader, setDefaultOpts } from "./loader";
-import { SuppressionLoader, SuppressionLoaderOption } from "./suppressionLoader";
-import { SwaggerExample, SwaggerSpec } from "./swaggerTypes";
+import { TYPES } from "../inversifyUtils.js";
+import { traverseSwagger } from "../transform/traverseSwagger.js";
+import { xmsExamples } from "../util/constants.js";
+import { getProviderFromSpecPath } from "../util/utils.js";
+import { FileLoader, FileLoaderOption } from "./fileLoader.js";
+import { JsonLoader, JsonLoaderOption } from "./jsonLoader.js";
+import { Loader, setDefaultOpts } from "./loader.js";
+import { SuppressionLoader, SuppressionLoaderOption } from "./suppressionLoader.js";
+import { SwaggerExample, SwaggerSpec } from "./swaggerTypes.js";
 
 export interface SwaggerLoaderOption
   extends SuppressionLoaderOption,

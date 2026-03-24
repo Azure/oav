@@ -1,4 +1,4 @@
-import { GlobalTransformer, TransformerType } from "./transformer";
+import { GlobalTransformer, TransformerType } from "./transformer.js";
 
 export const schemaV4ToV7Transformer: GlobalTransformer = {
   type: TransformerType.Global,

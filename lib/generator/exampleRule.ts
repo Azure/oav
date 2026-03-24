@@ -1,4 +1,4 @@
-import { CacheItem } from "./exampleCache";
+import { CacheItem } from "./exampleCache.js";
 export interface ExampleRule {
   exampleNamePostfix: string;
   ruleName: string | undefined;

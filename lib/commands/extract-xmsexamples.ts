@@ -5,9 +5,9 @@
 
 import * as yargs from "yargs";
 
-import { cliSuppressExceptions } from "../cliSuppressExceptions";
-import { log } from "../util/logging";
-import * as validate from "../validate";
+import { cliSuppressExceptions } from "../cliSuppressExceptions.js";
+import { log } from "../util/logging.js";
+import * as validate from "../validate.js";
 
 export const command = "extract-xmsexamples <spec-path> <recordings>";
 

@@ -1,9 +1,9 @@
-import { LiveValidatorLoggingLevels } from "../liveValidation/liveValidator";
-import { JsonLoader } from "../swagger/jsonLoader";
-import { Schema } from "../swagger/swaggerTypes";
-import { xNullable } from "../util/constants";
-import { allOfTransformer } from "./allOfTransformer";
-import { GlobalTransformer, TransformerType } from "./transformer";
+import { LiveValidatorLoggingLevels } from "../liveValidation/liveValidator.js";
+import { JsonLoader } from "../swagger/jsonLoader.js";
+import { Schema } from "../swagger/swaggerTypes.js";
+import { xNullable } from "../util/constants.js";
+import { allOfTransformer } from "./allOfTransformer.js";
+import { GlobalTransformer, TransformerType } from "./transformer.js";
 
 export const nullableTransformer: GlobalTransformer = {
   type: TransformerType.Global,

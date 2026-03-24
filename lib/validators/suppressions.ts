@@ -4,8 +4,8 @@
 import * as path from "path";
 import { isArray, parseMarkdown, readFile, some } from "@azure-tools/openapi-tools-common";
 import * as amd from "@azure/openapi-markdown";
-import { log } from "../util/logging";
-import { isSubPath, splitPathAndReverse } from "../util/path";
+import { log } from "../util/logging.js";
+import { isSubPath, splitPathAndReverse } from "../util/path.js";
 
 export const getSuppressions = async (specPath: string): Promise<undefined | amd.Suppression> => {
   // find readme.md

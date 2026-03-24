@@ -10,7 +10,7 @@ import {
   JsonPatchOpRemove,
   JsonPatchOpReplace,
   JsonPatchOpTest,
-} from "./apiScenarioTypes";
+} from "./apiScenarioTypes.js";
 
 interface PatchContext {
   root: any;

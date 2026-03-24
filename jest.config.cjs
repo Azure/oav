@@ -1,9 +1,13 @@
 // @ts-check
 
-/** @type {jest.InitialOptions} */
+/** @type {import('jest').Config} */
 module.exports = {
+  extensionsToTreatAsEsm: [".ts"],
   transform: {
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.tsx?$": ["ts-jest", {
+      useESM: true,
+      tsconfig: "tsconfig.json",
+    }],
   },
   testEnvironment: "node",
   moduleFileExtensions: ["ts", "js", "json", "node"],
@@ -16,12 +20,7 @@ module.exports = {
     "/\\.autopull/",
     "/utilities.helpers.ts"
   ],
-  globals: {
-    "ts-jest": {
-      tsconfig: "tsconfig.json",
-    },
-  },
-  setupFilesAfterEnv: ["<rootDir>/jest.setup-file.js"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup-file.cjs"],
   testMatch: ["**/test/**/*.ts", "!**/test/**/*.d.ts", "!**/test/sample.ts"],
   verbose: true,
 };

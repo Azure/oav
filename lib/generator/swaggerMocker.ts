@@ -1,5 +1,5 @@
-import { JsonLoader } from "../swagger/jsonLoader";
-import { log } from "../util/logging";
+import { JsonLoader } from "../swagger/jsonLoader.js";
+import { log } from "../util/logging.js";
 import {
   buildItemOption,
   CacheItem,
@@ -8,10 +8,10 @@ import {
   MockerCache,
   reBuildExample,
   PayloadCache,
-} from "./exampleCache";
-import Mocker from "./mocker";
-import * as util from "./util";
-import { ExampleRule, getRuleValidator } from "./exampleRule";
+} from "./exampleCache.js";
+import Mocker from "./mocker.js";
+import * as util from "./util.js";
+import { ExampleRule, getRuleValidator } from "./exampleRule.js";
 
 export default class SwaggerMocker {
   private jsonLoader: JsonLoader;

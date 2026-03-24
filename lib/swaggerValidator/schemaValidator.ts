@@ -1,7 +1,7 @@
-import { Schema } from "../swagger/swaggerTypes";
-import { SchemaValidationErrorCode, TrafficValidationErrorCode } from "../util/errorDefinitions";
-import { Severity } from "../util/severity";
-import { SourceLocation } from "../util/validationError";
+import { Schema } from "../swagger/swaggerTypes.js";
+import { SchemaValidationErrorCode, TrafficValidationErrorCode } from "../util/errorDefinitions.js";
+import { Severity } from "../util/severity.js";
+import { SourceLocation } from "../util/validationError.js";
 
 export interface SchemaValidateContext {
   isResponse?: boolean;

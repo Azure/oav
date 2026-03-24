@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { log } from "../util/logging";
+import { log } from "../util/logging.js";
 
 function randomString(length: number): string {
   const possible = "abcdefghijklmnopqrstuvwxyz";

@@ -5,10 +5,10 @@
 
 import * as yargs from "yargs";
 
-import { cliSuppressExceptions } from "../cliSuppressExceptions";
-import { log } from "../util/logging";
+import { cliSuppressExceptions } from "../cliSuppressExceptions.js";
+import { log } from "../util/logging.js";
 
-import * as validate from "../validate";
+import * as validate from "../validate.js";
 export const command = "generate-examples [spec-path]";
 
 export const describe = "Generate swagger examples from real payload records.";

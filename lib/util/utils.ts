@@ -21,7 +21,7 @@ import {
 } from "@azure-tools/openapi-tools-common";
 import * as amd from "@azure/openapi-markdown";
 import * as commonmark from "commonmark";
-import { log } from "./logging";
+import { log } from "./logging.js";
 
 /*
  * Executes an array of promises sequentially. Inspiration of this method is here:

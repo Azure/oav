@@ -3,9 +3,9 @@
 
 /* tslint:disable:no-console max-line-length*/
 
-import * as validate from "../lib/validate";
+import * as validate from "../lib/validate.js";
 
-import { clonePR } from "./utilities.helpers";
+import { clonePR } from "./utilities.helpers.js";
 
 const prNumber: number = 27067;
 const prRepo: string = "azure/azure-rest-api-specs";

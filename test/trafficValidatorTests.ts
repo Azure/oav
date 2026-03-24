@@ -1,6 +1,6 @@
 import * as path from "path";
-import { LiveValidator } from "../lib/liveValidation/liveValidator";
-import { TrafficValidator } from "../lib/swaggerValidator/trafficValidator";
+import { LiveValidator } from "../lib/liveValidation/liveValidator.js";
+import { TrafficValidator } from "../lib/swaggerValidator/trafficValidator.js";
 
 describe("TrafficValidator", () => {
   it("should initialize data-plane swagger without errors", async () => {

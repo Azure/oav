@@ -1,9 +1,9 @@
 import { copyInfo, StringMap } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../inversifyUtils";
-import { JsonLoader } from "../swagger/jsonLoader";
-import { Loader, setDefaultOpts } from "../swagger/loader";
-import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
+import { TYPES } from "../inversifyUtils.js";
+import { JsonLoader } from "../swagger/jsonLoader.js";
+import { Loader, setDefaultOpts } from "../swagger/loader.js";
+import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader.js";
 import {
   LoggingFn,
   Operation,
@@ -13,27 +13,27 @@ import {
   Response,
   Schema,
   SwaggerSpec,
-} from "../swagger/swaggerTypes";
+} from "../swagger/swaggerTypes.js";
 import {
   SchemaValidateFunction,
   SchemaValidator,
   SchemaValidatorOption,
-} from "../swaggerValidator/schemaValidator";
-import { allOfTransformer } from "../transform/allOfTransformer";
-import { getTransformContext, TransformContext } from "../transform/context";
-import { discriminatorTransformer } from "../transform/discriminatorTransformer";
-import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
-import { nullableTransformer } from "../transform/nullableTransformer";
-import { pathRegexTransformer } from "../transform/pathRegexTransformer";
-import { pureObjectTransformer } from "../transform/pureObjectTransformer";
-import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
-import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
-import { schemaV4ToV7Transformer } from "../transform/schemaV4ToV7Transformer";
-import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
-import { traverseSwaggerAsync } from "../transform/traverseSwagger";
-import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
-import { getLazyBuilder } from "../util/lazyBuilder";
-import { waitUntilLowLoad } from "../util/utils";
+} from "../swaggerValidator/schemaValidator.js";
+import { allOfTransformer } from "../transform/allOfTransformer.js";
+import { getTransformContext, TransformContext } from "../transform/context.js";
+import { discriminatorTransformer } from "../transform/discriminatorTransformer.js";
+import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer.js";
+import { nullableTransformer } from "../transform/nullableTransformer.js";
+import { pathRegexTransformer } from "../transform/pathRegexTransformer.js";
+import { pureObjectTransformer } from "../transform/pureObjectTransformer.js";
+import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer.js";
+import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer.js";
+import { schemaV4ToV7Transformer } from "../transform/schemaV4ToV7Transformer.js";
+import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer.js";
+import { traverseSwaggerAsync } from "../transform/traverseSwagger.js";
+import { xmsPathsTransformer } from "../transform/xmsPathsTransformer.js";
+import { getLazyBuilder } from "../util/lazyBuilder.js";
+import { waitUntilLowLoad } from "../util/utils.js";
 
 export interface LiveValidatorLoaderOption extends SwaggerLoaderOption, SchemaValidatorOption {
   transformToNewSchemaFormat?: boolean;

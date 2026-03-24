@@ -1,8 +1,8 @@
 import { arrayKeywords, keywords, propsKeywords } from "json-schema-traverse";
-import { $id } from "../swagger/jsonLoader";
-import { Operation, Path, refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
-import { SpecTransformer, TransformerType } from "./transformer";
-import { traverseSwagger } from "./traverseSwagger";
+import { $id } from "../swagger/jsonLoader.js";
+import { Operation, Path, refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes.js";
+import { SpecTransformer, TransformerType } from "./transformer.js";
+import { traverseSwagger } from "./traverseSwagger.js";
 
 const visited = new WeakSet<Schema>();
 

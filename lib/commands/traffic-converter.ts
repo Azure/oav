@@ -3,8 +3,8 @@ import * as fs from "fs";
 import * as path from "path";
 import { URL } from "url";
 import * as yargs from "yargs";
-import { cliSuppressExceptions } from "../cliSuppressExceptions";
-import { log } from "../util/logging";
+import { cliSuppressExceptions } from "../cliSuppressExceptions.js";
+import { log } from "../util/logging.js";
 
 let InputDirectory: string = "";
 let OutputDirectory: string = "";

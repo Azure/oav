@@ -1,9 +1,9 @@
 import * as yargs from "yargs";
 
-import { cliSuppressExceptions } from "../cliSuppressExceptions";
-import { TrafficValidationOptions } from "../swaggerValidator/trafficValidator";
-import { log } from "../util/logging";
-import * as validate from "../validate";
+import { cliSuppressExceptions } from "../cliSuppressExceptions.js";
+import { TrafficValidationOptions } from "../swaggerValidator/trafficValidator.js";
+import { log } from "../util/logging.js";
+import * as validate from "../validate.js";
 
 export const command = "validate-traffic <traffic-path> <spec-path>";
 export const describe = "Validate traffic payload against the spec.";

@@ -1,6 +1,6 @@
 import { array as topoSort } from "toposort";
-import { SwaggerSpec } from "../swagger/swaggerTypes";
-import { TransformContext } from "./context";
+import { SwaggerSpec } from "../swagger/swaggerTypes.js";
+import { TransformContext } from "./context.js";
 
 export enum TransformerType {
   Spec = "spec",

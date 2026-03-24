@@ -1,4 +1,4 @@
-import { Operation, SwaggerExample } from "../swagger/swaggerTypes";
+import { Operation, SwaggerExample } from "../swagger/swaggerTypes.js";
 
 //#region Common
 

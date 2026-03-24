@@ -1,5 +1,5 @@
 import assert from "assert";
-import * as validate from "../lib/validate";
+import * as validate from "../lib/validate.js";
 
 describe("xMsExampleExtractor", () => {
   it("simple", async () => {

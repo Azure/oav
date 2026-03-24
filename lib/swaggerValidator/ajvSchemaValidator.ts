@@ -7,23 +7,24 @@ import {
 } from "@azure-tools/openapi-tools-common";
 import { Ajv, default as ajvInit, ErrorObject, ValidateFunction } from "ajv";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../inversifyUtils";
-import { $id, JsonLoader } from "../swagger/jsonLoader";
-import { isSuppressed } from "../swagger/suppressionLoader";
-import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
-import { getNameFromRef } from "../transform/context";
+import { createRequire } from "module";
+import { TYPES } from "../inversifyUtils.js";
+import { $id, JsonLoader } from "../swagger/jsonLoader.js";
+import { isSuppressed } from "../swagger/suppressionLoader.js";
+import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes.js";
+import { getNameFromRef } from "../transform/context.js";
 import {
   xmsAzureResource,
   xmsEnum,
   xmsMutability,
   xmsReadonlyRef,
   xmsSecret,
-} from "../util/constants";
-import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefinitions";
-import { Severity } from "../util/severity";
-import { Writable } from "../util/utils";
-import { SourceLocation } from "../util/validationError";
-import { ajvEnableAll, ajvEnableArmRule, ajvEnableArmIdFormat } from "./ajv";
+} from "../util/constants.js";
+import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefinitions.js";
+import { Severity } from "../util/severity.js";
+import { Writable } from "../util/utils.js";
+import { SourceLocation } from "../util/validationError.js";
+import { ajvEnableAll, ajvEnableArmRule, ajvEnableArmIdFormat } from "./ajv.js";
 import {
   getIncludeErrorsMap,
   SchemaValidateContext,
@@ -31,7 +32,9 @@ import {
   SchemaValidateIssue,
   SchemaValidator,
   SchemaValidatorOption,
-} from "./schemaValidator";
+} from "./schemaValidator.js";
+
+const require = createRequire(import.meta.url);
 
 @injectable()
 export class AjvSchemaValidator implements SchemaValidator {

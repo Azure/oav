@@ -1,11 +1,11 @@
-import { getJsonPatchDiff } from "../apiScenario/diffUtils";
-import { RequestResponsePair, LiveValidationIssue } from "../liveValidation/liveValidator";
-import { OperationContext } from "../liveValidation/operationValidator";
-import { roundTripValidationErrors } from "../util/errorDefinitions";
-import * as utils from "../util/utils";
-import { Parameter, Operation } from "../swagger/swaggerTypes";
-import { JsonLoader } from "../swagger/jsonLoader";
-import { SchemaSearcher } from "../apiScenario/schemaSearcher";
+import { getJsonPatchDiff } from "../apiScenario/diffUtils.js";
+import { RequestResponsePair, LiveValidationIssue } from "../liveValidation/liveValidator.js";
+import { OperationContext } from "../liveValidation/operationValidator.js";
+import { roundTripValidationErrors } from "../util/errorDefinitions.js";
+import * as utils from "../util/utils.js";
+import { Parameter, Operation } from "../swagger/swaggerTypes.js";
+import { JsonLoader } from "../swagger/jsonLoader.js";
+import { SchemaSearcher } from "../apiScenario/schemaSearcher.js";
 
 const allowed = true;
 const notAllowed = false;

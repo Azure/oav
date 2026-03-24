@@ -1,5 +1,5 @@
-import { Severity } from "./severity";
-import { strTemplate, TemplateFunc } from "./strTemplate";
+import { Severity } from "./severity.js";
+import { strTemplate, TemplateFunc } from "./strTemplate.js";
 
 export type SchemaValidationErrorCode = keyof typeof schemaValidationErrors;
 

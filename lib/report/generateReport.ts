@@ -1,15 +1,21 @@
 import * as fs from "fs";
+import { createRequire } from "module";
 import * as path from "path";
-import * as Mustache from "mustache";
+import { fileURLToPath } from "url";
+import Mustache from "mustache";
 import {
   OperationCoverageInfo,
   OperationMeta,
   TrafficValidationIssue,
   TrafficValidationOptions,
-} from "../swaggerValidator/trafficValidator";
-import { LiveValidationIssue } from "../liveValidation/liveValidator";
-import { FileLoader } from "../swagger/fileLoader";
-import { OperationContext } from "../liveValidation/operationValidator";
+} from "../swaggerValidator/trafficValidator.js";
+import { LiveValidationIssue } from "../liveValidation/liveValidator.js";
+import { FileLoader } from "../swagger/fileLoader.js";
+import { OperationContext } from "../liveValidation/operationValidator.js";
+
+const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export interface TrafficValidationIssueForRendering extends TrafficValidationIssue {
   payloadFileLinkLabel?: string;

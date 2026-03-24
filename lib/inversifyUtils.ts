@@ -5,7 +5,10 @@ export const TYPES = {
 };
 
 import { Container, type ContainerOptions, type Newable } from "inversify";
-import { setDefaultOpts } from "./swagger/loader";
+import { createRequire } from "module";
+import { setDefaultOpts } from "./swagger/loader.js";
+
+const require = createRequire(import.meta.url);
 
 export const inversifyGetContainer = (opts: ContainerOptions = {}) => {
   setDefaultOpts(opts, {
@@ -27,7 +30,7 @@ export const inversifyGetInstance = <T, Opt = {}>(
   }
   opts.container.bind(TYPES.opts).toConstantValue(opts);
   opts.container.bind(TYPES.emptyObject).toConstantValue({});
-  const { AjvSchemaValidator } = require("./swaggerValidator/ajvSchemaValidator");
+  const { AjvSchemaValidator } = require("./swaggerValidator/ajvSchemaValidator.js");
   opts.container.bind(TYPES.schemaValidator).to(AjvSchemaValidator);
   return opts.container.get(claz);
 };

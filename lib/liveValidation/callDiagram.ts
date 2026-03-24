@@ -1,32 +1,32 @@
 // /* eslint-disable no-lone-blocks */
-// import { SwaggerLoader } from "../swagger/swaggerLoader";
-// import { JsonLoader } from "../swagger/jsonLoader";
-// import { SuppressionLoader } from "../swagger/suppressionLoader";
-// import { SwaggerSpec } from "../swagger/swaggerTypes";
-// import { applySpecTransformers } from "../transform/transformer";
-// import { pathRegexTransformer } from "../transform/pathRegexTransformer";
-// import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
-// import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
-// import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
-// import { discriminatorTransformer } from "../transform/discriminatorTransformer";
-// import { allOfTransformer } from "../transform/allOfTransformer";
-// import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
-// import { nullableTransformer } from "../transform/nullableTransformer";
-// import { pureObjectTransformer } from "../transform/pureObjectTransformer";
+// import { SwaggerLoader } from "../swagger/swaggerLoader.js";
+// import { JsonLoader } from "../swagger/jsonLoader.js";
+// import { SuppressionLoader } from "../swagger/suppressionLoader.js";
+// import { SwaggerSpec } from "../swagger/swaggerTypes.js";
+// import { applySpecTransformers } from "../transform/transformer.js";
+// import { pathRegexTransformer } from "../transform/pathRegexTransformer.js";
+// import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer.js";
+// import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer.js";
+// import { xmsPathsTransformer } from "../transform/xmsPathsTransformer.js";
+// import { discriminatorTransformer } from "../transform/discriminatorTransformer.js";
+// import { allOfTransformer } from "../transform/allOfTransformer.js";
+// import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer.js";
+// import { nullableTransformer } from "../transform/nullableTransformer.js";
+// import { pureObjectTransformer } from "../transform/pureObjectTransformer.js";
 // import {
 //   AjvSchemaValidator,
 //   ajvErrorToSchemaValidateIssue,
-// } from "../swaggerValidator/ajvSchemaValidator";
-// import { OperationSearcher } from "./operationSearcher";
-// import { LiveValidatorLoader } from "./liveValidatorLoader";
-// import { LiveValidator, RequestResponsePair } from "./liveValidator";
+// } from "../swaggerValidator/ajvSchemaValidator.js";
+// import { OperationSearcher } from "./operationSearcher.js";
+// import { LiveValidatorLoader } from "./liveValidatorLoader.js";
+// import { LiveValidator, RequestResponsePair } from "./liveValidator.js";
 // import {
 //   LiveRequest,
 //   validateSwaggerLiveRequest,
 //   schemaValidateIssueToLiveValidationIssue,
 //   LiveResponse,
 //   validateSwaggerLiveResponse,
-// } from "./operationValidator";
+// } from "./operationValidator.js";
 
 // const opts = {};
 // const ctx = {} as any;

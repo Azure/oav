@@ -1,11 +1,11 @@
 import { parse as urlParse } from "url";
 import { Key, pathToRegexp } from "path-to-regexp";
-import { lowerHttpMethods, Parameter, PathParameter, Schema } from "../swagger/swaggerTypes";
-import { xmsParameterizedHost } from "../util/constants";
-import { OperationMatch } from "../liveValidation/operationSearcher";
-import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer";
-import { SpecTransformer, TransformerType } from "./transformer";
-import { traverseSwagger } from "./traverseSwagger";
+import { lowerHttpMethods, Parameter, PathParameter, Schema } from "../swagger/swaggerTypes.js";
+import { xmsParameterizedHost } from "../util/constants.js";
+import { OperationMatch } from "../liveValidation/operationSearcher.js";
+import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer.js";
+import { SpecTransformer, TransformerType } from "./transformer.js";
+import { traverseSwagger } from "./traverseSwagger.js";
 
 export type RegExpWithKeys = RegExp & {
   _keys: string[];

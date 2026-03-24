@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import assert from "assert";
-import { getProviderFromPathTemplate } from "../lib/util/utils";
+import { getProviderFromPathTemplate } from "../lib/util/utils.js";
 
 describe("Utility functions", () => {
   describe("Get Provider", () => {

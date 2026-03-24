@@ -7,17 +7,17 @@ import {
   LiveValidationIssue,
   LiveValidator,
   RequestResponsePair,
-} from "../liveValidation/liveValidator";
-import { DefaultConfig } from "../util/constants";
-import { apiValidationErrors, ErrorCodeConstants } from "../util/errorDefinitions";
-import { OperationContext } from "../liveValidation/operationValidator";
-import { Options } from "../validate";
-import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils";
-import { findPathsToKey, findPathToValue, getApiVersionFromFilePath } from "../util/utils";
-import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
-import { getFilePositionFromJsonPath } from "../util/jsonUtils";
-import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
-import { traverseSwagger } from "../transform/traverseSwagger";
+} from "../liveValidation/liveValidator.js";
+import { DefaultConfig } from "../util/constants.js";
+import { apiValidationErrors, ErrorCodeConstants } from "../util/errorDefinitions.js";
+import { OperationContext } from "../liveValidation/operationValidator.js";
+import { Options } from "../validate.js";
+import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils.js";
+import { findPathsToKey, findPathToValue, getApiVersionFromFilePath } from "../util/utils.js";
+import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader.js";
+import { getFilePositionFromJsonPath } from "../util/jsonUtils.js";
+import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader.js";
+import { traverseSwagger } from "../transform/traverseSwagger.js";
 
 export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
@@ -185,7 +185,9 @@ export class TrafficValidator {
     try {
       for (const trafficFile of this.trafficFiles) {
         payloadFilePath = trafficFile;
-        const payload: RequestResponsePair = require(trafficFile);
+        const payload: RequestResponsePair = JSON.parse(
+          fs.readFileSync(trafficFile, "utf-8")
+        );
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
         let operationInfo = validationResult.requestValidationResult?.operationInfo;
         const liveRequest = payload.liveRequest;

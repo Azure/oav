@@ -2,8 +2,14 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import assert from "assert";
-import * as constants from "../lib/util/constants";
-import * as validate from "../lib/validate";
+import * as constants from "../lib/util/constants.js";
+import * as validate from "../lib/validate.js";
+
+import { fileURLToPath } from "url";
+import * as path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const testPath = __dirname;
 

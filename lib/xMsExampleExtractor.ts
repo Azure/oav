@@ -13,8 +13,8 @@ import {
   values,
 } from "@azure-tools/openapi-tools-common";
 import swaggerParser from "@apidevtools/swagger-parser";
-import { log } from "./util/logging";
-import { kvPairsToObject } from "./util/utils";
+import { log } from "./util/logging.js";
+import { kvPairsToObject } from "./util/utils.js";
 
 export interface Options {
   output?: string;

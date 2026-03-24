@@ -1,8 +1,15 @@
 import * as assert from "assert";
 import * as glob from "glob";
 import * as path from "path";
-import { DefaultConfig } from "../lib/util/constants";
-import { RequestResponsePair, LiveValidator } from "../lib/liveValidation/liveValidator";
+import { DefaultConfig } from "../lib/util/constants.js";
+import { RequestResponsePair, LiveValidator } from "../lib/liveValidation/liveValidator.js";
+
+import { fileURLToPath } from "url";
+import { createRequire } from "module";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
 
 jest.setTimeout(999999);
 

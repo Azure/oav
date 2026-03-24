@@ -3,10 +3,10 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import { Schema } from "../swagger/swaggerTypes";
-import { JsonLoader, isRefLike } from "../swagger/jsonLoader";
-import { logger } from "./logger";
-import { getObjValueFromPointer } from "./diffUtils";
+import { Schema } from "../swagger/swaggerTypes.js";
+import { JsonLoader, isRefLike } from "../swagger/jsonLoader.js";
+import { logger } from "./logger.js";
+import { getObjValueFromPointer } from "./diffUtils.js";
 
 export class SchemaSearcher {
   public static findSchemaByJsonPointer(

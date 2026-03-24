@@ -1,7 +1,7 @@
-import { JsonLoader } from "../swagger/jsonLoader";
-import { LoggingFn, Parameter, refSelfSymbol, Schema } from "../swagger/swaggerTypes";
-import { SchemaValidator } from "../swaggerValidator/schemaValidator";
-import { GlobalTransformer, sortTransformers, SpecTransformer, Transformer } from "./transformer";
+import { JsonLoader } from "../swagger/jsonLoader.js";
+import { LoggingFn, Parameter, refSelfSymbol, Schema } from "../swagger/swaggerTypes.js";
+import { SchemaValidator } from "../swaggerValidator/schemaValidator.js";
+import { GlobalTransformer, sortTransformers, SpecTransformer, Transformer } from "./transformer.js";
 
 export interface TransformContext {
   jsonLoader: JsonLoader;

@@ -1,8 +1,8 @@
 import { Ajv, CompilationContext } from "ajv";
-import { JsonLoader } from "../swagger/jsonLoader";
-import { Schema } from "../swagger/swaggerTypes";
-import { xmsAzureResource, xmsMutability, xmsSecret } from "../util/constants";
-import { ajvEnableDiscriminatorMap } from "./ajvDiscriminatorMap";
+import { JsonLoader } from "../swagger/jsonLoader.js";
+import { Schema } from "../swagger/swaggerTypes.js";
+import { xmsAzureResource, xmsMutability, xmsSecret } from "../util/constants.js";
+import { ajvEnableDiscriminatorMap } from "./ajvDiscriminatorMap.js";
 
 export const ajvEnableReadOnlyAndXmsMutability = (ajv: Ajv) => {
   ajv.removeKeyword("readOnly");

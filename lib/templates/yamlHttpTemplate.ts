@@ -4,7 +4,7 @@
 import { randomUUID } from "crypto";
 import { keys, toArray } from "@azure-tools/openapi-tools-common";
 
-import { HttpTemplate, Request, Response, Responses } from "./httpTemplate";
+import { HttpTemplate, Request, Response, Responses } from "./httpTemplate.js";
 
 export class YamlHttpTemplate extends HttpTemplate {
   public constructor(request: Request, responses: Responses) {

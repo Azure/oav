@@ -2,7 +2,15 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 // Sample standalone script to call live validator.
-import { LiveValidator } from "../lib/liveValidation/liveValidator";
+import { LiveValidator } from "../lib/liveValidation/liveValidator.js";
+
+import { fileURLToPath } from "url";
+import * as path from "path";
+import { createRequire } from "module";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
 
 const options = {
   directory: `${__dirname}/../../test/liveValidation/swaggers/`,

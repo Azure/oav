@@ -4,7 +4,13 @@
 /* tslint:disable:no-console max-line-length*/
 
 import assert from "assert";
-import * as validate from "../lib/validate";
+import * as validate from "../lib/validate.js";
+
+import { fileURLToPath } from "url";
+import * as path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const testPath = __dirname;
 

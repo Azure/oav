@@ -1,6 +1,6 @@
 import * as assert from "assert";
 
-import * as validate from "../lib/validate";
+import * as validate from "../lib/validate.js";
 
 const specPath = `test/modelValidation/swaggers/specification/invalidExamples/cdn.json`;
 
