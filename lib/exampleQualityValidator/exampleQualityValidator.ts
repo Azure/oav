@@ -1,29 +1,30 @@
 import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
-import * as _ from "lodash";
+import _ from "lodash";
 
-import { FileLoaderOption } from "../swagger/fileLoader";
-import { JsonLoaderOption, JsonLoader } from "../swagger/jsonLoader";
-import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
-import { getTransformContext, TransformContext } from "../transform/context";
-import { SchemaValidator } from "../swaggerValidator/schemaValidator";
-import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
-import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
-import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
-import { discriminatorTransformer } from "../transform/discriminatorTransformer";
-import { allOfTransformer } from "../transform/allOfTransformer";
-import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
-import { nullableTransformer } from "../transform/nullableTransformer";
-import { pureObjectTransformer } from "../transform/pureObjectTransformer";
-import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
-import { getJsonPatchDiff } from "../apiScenario/diffUtils";
-import { BodyTransformer } from "../apiScenario/bodyTransformer";
-import { ErrorCodes } from "../util/constants";
-import { SeverityString } from "../util/severity";
-import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
-import { setDefaultOpts } from "./../swagger/loader";
-import { traverseSwaggerAsync } from "./../transform/traverseSwagger";
-import { applyGlobalTransformers, applySpecTransformers } from "./../transform/transformer";
+import { FileLoaderOption } from "../swagger/fileLoader.js";
+import { JsonLoaderOption, JsonLoader } from "../swagger/jsonLoader.js";
+import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader.js";
+import { getTransformContext, TransformContext } from "../transform/context.js";
+import { SchemaValidator } from "../swaggerValidator/schemaValidator.js";
+import { xmsPathsTransformer } from "../transform/xmsPathsTransformer.js";
+import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer.js";
+import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer.js";
+import { discriminatorTransformer } from "../transform/discriminatorTransformer.js";
+import { allOfTransformer } from "../transform/allOfTransformer.js";
+import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer.js";
+import { nullableTransformer } from "../transform/nullableTransformer.js";
+import { pureObjectTransformer } from "../transform/pureObjectTransformer.js";
+import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator.js";
+import { getJsonPatchDiff } from "../apiScenario/diffUtils.js";
+import { BodyTransformer } from "../apiScenario/bodyTransformer.js";
+import { ErrorCodes } from "../util/constants.js";
+import { SeverityString } from "../util/severity.js";
+import { inversifyGetInstance } from "./../inversifyUtils.js";
+import { TYPES } from "./../inversifyTypes.js";
+import { setDefaultOpts } from "./../swagger/loader.js";
+import { traverseSwaggerAsync } from "./../transform/traverseSwagger.js";
+import { applyGlobalTransformers, applySpecTransformers } from "./../transform/transformer.js";
 import {
   LowerHttpMethods,
   Path,
@@ -31,7 +32,7 @@ import {
   SwaggerSpec,
   SwaggerExample,
   BodyParameter,
-} from "./../swagger/swaggerTypes";
+} from "./../swagger/swaggerTypes.js";
 
 export interface ExampleQualityValidatorOption
   extends FileLoaderOption,

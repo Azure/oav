@@ -1,6 +1,6 @@
-import { xmsPaths } from "../util/constants";
-import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer";
-import { SpecTransformer, TransformerType } from "./transformer";
+import { xmsPaths } from "../util/constants.js";
+import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer.js";
+import { SpecTransformer, TransformerType } from "./transformer.js";
 
 export const xmsPathsTransformer: SpecTransformer = {
   type: TransformerType.Spec,

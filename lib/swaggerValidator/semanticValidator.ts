@@ -1,3 +1,4 @@
+import { createRequire } from "module";
 import {
   FilePosition,
   getInfo,
@@ -5,44 +6,47 @@ import {
   ParseError,
 } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
-import swaggerSchemaDoc from "@autorest/schemas/swagger-extensions.json";
-import swaggerExampleSchemaDoc from "@autorest/schemas/example-schema.json";
 import jsonPointer from "json-pointer";
-import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
-import { $id, JsonLoader, JsonLoaderRefError } from "../swagger/jsonLoader";
-import { SwaggerLoaderOption } from "../swagger/swaggerLoader";
-import { Parameter, refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
-import { BaseValidationError } from "../util/baseValidationError";
+import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
+import { $id, JsonLoader, JsonLoaderRefError } from "../swagger/jsonLoader.js";
+import { SwaggerLoaderOption } from "../swagger/swaggerLoader.js";
+import { Parameter, refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes.js";
+import { BaseValidationError } from "../util/baseValidationError.js";
 import {
   getOavErrorMeta,
   SemanticValidationErrorCode,
   semanticValidationErrors,
-} from "../util/errorDefinitions";
-import { ValidationResultSource } from "../util/validationResultSource";
-import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
-import { getTransformContext, TransformContext } from "../transform/context";
-import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
-import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
-import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
-import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
-import { traverseSwagger, traverseSwaggerAsync } from "../transform/traverseSwagger";
-import { FileLoader } from "../swagger/fileLoader";
-import { getFilePositionFromJsonPath, jsonPathToPointer } from "../util/jsonUtils";
-import { pathRegexTransformer } from "../transform/pathRegexTransformer";
-import { discriminatorTransformer } from "../transform/discriminatorTransformer";
-import { allOfTransformer } from "../transform/allOfTransformer";
-import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
-import { nullableTransformer } from "../transform/nullableTransformer";
-import { pureObjectTransformer } from "../transform/pureObjectTransformer";
-import { isSuppressedInPath, SuppressionLoader } from "../swagger/suppressionLoader";
-import { xmsDiscriminatorValue } from "../util/constants";
+} from "../util/errorDefinitions.js";
+import { ValidationResultSource } from "../util/validationResultSource.js";
+import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader.js";
+import { getTransformContext, TransformContext } from "../transform/context.js";
+import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer.js";
+import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer.js";
+import { xmsPathsTransformer } from "../transform/xmsPathsTransformer.js";
+import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer.js";
+import { traverseSwagger, traverseSwaggerAsync } from "../transform/traverseSwagger.js";
+import { FileLoader } from "../swagger/fileLoader.js";
+import { getFilePositionFromJsonPath, jsonPathToPointer } from "../util/jsonUtils.js";
+import { pathRegexTransformer } from "../transform/pathRegexTransformer.js";
+import { discriminatorTransformer } from "../transform/discriminatorTransformer.js";
+import { allOfTransformer } from "../transform/allOfTransformer.js";
+import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer.js";
+import { nullableTransformer } from "../transform/nullableTransformer.js";
+import { pureObjectTransformer } from "../transform/pureObjectTransformer.js";
+import { isSuppressedInPath, SuppressionLoader } from "../swagger/suppressionLoader.js";
+import { xmsDiscriminatorValue } from "../util/constants.js";
 import {
-  SchemaValidateFunction,
-  SchemaValidateIssue,
-  SchemaValidator,
-  SchemaValidatorOption,
-} from "./schemaValidator";
-import swagger2SchemaDoc from "./swagger-2.0.json";
+  type SchemaValidateFunction,
+  type SchemaValidateIssue,
+  type SchemaValidator,
+  type SchemaValidatorOption,
+} from "./schemaValidator.js";
+
+const require = createRequire(import.meta.url);
+const swaggerSchemaDoc = require("@autorest/schemas/swagger-extensions.json");
+const swaggerExampleSchemaDoc = require("@autorest/schemas/example-schema.json");
+const swagger2SchemaDoc = require("./swagger-2.0.json");
 
 export interface SemanticErrorDetail {
   inner?: any; // Compatible with old NodeError. Always undefined.

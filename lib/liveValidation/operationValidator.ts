@@ -11,25 +11,25 @@ import {
   Operation,
   Response,
   TransformFn,
-} from "../swagger/swaggerTypes";
-import { sourceMapInfoToSourceLocation } from "../swaggerValidator/ajvSchemaValidator";
-import { SchemaValidateContext, SchemaValidateIssue } from "../swaggerValidator/schemaValidator";
-import { jsonPathToPointer } from "../util/jsonUtils";
-import { Writable } from "../util/utils";
-import { SourceLocation } from "../util/validationError";
-import { extractPathParamValue } from "../transform/pathRegexTransformer";
+} from "../swagger/swaggerTypes.js";
+import { sourceMapInfoToSourceLocation } from "../swaggerValidator/ajvSchemaValidator.js";
+import { SchemaValidateContext, SchemaValidateIssue } from "../swaggerValidator/schemaValidator.js";
+import { jsonPathToPointer } from "../util/jsonUtils.js";
+import { Writable } from "../util/utils.js";
+import { SourceLocation } from "../util/validationError.js";
+import { extractPathParamValue } from "../transform/pathRegexTransformer.js";
 import {
   ApiValidationErrorCode,
   getOavErrorMeta,
   TrafficValidationErrorCode,
-} from "../util/errorDefinitions";
+} from "../util/errorDefinitions.js";
 import {
   LiveValidationIssue,
   LiveValidatorLoggingLevels,
   LiveValidatorLoggingTypes,
-} from "./liveValidator";
-import { LiveValidatorLoader } from "./liveValidatorLoader";
-import { OperationMatch } from "./operationSearcher";
+} from "./liveValidator.js";
+import { LiveValidatorLoader } from "./liveValidatorLoader.js";
+import { OperationMatch } from "./operationSearcher.js";
 
 export interface ValidationRequest {
   providerNamespace: string;

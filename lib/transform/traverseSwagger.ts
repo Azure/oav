@@ -5,7 +5,7 @@ import {
   Path,
   Response,
   SwaggerSpec,
-} from "../swagger/swaggerTypes";
+} from "../swagger/swaggerTypes.js";
 
 export const traverseSwagger = (
   spec: SwaggerSpec,

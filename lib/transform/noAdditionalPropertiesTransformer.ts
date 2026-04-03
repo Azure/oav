@@ -1,5 +1,5 @@
-import { allOfTransformer } from "./allOfTransformer";
-import { GlobalTransformer, TransformerType } from "./transformer";
+import { allOfTransformer } from "./allOfTransformer.js";
+import { GlobalTransformer, TransformerType } from "./transformer.js";
 
 export const noAdditionalPropertiesTransformer: GlobalTransformer = {
   type: TransformerType.Global,

@@ -1,6 +1,6 @@
-import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer";
-import { SpecTransformer, TransformerType } from "./transformer";
-import { traverseSwagger } from "./traverseSwagger";
+import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer.js";
+import { SpecTransformer, TransformerType } from "./transformer.js";
+import { traverseSwagger } from "./traverseSwagger.js";
 
 const defaultMime = ["application/json"];
 

@@ -1,7 +1,7 @@
-import { LiveValidatorLoggingLevels } from "../liveValidation/liveValidator";
-import { JsonLoader } from "../swagger/jsonLoader";
-import { Schema } from "../swagger/swaggerTypes";
-import { GlobalTransformer, TransformerType } from "./transformer";
+import { LiveValidatorLoggingLevels } from "../liveValidation/liveValidator.js";
+import { JsonLoader } from "../swagger/jsonLoader.js";
+import { Schema } from "../swagger/swaggerTypes.js";
+import { GlobalTransformer, TransformerType } from "./transformer.js";
 
 const transformAllOfSchema = (schema: Schema, baseSchemas: Set<Schema>, jsonLoader: JsonLoader) => {
   if (schema.type !== undefined && schema.type !== "object") {

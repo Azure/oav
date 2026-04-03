@@ -4,7 +4,7 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import * as winston from "winston";
+import winston from "winston";
 
 let logDir = path.resolve(os.homedir(), "oav_output");
 

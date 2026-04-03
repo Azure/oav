@@ -3,7 +3,7 @@
 import { FilePosition, flatMap, fold, StringMap } from "@azure-tools/openapi-tools-common";
 import { JSONPath } from "jsonpath-plus";
 import _ from "lodash";
-import { Severity } from "./severity";
+import { Severity } from "./severity.js";
 
 /**
  * @class

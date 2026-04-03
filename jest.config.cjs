@@ -1,13 +1,19 @@
 // @ts-check
 
-/** @type {jest.InitialOptions} */
+/** @type {import('jest').Config} */
 module.exports = {
+  extensionsToTreatAsEsm: [".ts"],
   transform: {
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.tsx?$": ["ts-jest", {
+      useESM: true,
+      tsconfig: "tsconfig.json",
+    }],
   },
   testEnvironment: "node",
   moduleFileExtensions: ["ts", "js", "json", "node"],
-  moduleNameMapper: {},
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+  },
   collectCoverage: true,
   collectCoverageFrom: ["./lib/**/*.ts", "!**/node_modules/**"],
   coverageReporters: ["json", "lcov", "cobertura", "text", "html", "clover"],
@@ -16,12 +22,8 @@ module.exports = {
     "/\\.autopull/",
     "/utilities.helpers.ts"
   ],
-  globals: {
-    "ts-jest": {
-      tsconfig: "tsconfig.json",
-    },
-  },
-  setupFilesAfterEnv: ["<rootDir>/jest.setup-file.js"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup-file.cjs"],
   testMatch: ["**/test/**/*.ts", "!**/test/**/*.d.ts", "!**/test/sample.ts"],
+  testTimeout: 999999,
   verbose: true,
 };

@@ -7,9 +7,9 @@ import * as fs from "fs";
 import * as http from "http";
 import * as path from "path";
 import * as util from "util";
-import * as jsonPointer from "json-pointer";
-import * as YAML from "js-yaml";
-import * as lodash from "lodash";
+import jsonPointer from "json-pointer";
+import YAML from "js-yaml";
+import lodash from "lodash";
 import {
   cloneDeep,
   Data,
@@ -20,8 +20,8 @@ import {
   readFile,
 } from "@azure-tools/openapi-tools-common";
 import * as amd from "@azure/openapi-markdown";
-import * as commonmark from "commonmark";
-import { log } from "./logging";
+import commonmark from "commonmark";
+import { log } from "./logging.js";
 
 /*
  * Executes an array of promises sequentially. Inspiration of this method is here:

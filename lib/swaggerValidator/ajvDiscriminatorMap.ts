@@ -1,6 +1,6 @@
-import { Ajv, ErrorObject, ValidateFunction } from "ajv";
-import { JsonLoader } from "../swagger/jsonLoader";
-import { Schema } from "../swagger/swaggerTypes";
+import type { Ajv, ErrorObject, ValidateFunction } from "ajv";
+import { JsonLoader } from "../swagger/jsonLoader.js";
+import { Schema } from "../swagger/swaggerTypes.js";
 
 export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
   ajv.addKeyword("discriminatorMap", {

@@ -9,30 +9,31 @@ import { ParsedUrlQuery } from "querystring";
 import * as util from "util";
 import { URL } from "url";
 import * as glob from "glob";
-import * as _ from "lodash";
-import { diffRequestResponse } from "../armValidator/roundTripValidator";
-import * as models from "../models";
-import { requestResponseDefinition } from "../models/requestResponse";
-import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
+import _ from "lodash";
+import { diffRequestResponse } from "../armValidator/roundTripValidator.js";
+import * as models from "../models/index.js";
+import { requestResponseDefinition } from "../models/requestResponse.js";
+import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes.js";
 import {
   SchemaValidateFunction,
   SchemaValidateIssue,
   SchemaValidator,
-} from "../swaggerValidator/schemaValidator";
-import * as C from "../util/constants";
-import { log } from "../util/logging";
-import * as utils from "../util/utils";
-import { RuntimeException } from "../util/validationError";
-import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
-import { setDefaultOpts } from "../swagger/loader";
-import { apiValidationErrors, ApiValidationErrorCode } from "../util/errorDefinitions";
+} from "../swaggerValidator/schemaValidator.js";
+import * as C from "../util/constants.js";
+import { log } from "../util/logging.js";
+import * as utils from "../util/utils.js";
+import { RuntimeException } from "../util/validationError.js";
+import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
+import { setDefaultOpts } from "../swagger/loader.js";
+import { apiValidationErrors, ApiValidationErrorCode } from "../util/errorDefinitions.js";
 import {
   kvPairsToObject,
   getProviderFromPathTemplate,
   getProviderFromSpecPath,
-} from "../util/utils";
-import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
-import { OperationSearcher } from "./operationSearcher";
+} from "../util/utils.js";
+import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader.js";
+import { OperationSearcher } from "./operationSearcher.js";
 import {
   LiveRequest,
   LiveResponse,
@@ -40,7 +41,7 @@ import {
   validateSwaggerLiveRequest,
   validateSwaggerLiveResponse,
   ValidationRequest,
-} from "./operationValidator";
+} from "./operationValidator.js";
 
 export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   swaggerPaths: string[];

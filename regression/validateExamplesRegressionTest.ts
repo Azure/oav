@@ -1,6 +1,6 @@
-import md5File = require("md5-file");
+import md5File from "md5-file";
 
-import * as validate from "../lib/validate";
+import * as validate from "../lib/validate.js";
 
 export const validateExamplesRegressionTest = async (file: string) => {
   try {

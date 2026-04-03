@@ -1,18 +1,18 @@
 import { ParsedUrlQuery } from "querystring";
-import { LiveValidationError } from "../models";
-import { LowerHttpMethods, Operation, SwaggerSpec } from "../swagger/swaggerTypes";
-import { RegExpWithKeys } from "../transform/pathRegexTransformer";
-import { traverseSwagger } from "../transform/traverseSwagger";
+import { LiveValidationError } from "../models/index.js";
+import { LowerHttpMethods, Operation, SwaggerSpec } from "../swagger/swaggerTypes.js";
+import { RegExpWithKeys } from "../transform/pathRegexTransformer.js";
+import { traverseSwagger } from "../transform/traverseSwagger.js";
 import {
   ErrorCodes,
   knownTitleToResourceProviders,
   unknownApiVersion,
   unknownResourceProvider,
-} from "../util/constants";
-import { getOavErrorMeta } from "../util/errorDefinitions";
-import { getProviderFromPathTemplate, Writable } from "../util/utils";
-import { LiveValidatorLoggingLevels, LiveValidatorLoggingTypes } from "./liveValidator";
-import { ValidationRequest } from "./operationValidator";
+} from "../util/constants.js";
+import { getOavErrorMeta } from "../util/errorDefinitions.js";
+import { getProviderFromPathTemplate, Writable } from "../util/utils.js";
+import { LiveValidatorLoggingLevels, LiveValidatorLoggingTypes } from "./liveValidator.js";
+import { ValidationRequest } from "./operationValidator.js";
 
 export interface OperationMatch {
   operation: Operation;

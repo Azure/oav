@@ -4,10 +4,10 @@ import { MutableStringMap } from "@azure-tools/openapi-tools-common";
 import {
   LiveValidatorLoggingLevels,
   LiveValidatorLoggingTypes,
-} from "../liveValidation/liveValidator";
-import { ValidationRequest } from "../liveValidation/operationValidator";
-import { SchemaValidateFunction } from "../swaggerValidator/schemaValidator";
-import { RegExpWithKeys } from "../transform/pathRegexTransformer";
+} from "../liveValidation/liveValidator.js";
+import { ValidationRequest } from "../liveValidation/operationValidator.js";
+import { SchemaValidateFunction } from "../swaggerValidator/schemaValidator.js";
+import { RegExpWithKeys } from "../transform/pathRegexTransformer.js";
 import {
   xmsDiscriminatorValue,
   xmsEnum,
@@ -22,8 +22,8 @@ import {
   xmsAzureResource,
   xmsLongRunningOperationOptions,
   xmsLongRunningOperationOptionsField,
-} from "../util/constants";
-import { $id } from "./jsonLoader";
+} from "../util/constants.js";
+import { $id } from "./jsonLoader.js";
 
 export const refSelfSymbol = Symbol.for("oav-schema-refself");
 

@@ -3,13 +3,15 @@ import { inject, injectable } from "inversify";
 import { FilePosition, getInfo, ParseError, StringMap } from "@azure-tools/openapi-tools-common";
 import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
 import jsonPointer from "json-pointer";
-import { parseInt } from "lodash";
-import * as C from "../util/constants";
-import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
-import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
-import { JsonLoader, JsonLoaderRefError } from "../swagger/jsonLoader";
-import { isSuppressedInPath, SuppressionLoader } from "../swagger/suppressionLoader";
-import { SwaggerLoaderOption } from "../swagger/swaggerLoader";
+import lodash from "lodash";
+const { parseInt: lodashParseInt } = lodash;
+import * as C from "../util/constants.js";
+import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils.js";
+import { TYPES } from "../inversifyTypes.js";
+import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader.js";
+import { JsonLoader, JsonLoaderRefError } from "../swagger/jsonLoader.js";
+import { isSuppressedInPath, SuppressionLoader } from "../swagger/suppressionLoader.js";
+import { SwaggerLoaderOption } from "../swagger/swaggerLoader.js";
 import {
   BodyParameter,
   LowerHttpMethods,
@@ -19,36 +21,40 @@ import {
   refSelfSymbol,
   SwaggerExample,
   SwaggerSpec,
-} from "../swagger/swaggerTypes";
+} from "../swagger/swaggerTypes.js";
 import {
   ErrorCodeConstants,
   getOavErrorMeta,
   ModelValidationErrorCode,
   modelValidationErrors,
-} from "../util/errorDefinitions";
-import { traverseSwaggerAsync } from "../transform/traverseSwagger";
-import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
-import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
-import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
-import { pathRegexTransformer } from "../transform/pathRegexTransformer";
-import { discriminatorTransformer } from "../transform/discriminatorTransformer";
-import { allOfTransformer } from "../transform/allOfTransformer";
-import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
-import { nullableTransformer } from "../transform/nullableTransformer";
-import { pureObjectTransformer } from "../transform/pureObjectTransformer";
-import { getTransformContext } from "../transform/context";
-import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
+} from "../util/errorDefinitions.js";
+import { traverseSwaggerAsync } from "../transform/traverseSwagger.js";
+import { xmsPathsTransformer } from "../transform/xmsPathsTransformer.js";
+import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer.js";
+import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer.js";
+import { pathRegexTransformer } from "../transform/pathRegexTransformer.js";
+import { discriminatorTransformer } from "../transform/discriminatorTransformer.js";
+import { allOfTransformer } from "../transform/allOfTransformer.js";
+import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer.js";
+import { nullableTransformer } from "../transform/nullableTransformer.js";
+import { pureObjectTransformer } from "../transform/pureObjectTransformer.js";
+import { getTransformContext } from "../transform/context.js";
+import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer.js";
 import {
   transformBodyValue,
   transformLiveHeader,
   transformMapValue,
-} from "../liveValidation/operationValidator";
-import { log } from "../util/logging";
-import { getFilePositionFromJsonPath } from "../util/jsonUtils";
-import { checkAndResolveGithubUrl, getProviderFromSpecPath } from "../util/utils";
-import { Severity } from "../util/severity";
-import { ValidationResultSource } from "../util/validationResultSource";
-import { SchemaValidateIssue, SchemaValidator, SchemaValidatorOption } from "./schemaValidator";
+} from "../liveValidation/operationValidator.js";
+import { log } from "../util/logging.js";
+import { getFilePositionFromJsonPath } from "../util/jsonUtils.js";
+import { checkAndResolveGithubUrl, getProviderFromSpecPath } from "../util/utils.js";
+import { Severity } from "../util/severity.js";
+import { ValidationResultSource } from "../util/validationResultSource.js";
+import {
+  type SchemaValidateIssue,
+  type SchemaValidator,
+  type SchemaValidatorOption,
+} from "./schemaValidator.js";
 
 @injectable()
 export class SwaggerExampleValidator {
@@ -833,7 +839,7 @@ export class SwaggerExampleValidator {
     headers: StringMap<string>,
     exampleObj?: any
   ) => {
-    if (operation["x-ms-long-running-operation"] === true && parseInt(statusCode, 10) < 300) {
+    if (operation["x-ms-long-running-operation"] === true && lodashParseInt(statusCode, 10) < 300) {
       if (operation._method === "post") {
         if (statusCode === "202" || statusCode === "201") {
           this.validateLroHeader(examplePath, operation, statusCode, headers);

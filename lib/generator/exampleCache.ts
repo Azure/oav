@@ -1,4 +1,4 @@
-import { RuleValidatorFunc } from "./exampleRule";
+import { RuleValidatorFunc } from "./exampleRule.js";
 
 /* tslint:disable:max-classes-per-file */
 interface BaseCache {

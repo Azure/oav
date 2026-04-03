@@ -1,14 +1,22 @@
+import { jest } from "@jest/globals";
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as assert from "assert";
 import * as os from "os";
 import * as path from "path";
-import * as lodash from "lodash";
+import lodash from "lodash";
 import * as glob from "glob";
-import { LiveValidator, parseValidationRequest } from "../lib/liveValidation/liveValidator";
-import { OperationSearcher } from "../lib/liveValidation/operationSearcher";
-import * as Constants from "../lib/util/constants";
+import { LiveValidator, parseValidationRequest } from "../lib/liveValidation/liveValidator.js";
+import { OperationSearcher } from "../lib/liveValidation/operationSearcher.js";
+import * as Constants from "../lib/util/constants.js";
+
+import { fileURLToPath } from "url";
+import { createRequire } from "module";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
 
 const numberOfSpecs = 20;
 jest.setTimeout(999999);

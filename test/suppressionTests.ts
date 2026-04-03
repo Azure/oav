@@ -3,7 +3,7 @@
 
 import * as assert from "assert";
 
-import { validateExamples } from "../lib/validate";
+import { validateExamples } from "../lib/validate.js";
 
 describe("suppression", () => {
   it("suppress all", async () => {

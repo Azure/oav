@@ -1,11 +1,12 @@
 import { inject, injectable } from "inversify";
-import { cloneDeep } from "lodash";
-import * as jp from "json-pointer";
-import { TYPES } from "../inversifyUtils";
-import { Schema } from "../swagger/swaggerTypes";
-import { SchemaValidator } from "../swaggerValidator/schemaValidator";
-import { jsonPathToPointer } from "../util/jsonUtils";
-import { jsonPatchApply } from "./diffUtils";
+import lodash from "lodash";
+const { cloneDeep } = lodash;
+import jp from "json-pointer";
+import { TYPES } from "../inversifyTypes.js";
+import { Schema } from "../swagger/swaggerTypes.js";
+import { type SchemaValidator } from "../swaggerValidator/schemaValidator.js";
+import { jsonPathToPointer } from "../util/jsonUtils.js";
+import { jsonPatchApply } from "./diffUtils.js";
 
 @injectable()
 export class BodyTransformer {

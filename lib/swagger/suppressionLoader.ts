@@ -13,11 +13,11 @@ import {
 } from "@azure/openapi-markdown";
 import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
-import { log } from "../util/logging";
-import { TYPES } from "../inversifyUtils";
-import { FileLoader, FileLoaderOption } from "./fileLoader";
-import { Loader } from "./loader";
-import { SwaggerSpec } from "./swaggerTypes";
+import { log } from "../util/logging.js";
+import { TYPES } from "../inversifyTypes.js";
+import { FileLoader, FileLoaderOption } from "./fileLoader.js";
+import { Loader } from "./loader.js";
+import { SwaggerSpec } from "./swaggerTypes.js";
 
 export interface SuppressionLoaderOption extends FileLoaderOption {
   loadSuppression?: string[];

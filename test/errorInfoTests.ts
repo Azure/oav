@@ -3,7 +3,7 @@
 
 import * as assert from "assert";
 
-import { validateExamples } from "../lib/validate";
+import { validateExamples } from "../lib/validate.js";
 
 describe("error info", () => {
   it("error info should contain url to file", async () => {

@@ -8,7 +8,7 @@
  * regenerated.
  */
 
-import { Schema } from "../swagger/swaggerTypes";
+import { Schema } from "../swagger/swaggerTypes.js";
 
 /**
  * @class

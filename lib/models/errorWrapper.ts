@@ -8,7 +8,7 @@
  * regenerated.
  */
 
-import { ErrorResponse } from "./errorResponse";
+import { ErrorResponse } from "./errorResponse.js";
 
 /**
  * @class

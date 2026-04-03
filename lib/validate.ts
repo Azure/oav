@@ -7,24 +7,24 @@ import * as path from "path";
 import * as fs from "fs";
 import jsYaml from "js-yaml";
 import { flatMap, StringMap } from "@azure-tools/openapi-tools-common";
-import * as utils from "./util/utils";
+import * as utils from "./util/utils.js";
 
 import {
   NewModelValidator as ModelValidator,
   SwaggerExampleErrorDetail,
-} from "./swaggerValidator/modelValidator";
-import { NodeError } from "./util/validationError";
-import * as XMsExampleExtractor from "./xMsExampleExtractor";
-import ExampleGenerator from "./generator/exampleGenerator";
-import { log } from "./util/logging";
-import { SemanticValidator } from "./swaggerValidator/semanticValidator";
-import { ErrorCodeConstants } from "./util/errorDefinitions";
+} from "./swaggerValidator/modelValidator.js";
+import { NodeError } from "./util/validationError.js";
+import * as XMsExampleExtractor from "./xMsExampleExtractor.js";
+import ExampleGenerator from "./generator/exampleGenerator.js";
+import { log } from "./util/logging.js";
+import { SemanticValidator } from "./swaggerValidator/semanticValidator.js";
+import { ErrorCodeConstants } from "./util/errorDefinitions.js";
 import {
   TrafficValidationIssue,
   TrafficValidationOptions,
   TrafficValidator,
-} from "./swaggerValidator/trafficValidator";
-import { ReportGenerator, loadErrorDefinitions } from "./report/generateReport";
+} from "./swaggerValidator/trafficValidator.js";
+import { ReportGenerator, loadErrorDefinitions } from "./report/generateReport.js";
 
 export interface Options extends XMsExampleExtractor.Options {
   consoleLogLevel?: unknown;

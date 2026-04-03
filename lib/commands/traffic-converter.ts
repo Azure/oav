@@ -2,9 +2,9 @@
 import * as fs from "fs";
 import * as path from "path";
 import { URL } from "url";
-import * as yargs from "yargs";
-import { cliSuppressExceptions } from "../cliSuppressExceptions";
-import { log } from "../util/logging";
+import type { Arguments, CommandBuilder } from "yargs";
+import { cliSuppressExceptions } from "../cliSuppressExceptions.js";
+import { log } from "../util/logging.js";
 
 let InputDirectory: string = "";
 let OutputDirectory: string = "";
@@ -149,7 +149,7 @@ function convert(directory: string, outDirectory: string) {
 export const command = "traffic-convert <input-dir> <output-dir>";
 export const describe = "Convert a folder files to traffic files";
 
-export const builder: yargs.CommandBuilder = {
+export const builder: CommandBuilder = {
   inputDir: {
     alias: "d",
     describe: "The targeted input directory.",
@@ -162,7 +162,7 @@ export const builder: yargs.CommandBuilder = {
   },
 };
 
-export async function handler(argv: yargs.Arguments): Promise<void> {
+export async function handler(argv: Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     log.debug(argv.toString());
     InputDirectory = argv.inputDir;

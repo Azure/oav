@@ -3,7 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import { getProviderFromSpecPath } from "../lib/util/utils";
+import { getProviderFromSpecPath } from "../lib/util/utils.js";
 
 describe("Get resource provider from spec path", () => {
   it("should return the correct provider", () => {

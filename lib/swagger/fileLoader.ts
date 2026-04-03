@@ -8,9 +8,9 @@ import {
   urlParse,
 } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../inversifyUtils";
-import { checkAndResolveGithubUrl } from "../util/utils";
-import { Loader, setDefaultOpts } from "./loader";
+import { TYPES } from "../inversifyTypes.js";
+import { checkAndResolveGithubUrl } from "../util/utils.js";
+import { Loader, setDefaultOpts } from "./loader.js";
 
 export interface FileLoaderOption {
   fileRoot?: string;

@@ -3,11 +3,11 @@
 
 /* eslint-disable id-blacklist */
 
-import * as yargs from "yargs";
+import type { Arguments, CommandBuilder } from "yargs";
 
-import { cliSuppressExceptions } from "../cliSuppressExceptions";
-import { log } from "../util/logging";
-import * as validate from "../validate";
+import { cliSuppressExceptions } from "../cliSuppressExceptions.js";
+import { log } from "../util/logging.js";
+import * as validate from "../validate.js";
 
 export const command = "extract-xmsexamples <spec-path> <recordings>";
 
@@ -15,7 +15,7 @@ export const describe =
   "Extracts the x-ms-examples for a given swagger from the .NET session recordings and saves " +
   "them in a file.";
 
-export const builder: yargs.CommandBuilder = {
+export const builder: CommandBuilder = {
   d: {
     alias: "outDir",
     describe:
@@ -31,7 +31,7 @@ export const builder: yargs.CommandBuilder = {
   },
 };
 
-export async function handler(argv: yargs.Arguments): Promise<void> {
+export async function handler(argv: Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     log.debug(argv.toString());
     const specPath = argv.specPath;

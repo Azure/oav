@@ -1,8 +1,8 @@
 import { IterableEx, map } from "@azure-tools/openapi-tools-common";
 
-import { ModelValidationError } from "./modelValidationError";
-import { errorCodeToErrorMetadata, ExtendedErrorCode } from "./validationError";
-import { ValidationResultSource } from "./validationResultSource";
+import { ModelValidationError } from "./modelValidationError.js";
+import { errorCodeToErrorMetadata, ExtendedErrorCode } from "./validationError.js";
+import { ValidationResultSource } from "./validationResultSource.js";
 
 /**
  * Transforms serialized errors to ModelValidationError

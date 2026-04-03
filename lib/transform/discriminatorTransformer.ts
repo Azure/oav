@@ -1,11 +1,11 @@
 import { copyInfo } from "@azure-tools/openapi-tools-common";
-import { LiveValidatorLoggingLevels } from "../liveValidation/liveValidator";
-import { isRefLike, JsonLoader } from "../swagger/jsonLoader";
-import { refSelfSymbol, Schema } from "../swagger/swaggerTypes";
-import { xmsDiscriminatorValue } from "../util/constants";
-import { allOfTransformer } from "./allOfTransformer";
-import { getNameFromRef } from "./context";
-import { GlobalTransformer, TransformerType } from "./transformer";
+import { LiveValidatorLoggingLevels } from "../liveValidation/liveValidator.js";
+import { isRefLike, JsonLoader } from "../swagger/jsonLoader.js";
+import { refSelfSymbol, Schema } from "../swagger/swaggerTypes.js";
+import { xmsDiscriminatorValue } from "../util/constants.js";
+import { allOfTransformer } from "./allOfTransformer.js";
+import { getNameFromRef } from "./context.js";
+import { GlobalTransformer, TransformerType } from "./transformer.js";
 
 const getDiscriminatorRoot = (
   sch: Schema,

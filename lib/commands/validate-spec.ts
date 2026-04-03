@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as yargs from "yargs";
+import type { Arguments } from "yargs";
 
-import { cliSuppressExceptions } from "../cliSuppressExceptions";
-import { log } from "../util/logging";
-import * as validate from "../validate";
+import { cliSuppressExceptions } from "../cliSuppressExceptions.js";
+import { log } from "../util/logging.js";
+import * as validate from "../validate.js";
 
 export const command = "validate-spec <spec-path>";
 
 export const describe = "Performs semantic validation of the spec.";
 
-export async function handler(argv: yargs.Arguments): Promise<void> {
+export async function handler(argv: Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     log.debug(argv.toString());
     const specPath = argv.specPath;
