@@ -20,10 +20,10 @@ extends:
               - checkout: self
                 submodules: true
 
-              - task: NodeTool@0
+              - task: UseNode@1
                 inputs:
-                  versionSpec: "20.x"
-                displayName: "Use Node 20"
+                  version: "22.x"
+                displayName: "Use Node 22"
 
               - task: Npm@1
                 displayName: "npm ci"
