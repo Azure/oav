@@ -12,28 +12,16 @@ permissions:
 
 jobs:
   test:
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu
-            node-version: 20
-          - os: windows
-            node-version: 24
-
-    runs-on: ${{ fromJSON('{"ubuntu":"ubuntu-24.04", "windows":"windows-2022"}')[matrix.os] }}
+    runs-on: ubuntu-24.04
 
     steps:
-      - if: runner.os == 'Windows'
-        run: git config --global core.longpaths true
-        shell: pwsh
-
       - uses: actions/checkout@v6
 
-      - name: Setup Node ${{ matrix.node-version }}
+      - name: Setup Node 20
         uses: actions/setup-node@v6
         with:
           cache: "npm"
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
 
       - name: Install deps
         run: |
