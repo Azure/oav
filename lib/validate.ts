@@ -5,7 +5,7 @@
 
 import * as path from "path";
 import * as fs from "fs";
-import { dump } from "js-yaml";
+import { dump as yamlDump } from "js-yaml";
 import { flatMap, StringMap } from "@azure-tools/openapi-tools-common";
 import * as utils from "./util/utils";
 
