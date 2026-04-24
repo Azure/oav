@@ -4,6 +4,11 @@ parameters:
     default: "slow-test"
 
 steps:
+  - task: UseNode@1
+    inputs:
+      version: "22.x"
+    displayName: "Use Node 22"
+
   - task: Npm@1
     displayName: "npm ci"
     inputs:
