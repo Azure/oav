@@ -3,11 +3,24 @@
 
 import { URL } from "url";
 import { MutableStringMap } from "@azure-tools/openapi-tools-common";
-import * as msRest from "@azure/ms-rest-js";
 
 export type Headers = MutableStringMap<string | undefined>;
 
-export type Request = msRest.WebResource;
+export interface RequestHeader {
+  readonly name: string;
+  readonly value: string;
+}
+
+export interface RequestHeaders {
+  headersArray(): RequestHeader[];
+}
+
+export interface Request {
+  readonly url?: string;
+  readonly method?: string;
+  readonly body?: unknown;
+  readonly headers?: RequestHeaders;
+}
 
 export interface Response {
   readonly body: unknown;
