@@ -5,7 +5,7 @@
 
 import * as path from "path";
 import * as fs from "fs";
-import jsYaml from "js-yaml";
+import { dump } from "js-yaml";
 import { flatMap, StringMap } from "@azure-tools/openapi-tools-common";
 import * as utils from "./util/utils";
 
@@ -63,7 +63,7 @@ const prettyPrint = <T extends NodeError<T>>(
 ) => {
   if (errors !== undefined) {
     for (const error of errors) {
-      const yaml = jsYaml.dump(error);
+      const yaml = dump(error);
       if (process.env["Agent.Id"]) {
         // eslint-disable-next-line no-console
         console.error(vsoLogIssueWrapper(errorType, yaml));
@@ -78,7 +78,7 @@ const prettyPrint = <T extends NodeError<T>>(
 const prettyPrintInfo = <T>(errors: readonly T[] | undefined, errorType: ErrorType) => {
   if (errors !== undefined) {
     for (const error of errors) {
-      const yaml = jsYaml.dump(error);
+      const yaml = dump(error);
       if (process.env["Agent.Id"]) {
         // eslint-disable-next-line no-console
         console.error(vsoLogIssueWrapper(errorType, yaml));
@@ -122,7 +122,7 @@ export const validateSpec = async (specPath: string, options: Options | undefine
     } catch (err) {
       let outputMsg = err;
       if (typeof err === "object") {
-        outputMsg = jsYaml.dump(err);
+        outputMsg = yamlDump(err);
       }
       if (o.pretty) {
         logMessage(`Semantically validating ${specPath}`);
