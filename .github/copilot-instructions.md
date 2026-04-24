@@ -36,6 +36,12 @@ oav (openapi-validation-tools) is an npm package for validating Azure REST API s
 - **Run tests**: `npm test` or `npm run fast-test` for quicker iteration
 - Tests should validate both success cases and error/edge cases
 
+## Committing changes
+
+- **Do not commit changes under the `test/` folder** unless the task explicitly requires updating tests or test fixtures. Running the test suite (`npm test`, `npm run fast-test`, `npx jest ...`) may regenerate or modify files under `test/` (for example under `test/exampleGenerator/`, `test/liveValidation/payloads/`, or other fixture directories) as a side effect. These incidental modifications are **not** part of your change and must not be included in the PR.
+- Before calling `report_progress` (which stages and commits everything with `git add .`), review `git status` and revert any unintended changes under `test/` using `git checkout -- test/` (or `git checkout <base-ref> -- <path>` for specific files). Only keep `test/` changes that you deliberately authored to fulfill the task.
+- The same rule applies to any other files touched as a side effect of running build/test tooling (for example stray files under `dist/` should never be committed — `dist/` is build output).
+
 ## Project Structure
 
 - `lib/` — Main source code (validators, models, CLI commands, utilities)

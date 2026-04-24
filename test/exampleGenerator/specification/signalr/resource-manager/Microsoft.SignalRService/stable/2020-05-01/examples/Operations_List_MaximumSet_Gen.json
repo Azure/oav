@@ -15,24 +15,24 @@
               "provider": "Microsoft.SignalRService",
               "resource": "SignalR",
               "operation": "Manage SignalR (read-only)",
-              "description": "xpkbxzpkkcqfrtv"
+              "description": "jsgdzjqdhzsugzavxjfpwvwzhnom"
             },
             "properties": {
               "serviceSpecification": {
                 "metricSpecifications": [
                   {
-                    "name": "pikqdmfaqfibkoyehwgnhtpyzyz",
-                    "displayName": "nvmgrblbdqgeyrpwko",
-                    "displayDescription": "dmv",
-                    "unit": "rluvdkltmeyufntxnhzpwidwcuvoi",
-                    "aggregationType": "qmeijohpdjyx",
-                    "fillGapWithZero": "vakiso",
-                    "category": "kjschwuiqijydoyfxwyaikzzmjez",
+                    "name": "wbksmienolyvxvlnondekkciipiy",
+                    "displayName": "ylplobssswiupjjanauzxrivwbsgm",
+                    "displayDescription": "zhvhezv",
+                    "unit": "bypbgbfpnrlquqegwycsjvmpgu",
+                    "aggregationType": "outvijetbtfwzxvtpeyypm",
+                    "fillGapWithZero": "qwyaqgzvtfdlr",
+                    "category": "jwketejezvkyvqfvvxyxpqth",
                     "dimensions": [
                       {
-                        "name": "xuxqzammdhit",
-                        "displayName": "hnuujeydgedhowofvhcotxpdaix",
-                        "internalName": "lmqzlz",
+                        "name": "zzssneczitfequ",
+                        "displayName": "ccvzaxalesuuegkleco",
+                        "internalName": "rgwsbrbktkg",
                         "toBeExportedForShoebox": true
                       }
                     ]
@@ -40,13 +40,13 @@
                 ],
                 "logSpecifications": [
                   {
-                    "name": "fywhbnftwiogalxxsqsqk",
-                    "displayName": "kyg"
+                    "name": "icdmew",
+                    "displayName": "yctgzpnvlw"
                   }
                 ]
               }
             },
-            "origin": "tnqlqverqaxtaiapojvwoe"
+            "origin": "zrthxsxlmsh"
           }
         ],
         "nextLink": "providers/Microsoft.SignalRService?$skipToken={opaqueString}"
