@@ -3,28 +3,28 @@
 
 /* eslint-disable no-console */
 
-import * as path from "path";
+import { flatMap, StringMap } from "@azure-tools/openapi-tools-common";
 import * as fs from "fs";
 import { dump as yamlDump } from "js-yaml";
-import { flatMap, StringMap } from "@azure-tools/openapi-tools-common";
+import * as path from "path";
 import * as utils from "./util/utils";
 
+import ExampleGenerator from "./generator/exampleGenerator";
+import { loadErrorDefinitions, ReportGenerator } from "./report/generateReport";
 import {
   NewModelValidator as ModelValidator,
   SwaggerExampleErrorDetail,
 } from "./swaggerValidator/modelValidator";
-import { NodeError } from "./util/validationError";
-import * as XMsExampleExtractor from "./xMsExampleExtractor";
-import ExampleGenerator from "./generator/exampleGenerator";
-import { log } from "./util/logging";
 import { SemanticValidator } from "./swaggerValidator/semanticValidator";
-import { ErrorCodeConstants } from "./util/errorDefinitions";
 import {
   TrafficValidationIssue,
   TrafficValidationOptions,
   TrafficValidator,
 } from "./swaggerValidator/trafficValidator";
-import { ReportGenerator, loadErrorDefinitions } from "./report/generateReport";
+import { ErrorCodeConstants } from "./util/errorDefinitions";
+import { log } from "./util/logging";
+import { NodeError } from "./util/validationError";
+import * as XMsExampleExtractor from "./xMsExampleExtractor";
 
 export interface Options extends XMsExampleExtractor.Options {
   consoleLogLevel?: unknown;
@@ -63,7 +63,7 @@ const prettyPrint = <T extends NodeError<T>>(
 ) => {
   if (errors !== undefined) {
     for (const error of errors) {
-      const yaml = dump(error);
+      const yaml = yamlDump(error);
       if (process.env["Agent.Id"]) {
         // eslint-disable-next-line no-console
         console.error(vsoLogIssueWrapper(errorType, yaml));
@@ -78,7 +78,7 @@ const prettyPrint = <T extends NodeError<T>>(
 const prettyPrintInfo = <T>(errors: readonly T[] | undefined, errorType: ErrorType) => {
   if (errors !== undefined) {
     for (const error of errors) {
-      const yaml = dump(error);
+      const yaml = yamlDump(error);
       if (process.env["Agent.Id"]) {
         // eslint-disable-next-line no-console
         console.error(vsoLogIssueWrapper(errorType, yaml));
