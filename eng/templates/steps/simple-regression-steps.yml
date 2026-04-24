@@ -24,7 +24,7 @@ steps:
 
   - task: PublishTestResults@2
     inputs:
-      testResultsFiles: "**/test-results.xml"
+      testResultsFiles: "**/junit.xml"
       testRunTitle: "Test results for JavaScript"
 
   - task: PublishCodeCoverageResults@2
