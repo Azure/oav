@@ -1,6 +1,6 @@
 import * as assert from "assert";
-import * as glob from "glob";
 import * as path from "path";
+import * as glob from "glob";
 import { DefaultConfig } from "../lib/util/constants";
 import { RequestResponsePair, LiveValidator } from "../lib/liveValidation/liveValidator";
 
