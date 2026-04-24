@@ -17,11 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup Node 20
+      - name: Setup Node 22
         uses: actions/setup-node@v6
         with:
           cache: "npm"
-          node-version: 20
+          node-version: 22
 
       - name: Install deps
         run: |
