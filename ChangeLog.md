@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 04/24/2026 4.0.4
+
+- Remove unused runtime dependency `@azure/ms-rest-js`
+- Remove dead code under `lib/templates` (`httpTemplate.ts`, `markdownHttpTemplate.ts`, `yamlHttpTemplate.ts`) and the unused `lib/models/responseWrapper.ts`
+
 ## 11/18/2025 4.0.3
 
 - Bump dependency `glob` from `^11.0.3` to `^13.0.0`
