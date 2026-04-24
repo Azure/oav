@@ -2,6 +2,7 @@
 
 ## 04/24/2026 4.0.4
 
+- Requires Node 22 or higher
 - Remove unused runtime dependency `@azure/ms-rest-js`
 - Remove dead code under `lib/templates` (`httpTemplate.ts`, `markdownHttpTemplate.ts`, `yamlHttpTemplate.ts`) and the unused `lib/models/responseWrapper.ts`
 

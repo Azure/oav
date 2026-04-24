@@ -29,7 +29,7 @@ updates:
 
       # devDependencies
 
-      # locked to "^20.0.0" to align with our minimum node version in package.json/engines
+      # locked to align with our minimum node version in package.json/engines
       - dependency-name: "@types/node"
 
       # locked to "^8", since newer versions include breaking changes
