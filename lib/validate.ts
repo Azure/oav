@@ -3,28 +3,28 @@
 
 /* eslint-disable no-console */
 
-import { flatMap, StringMap } from "@azure-tools/openapi-tools-common";
+import * as path from "path";
 import * as fs from "fs";
 import { dump as yamlDump } from "js-yaml";
-import * as path from "path";
+import { flatMap, StringMap } from "@azure-tools/openapi-tools-common";
 import * as utils from "./util/utils";
 
-import ExampleGenerator from "./generator/exampleGenerator";
-import { loadErrorDefinitions, ReportGenerator } from "./report/generateReport";
 import {
   NewModelValidator as ModelValidator,
   SwaggerExampleErrorDetail,
 } from "./swaggerValidator/modelValidator";
+import { NodeError } from "./util/validationError";
+import * as XMsExampleExtractor from "./xMsExampleExtractor";
+import ExampleGenerator from "./generator/exampleGenerator";
+import { log } from "./util/logging";
 import { SemanticValidator } from "./swaggerValidator/semanticValidator";
+import { ErrorCodeConstants } from "./util/errorDefinitions";
 import {
   TrafficValidationIssue,
   TrafficValidationOptions,
   TrafficValidator,
 } from "./swaggerValidator/trafficValidator";
-import { ErrorCodeConstants } from "./util/errorDefinitions";
-import { log } from "./util/logging";
-import { NodeError } from "./util/validationError";
-import * as XMsExampleExtractor from "./xMsExampleExtractor";
+import { ReportGenerator, loadErrorDefinitions } from "./report/generateReport";
 
 export interface Options extends XMsExampleExtractor.Options {
   consoleLogLevel?: unknown;
