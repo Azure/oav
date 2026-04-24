@@ -1,0 +1,54 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu
+            node-version: 20
+          - os: windows
+            node-version: 24
+
+    runs-on: ${{ fromJSON('{"ubuntu":"ubuntu-24.04", "windows":"windows-2022"}')[matrix.os] }}
+
+    steps:
+      - if: runner.os == 'Windows'
+        run: git config --global core.longpaths true
+        shell: pwsh
+
+      - uses: actions/checkout@v6
+
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install deps
+        run: |
+          echo "::group::npm ci"
+          npm ci
+          echo "::endgroup::"
+          echo "::group::npm ls -a"
+          npm ls -a || true
+          echo "::endgroup::"
+        shell: bash
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test:ci
+
+      - name: Lint
+        run: npm run lint
