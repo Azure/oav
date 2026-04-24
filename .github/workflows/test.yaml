@@ -45,11 +45,9 @@ jobs:
           echo "::endgroup::"
         shell: bash
 
+      # script "build" also calls "lint"
       - name: Build
         run: npm run build
 
       - name: Test
         run: npm run test
-
-      - name: Lint
-        run: npm run lint
