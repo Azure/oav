@@ -75,62 +75,62 @@ extends:
 
               - template: /eng/templates/steps/publish-1es-artifact.yml
                 parameters:
-                  ArtifactName: "oav"
-                  ArtifactPath: "$(Build.ArtifactStagingDirectory)"
+                  ArtifactName: 'oav'
+                  ArtifactPath: '$(Build.ArtifactStagingDirectory)'
                   CustomCondition: succeededOrFailed()
 
       - template: /eng/templates/stages/examples-regression.yml
 
       # only include if running on `internal` build with manual queue, otherwise never include
       - ${{ if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
-          - stage: Publish
-            displayName: Publish
-            dependsOn: Build_And_Test
+        - stage: Publish
+          displayName: Publish
+          dependsOn: Build_And_Test
 
-            jobs:
-              - deployment: Publish
-                environment: "package-publish"
-                pool:
-                  name: azsdk-pool
-                  image: ubuntu-24.04
-                  os: linux
+          jobs:
+            - deployment: Publish
+              environment: 'package-publish'
+              pool:
+                name: azsdk-pool
+                image: ubuntu-24.04
+                os: linux
 
-                variables:
-                  - name: ArtifactPath
-                    value: $(Pipeline.Workspace)/oav
+              variables:
+              - name: ArtifactPath
+                value: $(Pipeline.Workspace)/oav
 
-                templateContext:
-                  type: releaseJob
-                  isProduction: true
-                  inputs:
-                    - input: pipelineArtifact
-                      artifactName: oav
-                      itemPattern: "**/*.tgz"
-                      targetPath: $(ArtifactPath)
+              templateContext:
+                type: releaseJob
+                isProduction: true
+                inputs:
+                - input: pipelineArtifact
+                  artifactName: oav
+                  itemPattern: '**/*.tgz'
+                  targetPath: $(ArtifactPath)
 
-                strategy:
-                  runOnce:
-                    deploy:
-                      steps:
-                        - pwsh: |
-                            Write-Host "Will deploy with tag of latest"
-                            Get-ChildItem "$(ArtifactPath)" *.tgz -Recurse | % { Write-Host $_.FullName }
-                          displayName: Packages to be published
+              strategy:
+                runOnce:
+                  deploy:
+                    steps:
+                    - pwsh: |
+                        Write-Host "Will deploy with tag of latest"
+                        Get-ChildItem "$(ArtifactPath)" *.tgz -Recurse | % { Write-Host $_.FullName }
+                      displayName: Packages to be published
 
-                        - task: EsrpRelease@9
-                          displayName: "Publish oav to ESRP"
-                          inputs:
-                            ConnectedServiceName: "Azure SDK PME Managed Identity"
-                            ClientId: "5f81938c-2544-4f1f-9251-dd9de5b8a81b"
-                            DomainTenantId: "975f013f-7f24-47e8-a7d3-abc4752bf346"
-                            UseManagedIdentity: true
-                            KeyVaultName: "kv-azuresdk-codesign"
-                            SignCertName: "azure-sdk-esrp-release-certificate"
-                            Intent: "PackageDistribution"
-                            ContentType: "npm"
-                            FolderLocation: $(ArtifactPath)
-                            Owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
-                            Approvers: "azuresdk@microsoft.com"
-                            ServiceEndpointUrl: "https://api.esrp.microsoft.com"
-                            MainPublisher: "ESRPRELPACMANTEST"
-                            productstate: latest
+                    - task: EsrpRelease@9
+                      displayName: 'Publish oav to ESRP'
+                      inputs:
+                        ConnectedServiceName: 'Azure SDK PME Managed Identity'
+                        ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+                        DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
+                        UseManagedIdentity: true
+                        KeyVaultName: 'kv-azuresdk-codesign'
+                        SignCertName: 'azure-sdk-esrp-release-certificate'
+                        Intent: 'PackageDistribution'
+                        ContentType: 'npm'
+                        FolderLocation: $(ArtifactPath)
+                        Owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
+                        Approvers: 'azuresdk@microsoft.com'
+                        ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+                        MainPublisher: 'ESRPRELPACMANTEST'
+                        productstate: latest
