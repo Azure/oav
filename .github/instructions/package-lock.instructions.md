@@ -36,13 +36,14 @@ change as small as possible and follow these rules:
 ## 3. Beware overrides that break transitive consumers
 
 - An `overrides` entry forces **every** consumer to the new version, including
-  transitive ones that may rely on removed APIs. Do not add an override unless
-  you have confirmed the affected consumers still work.
-- Known example: forcing `js-yaml` to `4.x` via `overrides` breaks
-  `@azure/openapi-markdown` and `front-matter`, which call `js-yaml.safeLoad`
-  (removed in js-yaml 4.x). This causes readme-parsing tests in
-  `exampleGeneratorTests` to fail (YAML parses to empty). Do not add this
-  override.
+  transitive ones that may rely on APIs or behavior removed in a newer major.
+  Do not add an override unless you have confirmed the affected consumers still
+  work.
+- Known example: `@azure/openapi-markdown` and `front-matter` are transitive
+  consumers of `js-yaml` that call `js-yaml.safeLoad`, which was removed in
+  js-yaml 5.x. Forcing `js-yaml` onto a major that drops `safeLoad` breaks them,
+  causing readme-parsing tests in `exampleGeneratorTests` to fail (YAML parses
+  to empty). Do not add such an override.
 - Some transitive advisories cannot be remediated by a lock or `package.json`
   change (for example when there is no patched `3.x` release and the parent
   package still requires the vulnerable major). In that case, do not force a
