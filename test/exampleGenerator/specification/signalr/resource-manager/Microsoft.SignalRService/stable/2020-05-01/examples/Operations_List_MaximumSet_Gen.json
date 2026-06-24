@@ -15,24 +15,24 @@
               "provider": "Microsoft.SignalRService",
               "resource": "SignalR",
               "operation": "Manage SignalR (read-only)",
-              "description": "jsgdzjqdhzsugzavxjfpwvwzhnom"
+              "description": "axrrjfhj"
             },
             "properties": {
               "serviceSpecification": {
                 "metricSpecifications": [
                   {
-                    "name": "wbksmienolyvxvlnondekkciipiy",
-                    "displayName": "ylplobssswiupjjanauzxrivwbsgm",
-                    "displayDescription": "zhvhezv",
-                    "unit": "bypbgbfpnrlquqegwycsjvmpgu",
-                    "aggregationType": "outvijetbtfwzxvtpeyypm",
-                    "fillGapWithZero": "qwyaqgzvtfdlr",
-                    "category": "jwketejezvkyvqfvvxyxpqth",
+                    "name": "txzpxcipumbazu",
+                    "displayName": "tqogenbvqqafo",
+                    "displayDescription": "xvdfvwpovnerdhrqunjdvezjrwabhs",
+                    "unit": "dkgxdykhjpwqpgivjalziwvwarw",
+                    "aggregationType": "awjqqkwyeifdjoohyuzosbnayhmt",
+                    "fillGapWithZero": "kzk",
+                    "category": "xcvjcntamugrfekfdjkfkyvexnouh",
                     "dimensions": [
                       {
-                        "name": "zzssneczitfequ",
-                        "displayName": "ccvzaxalesuuegkleco",
-                        "internalName": "rgwsbrbktkg",
+                        "name": "gksbcpu",
+                        "displayName": "bclsmlgboiqiwlcqsijhdjuceuz",
+                        "internalName": "igcqbclkubylqmktjzopwnlurxe",
                         "toBeExportedForShoebox": true
                       }
                     ]
@@ -40,13 +40,13 @@
                 ],
                 "logSpecifications": [
                   {
-                    "name": "icdmew",
-                    "displayName": "yctgzpnvlw"
+                    "name": "xnxnjpclrwgyqomy",
+                    "displayName": "mdphc"
                   }
                 ]
               }
             },
-            "origin": "zrthxsxlmsh"
+            "origin": "gsuvsgydrfbfddnuypxpppyvefaod"
           }
         ],
         "nextLink": "providers/Microsoft.SignalRService?$skipToken={opaqueString}"
