@@ -34,6 +34,7 @@
     "yargs": "^15.4.1"
   },
   "overrides": {
+    "@babel/core": "7.29.6",
     "copyfiles": {
       "glob": "^9.3.5"
     },
