@@ -9,17 +9,17 @@
       "tags": {},
       "properties": {
         "collation": "SQL_Latin1_General_CP1_CI_AS",
-        "restorePointInTime": "2026-06-24T16:55:58.233Z",
+        "restorePointInTime": "2024-01-29T21:42:02.024Z",
         "catalogCollation": "DATABASE_DEFAULT",
         "createMode": "Default",
-        "storageContainerUri": "pvuqrcuxw",
-        "sourceDatabaseId": "lrcswtfnwsmgqtcfymrufgmznyw",
-        "restorableDroppedDatabaseId": "bmvg",
-        "storageContainerSasToken": "lswmzwtwjsjjnju",
-        "recoverableDatabaseId": "pgac",
-        "longTermRetentionBackupResourceId": "cduovptrpzkoqcghmtjgjh",
+        "storageContainerUri": "pkohwhsjeiyoyvfusrco",
+        "sourceDatabaseId": "jbndbli",
+        "restorableDroppedDatabaseId": "jgtflimykvixeixqdtzlonn",
+        "storageContainerSasToken": "azvqaqcrmhpxdhfpyxz",
+        "recoverableDatabaseId": "etfcvitflkmayjinkkcvkutpylgrx",
+        "longTermRetentionBackupResourceId": "bhisfiwxwmvbwqyxy",
         "autoCompleteRestore": true,
-        "lastBackupName": "eqhnbthiwepkg"
+        "lastBackupName": "dalhtyjscwfsmuenpglwv"
       }
     },
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
@@ -33,14 +33,14 @@
           "collation": "SQL_Latin1_General_CP1_CI_AS",
           "status": "Online",
           "creationDate": "2017-08-04T15:00:17.73Z",
-          "earliestRestorePoint": "2026-06-24T16:55:58.233Z",
+          "earliestRestorePoint": "2024-01-29T21:42:02.024Z",
           "defaultSecondaryLocation": "North Europe",
           "catalogCollation": "DATABASE_DEFAULT",
-          "failoverGroupId": "dwbqmdtyqjiykbjziezt"
+          "failoverGroupId": "rjrmzuujqsfbhdxajnjf"
         },
         "tags": {
-          "key4538": "smkfpucx",
-          "key8192": "qqvprefliagelz"
+          "key4328": "hvqotbq",
+          "key2964": "zrpudzyvendxw"
         },
         "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Sql/managedInstances/testcl/databases/testdb1",
         "name": "testdb1",
