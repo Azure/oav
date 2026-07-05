@@ -20,7 +20,7 @@
     "fast-json-stable-stringify": "^2.1.0",
     "glob": "^13.0.0",
     "inversify": "^7.10.1",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^5.2.0",
     "json-pointer": "0.6.2",
     "json-schema-traverse": "0.4.1",
     "jsonpath-plus": "^10.3.0",
