@@ -118,6 +118,17 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "overrides": {
+    "@azure/openapi-markdown": {
+      "js-yaml": "^3.15.0"
+    },
+    "front-matter": {
+      "js-yaml": "^3.15.0"
+    },
+    "@istanbuljs/load-nyc-config": {
+      "js-yaml": "^3.15.0"
+    }
+  },
   "jest-junit": {
     "output": "test-results.xml"
   }
