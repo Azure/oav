@@ -16,7 +16,7 @@
               "tier": "Standard",
               "size": "S1",
               "capacity": 1,
-              "family": "lpdocxclx"
+              "family": "bpodalafnq"
             },
             "properties": {
               "provisioningState": "Succeeded",
@@ -34,7 +34,7 @@
                     },
                     "privateLinkServiceConnectionState": {
                       "status": "Approved",
-                      "description": "gnvgvukrqwyhetmqnu",
+                      "description": "vrkhgitrv",
                       "actionsRequired": "None"
                     }
                   },
@@ -70,9 +70,9 @@
               "upstream": {
                 "templates": [
                   {
-                    "hubPattern": "nvrisxltwpnheluhmrj",
-                    "eventPattern": "eovmodaokahzffzzneuwqxgqhtu",
-                    "categoryPattern": "lmwenhdeihpljb",
+                    "hubPattern": "svckzwqharibncltcmv",
+                    "eventPattern": "onoczwsqsigtndablytmnffnyzo",
+                    "categoryPattern": "kyzgku",
                     "urlTemplate": "http://foo.com"
                   }
                 ]
@@ -108,7 +108,7 @@
             "type": "Microsoft.SignalRService/SignalR"
           }
         ],
-        "nextLink": "yptjqorzbllnmkoiwptcmyl"
+        "nextLink": "zf"
       }
     }
   }
