@@ -33,6 +33,7 @@ module.exports = {
   rules: {
     "import/order": "error",
     "import/namespace": "off",
+    "import/no-unresolved": ["error", { ignore: ["^inversify$"] }],
     "@typescript-eslint/typedef": "off",
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/explicit-function-return-type": "off",

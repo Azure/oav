@@ -275,9 +275,9 @@ export default class Generator {
     type pathNode = string | number;
     type pathNodes = pathNode[];
 
-    const requestPaths = _.paths(example.parameters, { pathFormat: "array" }).map((v) =>
-      (v as pathNode[]).reverse()
-    );
+    const requestPaths: pathNodes[] = (
+      _.paths(example.parameters, { pathFormat: "array" }) as pathNode[][]
+    ).map((v) => v.reverse());
 
     /**
      * construct a inverted index , the key is leaf property key, value is reverse of the path from the root to the leaf property.
@@ -315,7 +315,7 @@ export default class Generator {
      */
     const res = _.mapValuesDeep(
       example.responses,
-      (value, key, parentValue, context) => {
+      (value: any, key: string | number, parentValue: any, context: any) => {
         if (!parentValue) {
           log.warn(`parent is null`);
         }
