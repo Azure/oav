@@ -4,16 +4,25 @@ parameters:
     default: "slow-test"
 
 steps:
+  - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
+
   - task: UseNode@1
     inputs:
       version: "22.x"
     displayName: "Use Node 22"
 
-  - task: Npm@1
+  - bash: npm ci
     displayName: "npm ci"
-    inputs:
-      command: ci
-      verbose: false
+    retryCountOnTaskFailure: 3
+    env:
+      NPM_CONFIG_USERCONFIG: $(resolvedNpmrcPath)
+      NPM_CONFIG_REPLACE_REGISTRY_HOST: always
+      NPM_CONFIG_ALWAYS_AUTH: true
+      NPM_CONFIG_CACHE: $(Pipeline.Workspace)/.npm
+      NPM_CONFIG_FETCH_RETRIES: 5
+      NPM_CONFIG_FETCH_RETRY_FACTOR: 2
+      NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: 10000
+      NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: 120000
 
   - task: Npm@1
     displayName: "npm run ${{ parameters.NpmEnvironment }}"
@@ -44,4 +53,4 @@ steps:
   - template: /eng/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactName: "snapshot-patch-${{ parameters.NpmEnvironment }}"
-      ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+      ArtifactPath: "$(Build.ArtifactStagingDirectory)"
