@@ -4,16 +4,15 @@ parameters:
     default: "slow-test"
 
 steps:
+  - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
+
   - task: UseNode@1
     inputs:
       version: "22.x"
     displayName: "Use Node 22"
 
-  - task: Npm@1
+  - bash: npm ci
     displayName: "npm ci"
-    inputs:
-      command: ci
-      verbose: false
 
   - task: Npm@1
     displayName: "npm run ${{ parameters.NpmEnvironment }}"
