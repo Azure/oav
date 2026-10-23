@@ -1,3 +1,15 @@
+# ⚠️ Deprecation Notice
+
+**AutoRest and its ecosystem(including oad) is deprecated and will be retired on July 1, 2026.**
+
+AutoRest is no longer under active development. No new features, language generators, or plugins will be added.
+
+### ✅ Recommended replacement: TypeSpec
+
+The recommended successor to AutoRest is **[TypeSpec](https://typespec.io/)** — a modern, actively developed API description language and code generation platform.
+
+For examples use the typespec azure `tsp-examples` tool instead. https://aka.ms/typespec/azure/examples
+
 # openapi-validation-tools [oav]
 
 [![Package version](https://img.shields.io/npm/v/oav)](https://www.npmjs.com/package/oav)
